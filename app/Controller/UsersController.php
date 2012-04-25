@@ -68,25 +68,20 @@ class UsersController extends AppController{
             $user['Twitter']['screen_name'] = $user_information->screen_name;
             
             //Twitterのidがデータベースにあるか調べる。ない場合、Statuses/importへリダイレクト
-            $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$user_information->id)));
+            $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$user_information->id_str)));
             if($exist){
                 //データベースに保存してあるアクセストークンが最新か調べる。
-                
+                $this->User->findByTwitterId($user);
                 //ツイートのインポートが済んでいるか調べる。
                 $hasBeenInitialized = $this->User->find('first',array('conditions'=>array('initialized_flag')));
-                $this->pr($hasBeenInitialized);exit;
+                
                 if(!$hasBeenInitialized){
-                    //済んでいない場合、ログイン処理後、Statuses/import()へリダイレクト
+                    //済んでいない場合、ログイン処理後、Statuses/importへリダイレクト
                     if($this->Auth->login($user)){
                         $this->redirect('/statuses/import');
-                    }else{
-                        //済んでいる場合、ログインしてhome()へリダイレクト
-                        if($this->Auth->login($user)){
-                            $this->redirect('/users/home');
-                        }
                     }
                 }else{
-                    //済んでいる場合、ログインしてhomeへリダイレクト
+                    //済んでいる場合、ログイン処理後homeへリダイレクト
                     if($this->Auth->login($user)){
                         $this->redirect('/users/home');
                     }
