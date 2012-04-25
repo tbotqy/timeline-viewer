@@ -13,7 +13,6 @@
 
 require('OAuth.php');
 App::uses('HttpSocket', 'Network/Http');
-
 class OAuthClient {
     private $url = null;
     private $consumerKey = null;
