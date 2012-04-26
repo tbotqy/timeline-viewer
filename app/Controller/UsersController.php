@@ -4,6 +4,7 @@
  */
 
 class UsersController extends AppController{
+
     /* settings */
     public $helpers = array('Html','Form','Session');
     public $components = array('Auth','Session');
@@ -15,31 +16,31 @@ class UsersController extends AppController{
     
     public function index(){
         /*
-         * ユーザーがログインしているかチェックするアクション
+         * This action checks if user is logged in.
          */
         
-        if($this->Auth->loggedIn()){
-            //ログインしている場合、ホームへリダイレクト
+        if( $this->Auth->loggedIn() ){
             $this->redirect('/users/home');
         }else{
-            //ログインしていない場合、ログイン画面へリダイレクト
             $this->redirect('/users/login');
         }
     }
 
     public function login(){
         /*
-         * ログイン画面を表示するアクション
+         * This action just shows the view for login.
          */
     }
 
     public function authorize(){
         /*
-         * ツイッターのOAuth認証をするアクション
+         * This action takes Twitter OAuth process.
          */
+
         $client = $this->createClient();
         $requestToken = $client->getRequestToken('https://api.twitter.com/oauth/request_token', 'http://' . $_SERVER['HTTP_HOST'] . '/users/callback');
-        if($requestToken){
+
+        if( $requestToken ){
             //redirect to api.twitter.com
             $this->Session->write('twitter_request_token', $requestToken);
             $this->redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' . $requestToken->key);
@@ -50,37 +51,40 @@ class UsersController extends AppController{
 
     public function callback(){
         /*
-         * ツイッターOAuth認証のコールバックアクション
+         * This is the callback action for Twitter OAuth.
          */
-        //リクエストトークンを使ってアクセストークンを取得する
+        
+        // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
         $client = $this->createClient();
+        // fetch access token for this user
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
   
-        if(!$accessToken){
-            //アクセストークンが取得できなかった場合
-            //エラーメッセージを表示
+        if( !$accessToken ){
+            //if failed in fetching access token
+            //show the error message
             $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
         }else{
-            //ユーザーのアカウント情報を取得
-            $user_information = $client->get($accessToken->key,$accessToken->secret,'https://api.twitter.com/1/account/verify_credentials.json');
-            $user_information = json_decode($user_information);
-            $user = array();//ログインさせるユーザーのアカウント情報を格納する配列
-            $user['Twitter']['id'] = $user_information->id_str;
-            $user['Twitter']['screen_name'] = $user_information->screen_name;
+            //
+            $verify_credentials = $client->get($accessToken->key,$accessToken->secret,'https://api.twitter.com/1/account/verify_credentials.json');
+            $verify_credentials = json_decode($verify_credentials);
+            $user = array();//contain the information about the user to get logged in.
+            $user['Twitter']['id'] = $verify_credentials->id_str;
+            $user['Twitter']['screen_name'] = $verify_credentials->screen_name;
             
-            //Twitterのidがデータベースにあるか調べる。ない場合、Statuses/importへリダイレクト
-            $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$user_information->id_str)));
-            if($exist){
+            // check if user is already registored 
+            $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$verify_credentials->id_str)));
+            
+            if( $exist ){
                 
-                // データベースに保存してあるアクセストークンが最新か調べる。
+                // check if stored tokens are up-to-date
                 $stored_tokens = $this->User->findByTwitterId(
-                                                              $user_information->id_str,
+                                                              $verify_credentials->id_str,
                                                               array('User.id','User.token','User.token_secret')
                                                               );
               
-                if($stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret){
-                    //アクセストークンが古い場合、更新する
+                if( $stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret ){
+                    // if not, update them
                     $id = $stored_tokens['User']['id'];
                     $data = array('id' => $id,
                                   'token' => $accessToken->key,
@@ -90,34 +94,36 @@ class UsersController extends AppController{
                     $this->User->save($data);
                 }
 
-                // ツイートのインポートが済んでいるか調べる。
-                $hasBeenInitialized = $this->User->findByTwitterId($user_information->id_str,
+                // check if user has aleady imported his status on twitter
+                $hasBeenInitialized = $this->User->findByTwitterId($verify_credentials->id_str,
                                                                    array('User.initialized_flag')
                                                                    );
-                if(!$hasBeenInitialized['User']['initialized_flag']){
-                    //済んでいない場合、ログイン処理後、Statuses/importへリダイレクト
-                    if($this->Auth->login($user)){
+                
+                if( !$hasBeenInitialized['User']['initialized_flag'] ){
+    
+                    if( $this->Auth->login($user) ){
                         $this->redirect('/statuses/import');
                     }
                 }else{
-                    //済んでいる場合、ログイン処理後homeへリダイレクト
-                    if($this->Auth->login($user)){
+
+                    if( $this->Auth->login($user) ){
                         $this->redirect('/users/home');
                     }
                 }
             }else{
-                //Twiiterのidがデータベースにない場合、登録した後に/statuses/importへリダイレクト
-                //登録するデータセット
+                // register if user doesn't have his account
+                
+                //user's data to save
                 $data_to_save = array(
-                                      'twitter_id'=>$user_information->id_str,
-                                      'screen_name'=>$user_information->screen_name,
+                                      'twitter_id'=>$verify_credentials->id_str,
+                                      'screen_name'=>$verify_credentials->screen_name,
                                       'token'=>$accessToken->key,
                                       'token_secret'=>$accessToken->secret,
                                       'created'=>time()
                                       );
                 $this->User->save($data_to_save);
                 
-                if($this->Auth->login($user)){
+                if( $this->Auth->login($user) ){
                     $this->redirect('/users/import');
                 }
             }
@@ -125,15 +131,13 @@ class UsersController extends AppController{
     }
 
     public function home(){
-        //ログインしているユーザーのデータを読み込んで表示する。
-
+        // [ToDo] show the loaded user's data in the view named home
     }
 
     public function logout(){
-        //ログアウト処理をする
+        // log the user out
         if($this->Auth->logout()){
             $this->redirect('/users/');
         }
     }
-
 }
