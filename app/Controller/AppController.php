@@ -41,5 +41,9 @@ class AppController extends Controller {
         print_r($array);
         echo "</pre>";
     }
+
+    public function createClient(){
+        return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
+    }
         
 }

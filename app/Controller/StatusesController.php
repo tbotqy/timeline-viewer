@@ -10,7 +10,7 @@ class StatusesController extends AppController{
         //ツイートの取り込みを行う画面を表示する。
        $user =  $this->Auth->user();
 
-       $client = new OAuthClient(CONSUMER_KEY,SECRET_KEY);
+       $client = $this->createClient();
        $token = $this->User->findByTwitterId($user['Twitter']['id'],
                                              $fields = array('User.token','User.token_secret')
                                              );
@@ -18,7 +18,6 @@ class StatusesController extends AppController{
        $verify_credentials = json_decode($verify_credentials);
        $this->set('screen_name',$user['Twitter']['screen_name']);
        $this->set('profile_image',$verify_credentials->profile_image_url_https);
-       $this->pr($verify_credentials);
     }
 
     public function acquire_statuses(){

@@ -37,7 +37,6 @@ class UsersController extends AppController{
         /*
          * ツイッターのOAuth認証をするアクション
          */
-        
         $client = $this->createClient();
         $requestToken = $client->getRequestToken('https://api.twitter.com/oauth/request_token', 'http://' . $_SERVER['HTTP_HOST'] . '/users/callback');
         if($requestToken){
@@ -53,13 +52,16 @@ class UsersController extends AppController{
         /*
          * ツイッターOAuth認証のコールバックアクション
          */
-
         //リクエストトークンを使ってアクセストークンを取得する
         $requestToken = $this->Session->read('twitter_request_token');
         $client = $this->createClient();
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
   
-        if($accessToken){
+        if(!$accessToken){
+            //アクセストークンが取得できなかった場合
+            //エラーメッセージを表示
+            $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
+        }else{
             //ユーザーのアカウント情報を取得
             $user_information = $client->get($accessToken->key,$accessToken->secret,'https://api.twitter.com/1/account/verify_credentials.json');
             $user_information = json_decode($user_information);
@@ -70,12 +72,29 @@ class UsersController extends AppController{
             //Twitterのidがデータベースにあるか調べる。ない場合、Statuses/importへリダイレクト
             $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$user_information->id_str)));
             if($exist){
-                //データベースに保存してあるアクセストークンが最新か調べる。
-                $this->User->findByTwitterId($user);
-                //ツイートのインポートが済んでいるか調べる。
-                $hasBeenInitialized = $this->User->find('first',array('conditions'=>array('initialized_flag')));
                 
-                if(!$hasBeenInitialized){
+                // データベースに保存してあるアクセストークンが最新か調べる。
+                $stored_tokens = $this->User->findByTwitterId(
+                                                              $user_information->id_str,
+                                                              array('User.id','User.token','User.token_secret')
+                                                              );
+              
+                if($stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret){
+                    //アクセストークンが古い場合、更新する
+                    $id = $stored_tokens['User']['id'];
+                    $data = array('id' => $id,
+                                  'token' => $accessToken->key,
+                                  'token_secret' => $accessToken->secret,
+                                  'token_updated' => time()
+                                  );
+                    $this->User->save($data);
+                }
+
+                // ツイートのインポートが済んでいるか調べる。
+                $hasBeenInitialized = $this->User->findByTwitterId($user_information->id_str,
+                                                                   array('User.initialized_flag')
+                                                                   );
+                if(!$hasBeenInitialized['User']['initialized_flag']){
                     //済んでいない場合、ログイン処理後、Statuses/importへリダイレクト
                     if($this->Auth->login($user)){
                         $this->redirect('/statuses/import');
@@ -104,7 +123,7 @@ class UsersController extends AppController{
             }
         }
     }
-    
+
     public function home(){
         //ログインしているユーザーのデータを読み込んで表示する。
 
@@ -115,10 +134,6 @@ class UsersController extends AppController{
         if($this->Auth->logout()){
             $this->redirect('/users/');
         }
-    }
-
-    private function createClient(){
-        return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
     }
 
 }
