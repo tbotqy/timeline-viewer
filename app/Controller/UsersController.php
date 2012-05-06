@@ -10,8 +10,9 @@ class UsersController extends AppController{
     public $components = array('Auth','Session');
     public $layout = 'common';
 
-    public function beforeFIlter(){
+    public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
+        parent::beforeFilter();
     }
     
     public function index(){
@@ -41,9 +42,10 @@ class UsersController extends AppController{
         $requestToken = $client->getRequestToken('https://api.twitter.com/oauth/request_token', 'http://' . $_SERVER['HTTP_HOST'] . '/users/callback');
 
         if( $requestToken ){
-            //redirect to api.twitter.com
+            // redirect to api.twitter.com
             $this->Session->write('twitter_request_token', $requestToken);
-            $this->redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' . $requestToken->key);
+            /* test mode */ $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
+            //$this->redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' . $requestToken->key);
         }else{
             $this->Session->setFlash('failed in connecting to twitter. Please try again later.');
         }
@@ -61,18 +63,18 @@ class UsersController extends AppController{
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
   
         if( !$accessToken ){
-            //if failed in fetching access token
-            //show the error message
+            // if failed in fetching access token
+            // show the error message
             $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
         }else{
-            //
+
             $verify_credentials = $client->get($accessToken->key,$accessToken->secret,'https://api.twitter.com/1/account/verify_credentials.json');
             $verify_credentials = json_decode($verify_credentials);
             $user = array();//contain the information about the user to get logged in.
             $user['Twitter']['id'] = $verify_credentials->id_str;
             $user['Twitter']['screen_name'] = $verify_credentials->screen_name;
             
-            // check if user is already registored 
+            // check if user is already registered 
             $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$verify_credentials->id_str)));
             
             if( $exist ){
@@ -113,7 +115,7 @@ class UsersController extends AppController{
             }else{
                 // register if user doesn't have his account
                 
-                //user's data to save
+                // user's data to save
                 $data_to_save = array(
                                       'twitter_id'=>$verify_credentials->id_str,
                                       'screen_name'=>$verify_credentials->screen_name,
@@ -124,14 +126,14 @@ class UsersController extends AppController{
                 $this->User->save($data_to_save);
                 
                 if( $this->Auth->login($user) ){
-                    $this->redirect('/users/import');
+                    $this->redirect('/statuses/import');
                 }
             }
         }
     }
 
     public function home(){
-        // [ToDo] show the loaded user's data in the view named home
+        // [ToDo] show the loaded user's data in the view named home.ctp
     }
 
     public function logout(){
