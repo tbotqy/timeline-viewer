@@ -30,29 +30,85 @@ class StatusesController extends AppController{
 
     public function acquire_statuses(){
         /* This action calls twitter api to retrieve user's twitter statuses.
-         * interacts with javascript with ajax
+         * interacts with JavaScript with ajax
          * returns json string
          */
-
-        /* TEST CODE */
-        echo $this->request->data('test');
+        
+        $this->autoRender = false;
+        
         $user = $this->Auth->user();
-        $token = $this->User->findByTwitterId($user['Twitter']['id'],
-                                              array('User.token','User.token_secret')
-                                              );
-        $client = $this->createClient();
-        $statuses = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',array('count'=>'200'));
-        //pr(json_decode($statuses->body));
+        
+        //                           //
+        // acquire and save statuses //
+        //                           //
+
+        $max_id = $this->request->data('id_str_oldest');
+        if(!$max_id){
+            // [ToDo]
+            // acquire latest 100 statuses
+            // save those to database
+        }else{
+            // [ToDo]
+            // acquire statuses which are older than the status with max_id
+            // save those to database
+        }
+        
+        //                                //
+        // define the json data to return //
+        //                                //
+        
+        // determine whether continue loop or not
+        $continue = count($fetched_statuses) < 100 ? false : true;
+        // how many of new statuses added to database
+        $saved_count = ;
+        // show user the status currently fetching
+        $current_status = ;
+
+        $ret = array(
+                     'continue' => $continue,
+                     'saved_count' => $saved_count,
+                     'current_status' => array(
+                                               'date'=>'',
+                                               'text'=>''
+                                               )
+                     );
+        echo json_encode($ret);
     }
 
+
+    
     public function ajax_test(){
         $this->autoRender = false;
-        $data = $this->request->data('test');
-        $ret = array(
-                     'data'=>$data
-                     );
-        $ret = json_encode($ret);
-        echo $ret;
-        //echo $this->request->data('test');
+
+        $received_num = json_decode($this->request->data('num'));
+
+        $num = $received_num;
+        $num ++;
+
+        $ret = array('num'=>$num);
+        echo json_encode($ret);
+        return;
+
+    }
+
+    private function createApiUrl($method,$params = null){
+        $url = 'http://twitter.com/'.$method;
+        $ret = '';
+        if($params){
+            $params_on_url= '?';
+            $loop_count = 0;
+            foreach($params as $key=>$val){
+                $loop_count++;
+                $params_on_url .= $key .'='.$val;
+                if($loop_count > 0 && $loop_count < count($params)){
+                    $params_on_url .= '&';
+                }
+            }
+            $ret = $url.$params_on_url;
+        }else{
+            $ret = $url;
+        }
+
+        return $ret;
     }
 }
