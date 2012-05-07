@@ -7,44 +7,6 @@ $(document).ready(function(){
   });
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 function getStatuses(params){
 /*
  * acquire all the statuses 
