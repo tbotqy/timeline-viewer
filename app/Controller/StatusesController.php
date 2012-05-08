@@ -18,7 +18,8 @@ class StatusesController extends AppController{
     public function import(){
         $user =  $this->Auth->user();
         $client = $this->createClient();
-        $token = $this->User->findByTwitterId($user['Twitter']['id'],
+        $token = $this->User->findByTwitterId(
+                                              $user['Twitter']['id'],
                                               array('User.token','User.token_secret')
                                               );
         $verify_credentials = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json',array('screen_name'=>$user['Twitter']['screen_name']));
@@ -37,46 +38,100 @@ class StatusesController extends AppController{
         $this->autoRender = false;
         
         $user = $this->Auth->user();
-        
+    
         //                           //
         // acquire and save statuses //
         //                           //
 
+        $api_method = "statuses/user_timeline.json";
+        $api_params = array(
+                            'include_rts'=>true,
+                            'screen_name'=>$user['Twitter']['screen_name']
+                            );     
         $max_id = $this->request->data('id_str_oldest');
+        
+        // configure parameters 
         if(!$max_id){
-            // [ToDo]
+            // this is the case for first ajax request
+            
             // acquire latest 100 statuses
-            // save those to database
+            $api_params['count'] = 100;
+            $api_url = $this->createApiUrl($api_method,$api_params);
+            $result = json_decode(file_get_contents($api_url),true);
         }else{
-            // [ToDo]
-            // acquire statuses which are older than the status with max_id
-            // save those to database
+            // acquire 101 statuses which are older than the status with max_id
+            $api_params['count'] = 101;
+            $api_params['max_id'] = $max_id;
+            $api_url = $this->createApiUrl($api_method,$api_params);
+            $result = json_decode(file_get_contents($api_url),true);
+            
+            // remove newest status from result because the status with max_id has been already saved 
+            array_shift($result);
         }
+
+        // [ToDo]save acquired data
         
         //                                //
         // define the json data to return //
         //                                //
         
-        // determine whether continue loop or not
-        $continue = count($fetched_statuses) < 100 ? false : true;
-        // how many of new statuses added to database
-        $saved_count = ;
-        // show user the status currently fetching
-        $current_status = ;
+        // determine whether continue loop in ajax or not
+        $continue = count($result) < 100 ? false : true;
+        // number of statuses added to database
+        $saved_count = count($result);
+        // status currently fetching
+        $last_status = end($result);
+        
+        $text = $last_status['text'];       
+ 
+        $utc_offset = $last_status['user']['utc_offset'];
+        $created_at = strtotime($last_status['created_at']);// convert its format to unix time
+        $created_at = $created_at - 32400;// fix server's timezone
+        $created_at += $utc_offset;// timezone equal to the one conficured in user's twitter profile
+        $created_at = date("Y/m/d - H:i",$created_at);
+        
 
         $ret = array(
                      'continue' => $continue,
                      'saved_count' => $saved_count,
                      'current_status' => array(
-                                               'date'=>'',
-                                               'text'=>''
+                                               'date'=>$created_at,
+                                               'text'=>$text
                                                )
                      );
+        
+        // return json
         echo json_encode($ret);
     }
 
 
+    public function debug(){
+        date_default_timezone_set('Asia/Tokyo');
+        $user = $this->Auth->user();
     
+        $api_method = "statuses/user_timeline.json";
+        $api_params = array(
+                            'include_rts'=>true,
+                            'screen_name'=>$user['Twitter']['screen_name'],
+                            'count'=>50
+                            );     
+        
+        $api_url = $this->createApiUrl($api_method,$api_params);
+        $result = json_decode(file_get_contents($api_url),true);
+        
+        $last_status = end($result);
+        
+        $text = $last_status['text'];       
+ 
+        $utc_offset = $last_status['user']['utc_offset'];
+        $created_at = strtotime($last_status['created_at']);// convert its format to unix time
+        $created_at = $created_at - 32400;// fix server's timezone
+        $created_at += $utc_offset;// timezone equal to the one conficured in user's twitter profile
+        $created_at = date("Y/m/d - H:i",$created_at);
+        
+        echo $created_at;
+    }
+
     public function ajax_test(){
         $this->autoRender = false;
 
