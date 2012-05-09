@@ -1,34 +1,43 @@
 $(document).ready(function(){
 
   $("#start").click(function(){
+
     $("#status").css({"display":"block"});
-    //getStatuses(data_to_post);
-    ajaxTest(data_to_post);
+    
+    //initial data to post
+    var data_to_post = {"id_str_oldes":null};
+
+    getStatuses(data_to_post);
+
   });
 });
 
+
+var total_count = 0;  
 function getStatuses(params){
 /*
- * acquire all the statuses 
+ * throw request to acquire all the statuses 
  */
 
   var data_to_post = params;
-  
+
   $.ajax(
     {
-      //url: "acquire_statuses",
-      // test code //
-      url: "ajax_test",
+      url: "acquire_statuses",
       type: "POST",
+      dataType:"json",
       data: data_to_post,
       success: function(ret){
 	if(ret.continue){
-	  total_count += ret.count_saved;
-
+	  total_count += ret.saved_count;
 	  //show the result
-	  $("#status").html("Retrieved " + total_count + " statuses so far.");
-	  data.id_str_oldest = ret.id_str_oldest;
-	  data.initial_request = false;
+	  $("#status .progress").html("Retrieved " + total_count + " statuses so far.");
+	  
+	  $("#status .text").html(ret.status.text);
+	  $("#status .date").html(ret.status.date);
+	  
+	  data_to_post.id_str_oldest = ret.id_str_oldest;
+	  
 	  //throw new request
 	  getStatuses(data_to_post);
 	  

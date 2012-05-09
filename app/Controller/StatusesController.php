@@ -83,32 +83,32 @@ class StatusesController extends AppController{
         $last_status = end($result);
         
         $text = $last_status['text'];       
- 
+        $id_str_oldest = $last_status['id_str'];
+
         $utc_offset = $last_status['user']['utc_offset'];
         $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-        $created_at = $created_at - 32400;// fix server's timezone
-        $created_at += $utc_offset;// timezone equal to the one conficured in user's twitter profile
+        $created_at -= 32400;// fix server's timezone
+        $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
         $created_at = date("Y/m/d - H:i",$created_at);
         
-
         $ret = array(
                      'continue' => $continue,
                      'saved_count' => $saved_count,
-                     'current_status' => array(
-                                               'date'=>$created_at,
-                                               'text'=>$text
-                                               )
+                     'id_str_oldest' => $id_str_oldest,
+                     'status' => array(
+                                       'date'=>$created_at,
+                                       'text'=>$text
+                                       )
                      );
         
         // return json
         echo json_encode($ret);
     }
-
-
+    
     public function debug(){
         date_default_timezone_set('Asia/Tokyo');
         $user = $this->Auth->user();
-    
+        
         $api_method = "statuses/user_timeline.json";
         $api_params = array(
                             'include_rts'=>true,
@@ -122,7 +122,7 @@ class StatusesController extends AppController{
         $last_status = end($result);
         
         $text = $last_status['text'];       
- 
+        
         $utc_offset = $last_status['user']['utc_offset'];
         $created_at = strtotime($last_status['created_at']);// convert its format to unix time
         $created_at = $created_at - 32400;// fix server's timezone
@@ -134,7 +134,7 @@ class StatusesController extends AppController{
 
     public function ajax_test(){
         $this->autoRender = false;
-
+        
         $received_num = json_decode($this->request->data('num'));
 
         $num = $received_num;

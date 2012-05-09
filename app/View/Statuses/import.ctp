@@ -17,8 +17,10 @@ $this->Html->script('ajax',array('inline'=>false));
   <p>Retrieve your past tweets.This may take several seconds.</p>
   
   <input type="button" id="start" value="取得開始"/>
-   <div id="status" style="display:none;">
-    <span>Start</span>
+  <div id="status" style="display:none;">
+    <span class="progress">Start</span>
+    <p class="text"></p>
+    <span class="date"></span>
   </div>
   
 </div>
