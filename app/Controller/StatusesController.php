@@ -38,14 +38,16 @@ class StatusesController extends AppController{
         $this->autoRender = false;
         
         $user = $this->Auth->user();
-    
+        $client = $this->createClient();
+
         //                           //
         // acquire and save statuses //
         //                           //
 
-        $api_method = "statuses/user_timeline.json";
+        //$api_method = "statuses/user_timeline.json";
         $api_params = array(
                             'include_rts'=>true,
+                            'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name']
                             );     
         $max_id = $this->request->data('id_str_oldest');
@@ -56,15 +58,21 @@ class StatusesController extends AppController{
             
             // acquire latest 100 statuses
             $api_params['count'] = 100;
-            $api_url = $this->createApiUrl($api_method,$api_params);
+        
+            $token = $this->User->findByTwitterId(
+                                                  $user['Twitter']['id'],
+                                                  array('User.token','User.token_secret')
+                                                  );
+            $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
+
             $result = json_decode(file_get_contents($api_url),true);
         }else{
             // acquire 101 statuses which are older than the status with max_id
             $api_params['count'] = 101;
             $api_params['max_id'] = $max_id;
-            $api_url = $this->createApiUrl($api_method,$api_params);
-            $result = json_decode(file_get_contents($api_url),true);
-            
+
+            $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
+
             // remove newest status from result because the status with max_id has been already saved 
             array_shift($result);
         }
@@ -108,42 +116,28 @@ class StatusesController extends AppController{
     public function debug(){
         date_default_timezone_set('Asia/Tokyo');
         $user = $this->Auth->user();
+        $client = $this->createClient();
         
-        $api_method = "statuses/user_timeline.json";
         $api_params = array(
                             'include_rts'=>true,
+                            'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name'],
-                            'count'=>50
+                            'count'=>100
                             );     
         
-        $api_url = $this->createApiUrl($api_method,$api_params);
-        $result = json_decode(file_get_contents($api_url),true);
+        $result = $client->get(
         
-        $last_status = end($result);
-        
-        $text = $last_status['text'];       
-        
-        $utc_offset = $last_status['user']['utc_offset'];
-        $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-        $created_at = $created_at - 32400;// fix server's timezone
-        $created_at += $utc_offset;// timezone equal to the one conficured in user's twitter profile
-        $created_at = date("Y/m/d - H:i",$created_at);
-        
-        echo $created_at;
+        echo "<meta charset='utf-8' />";
+        print_r($result);
+        //echo count($result);
     }
 
     public function ajax_test(){
         $this->autoRender = false;
         
-        $received_num = json_decode($this->request->data('num'));
-
-        $num = $received_num;
-        $num ++;
-
-        $ret = array('num'=>$num);
-        echo json_encode($ret);
-        return;
-
+        $nullData = $this->request->data('nullData');
+        $nullData = null;
+        echo gettype($nullData);
     }
 
     private function createApiUrl($method,$params = null){

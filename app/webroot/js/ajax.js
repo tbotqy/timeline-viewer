@@ -5,10 +5,10 @@ $(document).ready(function(){
     $("#status").css({"display":"block"});
     
     //initial data to post
-    var data_to_post = {"id_str_oldes":null};
+    var data_to_post = {"id_str_oldest":""};
 
     getStatuses(data_to_post);
-
+    //ajaxTest();
   });
 });
 
@@ -28,8 +28,10 @@ function getStatuses(params){
       dataType:"json",
       data: data_to_post,
       success: function(ret){
+	total_count += ret.saved_count;
+	
 	if(ret.continue){
-	  total_count += ret.saved_count;
+	  
 	  //show the result
 	  $("#status .progress").html("Retrieved " + total_count + " statuses so far.");
 	  
@@ -61,24 +63,16 @@ function getStatuses(params){
   );
 }
 
-var num = 1;
-function ajaxTest(data){
-  var data = data;
+function ajaxTest(){
+
   $.ajax(
     {
       url: 'ajax_test', 
       type:"POST",
-      dataType:"json",
-      data: data,
+      //dataType:"json",
+      data: {"nullData":null},
       success: function(responce){
-	num = responce.num;
-	if(num < 300){
-	  $("#status").html(num);
-	  ajaxTest(data);
-	}else{
-	  num = 1;
-	  $("#status").html('finished');
-	}
+	alert(responce);
       },
       error: function(responce){
 	console.log(responce);
