@@ -12,7 +12,6 @@ $(document).ready(function(){
   });
 });
 
-
 var total_count = 0;  
 function getStatuses(params){
 /*
