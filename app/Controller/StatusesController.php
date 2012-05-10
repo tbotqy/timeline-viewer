@@ -8,7 +8,7 @@ class StatusesController extends AppController{
     public $components = array('Auth','Session');
     public $helpers = array('Html','Form');
     public $layout = 'common';
-    public $uses = array('User');
+    public $uses = array('Status','User');
     
     public function beforeFilter(){
         $this->Auth->deny('import');
@@ -56,6 +56,9 @@ class StatusesController extends AppController{
                             );     
         $max_id = $this->request->data('id_str_oldest');
         
+        //[debug]
+        if(!$max_id) $max_id = '196813231782768640';
+        
         // configure parameters 
         if(!$max_id){
             // this is the case for first ajax request
@@ -79,6 +82,25 @@ class StatusesController extends AppController{
         }
 
         // [ToDo]save acquired data
+        foreach($result as $val){
+            // [debug code]
+            $text = $val['text'];
+            $id_str = $val['id_str'];
+            $created_at = strtotime($val['created_at'])-32400;// based on GMT+0
+            $created = time();// based on server's timezone 
+
+            $data_to_save = array('id'=>(int)$text,
+                                  'twitter_id'=>$user['Twitter']['id'],
+                                  'id_str'=>$id_str,
+                                  'created_at'=>$created_at,
+                                  'text'=>$text
+                                  );
+            
+            //$this->Status->create();
+            $this->Status->save($data_to_save);
+            // [ToDo] consider which value to store from returned status
+            // [ToDo] turn initialized flag true in user model
+        }
         
         //                                //
         // define the json data to return //
@@ -96,10 +118,10 @@ class StatusesController extends AppController{
 
         $utc_offset = $last_status['user']['utc_offset'];
         $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-        $created_at -= 32400;// fix server's timezone
+        $created_at -= 32400;// fix server's timezone offset
         $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
         $created_at = date("Y/m/d - H:i",$created_at);
-        
+      
         $ret = array(
                      'continue' => $continue,
                      'saved_count' => $saved_count,
@@ -124,7 +146,7 @@ class StatusesController extends AppController{
                             'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name'],
                             'count'=>100,
-                            'max_id'=>'108045541816012800'
+                            'max_id'=>'196813231782768641'
                             );     
         $token = $this->User->findByTwitterId($user['Twitter']['id'],
                                               array(
@@ -145,26 +167,5 @@ class StatusesController extends AppController{
         $nullData = $this->request->data('nullData');
         $nullData = null;
         echo gettype($nullData);
-    }
-
-    private function createApiUrl($method,$params = null){
-        $url = 'http://twitter.com/'.$method;
-        $ret = '';
-        if($params){
-            $params_on_url= '?';
-            $loop_count = 0;
-            foreach($params as $key=>$val){
-                $loop_count++;
-                $params_on_url .= $key .'='.$val;
-                if($loop_count > 0 && $loop_count < count($params)){
-                    $params_on_url .= '&';
-                }
-            }
-            $ret = $url.$params_on_url;
-        }else{
-            $ret = $url;
-        }
-
-        return $ret;
-    }
+    }    
 }
