@@ -57,7 +57,10 @@ class StatusesController extends AppController{
         $max_id = $this->request->data('id_str_oldest');
         
         //[debug]
-        if(!$max_id) $max_id = '196813231782768640';
+        //if(!$max_id) $max_id = '196813231782768640';// oldest id in one sequesnce
+        //if(!$max_id) $max_id = '196813231782768639';
+        //if(!$max_id) $max_id = '196589929592127487';
+        //if(!$max_id) $max_id = '15714300821';
         
         // configure parameters 
         if(!$max_id){
@@ -89,14 +92,17 @@ class StatusesController extends AppController{
             $created_at = strtotime($val['created_at'])-32400;// based on GMT+0
             $created = time();// based on server's timezone 
 
-            $data_to_save = array('id'=>(int)$text,
+            $data_to_save = array(
                                   'twitter_id'=>$user['Twitter']['id'],
                                   'id_str'=>$id_str,
                                   'created_at'=>$created_at,
                                   'text'=>$text
                                   );
-            
-            //$this->Status->create();
+            // [debug code]
+            //$data_to_save['id'] = (int)$text;
+
+
+            $this->Status->create();
             $this->Status->save($data_to_save);
             // [ToDo] consider which value to store from returned status
             // [ToDo] turn initialized flag true in user model
@@ -142,11 +148,11 @@ class StatusesController extends AppController{
         $client = $this->createClient();
         
         $api_params = array(
-                            'include_rts'=>true,
+                            'include_rts'=>'true',
                             'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name'],
                             'count'=>100,
-                            'max_id'=>'196813231782768641'
+                            'max_id'=>'196267504706916352'
                             );     
         $token = $this->User->findByTwitterId($user['Twitter']['id'],
                                               array(
@@ -158,7 +164,7 @@ class StatusesController extends AppController{
         $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
 
         echo "<meta charset='utf-8' />";
-        pr(json_decode($result['body'],true));
+        pr(json_decode($result,true));
     }
 
     public function ajax_test(){
@@ -168,4 +174,19 @@ class StatusesController extends AppController{
         $nullData = null;
         echo gettype($nullData);
     }    
+
+    public function checkDb(){
+        $lack_list = array();
+        for($num = 3200;$num>0;$num--){
+            $text = $num;
+            $result = $this->Status->find('count',
+                                          array('conditions'=>array('Status.text'=>$text))
+                                          );
+        
+            if($result == 0){
+                $lack_list[] = $num;
+            }
+        }
+        pr($lack_list);
+    }
 }
