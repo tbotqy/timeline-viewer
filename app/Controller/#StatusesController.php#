@@ -206,11 +206,6 @@ class StatusesController extends AppController{
             
         }
 
-        foreach($result as $key=>$val){
-            $num[$key] ++;
-        }
-
-        pr($num);
 
     }
 
