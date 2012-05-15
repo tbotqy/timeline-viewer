@@ -80,7 +80,7 @@ class StatusesController extends AppController{
         }
 
         // [ToDo]save acquired data if there are
-        if( count($result) > 0){
+        if(count($result) > 0){
             foreach($result as $val){
                 // [debug code]
                 $text = $val['text'];
@@ -94,9 +94,7 @@ class StatusesController extends AppController{
                                       'created_at'=>$created_at,
                                       'text'=>$text
                                       );
-                // [debug code]
-                //$data_to_save['id'] = (int)$text;
-
+              
                 $this->Status->create();
                 $this->Status->save($data_to_save);
                 // [ToDo] consider which entity to store from returned status
@@ -138,6 +136,11 @@ class StatusesController extends AppController{
         echo json_encode($ret);
     }
     
+    
+    //                       //
+    // actions for debugging //
+    //                       //
+
     public function debug(){
         date_default_timezone_set('Asia/Tokyo');
         $user = $this->Auth->user();
@@ -192,9 +195,7 @@ class StatusesController extends AppController{
 
         $user = $this->Auth->user();
 
-        $statuses = $this->Status->find(
-                                        'all'
-                                        );
+        $statuses = $this->Status->find('all');
 
         foreach($statuses as $status){
             $status = $status['Status'];
@@ -202,15 +203,20 @@ class StatusesController extends AppController{
             $created_at = $status['created_at'] + 32400;
             $month = date('n',$created_at);
             $year = date('Y',$created_at);
-            $result[] = array($year=>$month);
+            
+            $str = $year."年".$month."月";
+            
+
+            if(isset($result[$str])){
+                $num = $result[$str]['count'];
+                $num++;
+                $result[$str]['count'] = $num;
+            }else{
+                $result[$str]['count'] = 1;
+            }
             
         }
-
-        foreach($result as $key=>$val){
-            $num[$key] ++;
-        }
-
-        pr($num);
+        pr($result);
 
     }
 
