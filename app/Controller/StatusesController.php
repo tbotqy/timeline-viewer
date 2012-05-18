@@ -8,7 +8,7 @@ class StatusesController extends AppController{
     public $components = array('Auth','Session');
     public $helpers = array('Html','Form');
     public $layout = 'common';
-    public $uses = array('Status','User');
+    public $uses = array('User','Status','Entity');
     
     public function beforeFilter(){
         $this->Auth->deny('import');
@@ -35,6 +35,12 @@ class StatusesController extends AppController{
          * returns json string
          */
         
+        if(!$this->request->is('Ajax')){
+            // reject any request if not ajax
+            echo "bad request";
+            exit;
+        }
+
         $this->autoRender = false;
         
         $user = $this->Auth->user();
@@ -59,7 +65,10 @@ class StatusesController extends AppController{
         // configure parameters 
         if(!$max_id){
             // this is the case for first ajax request
-            
+
+            // [ToDo] turn initialized flag true in user model
+            //$this->User->updateAll(array('initialized_flag'=>1),array('User.twitter_id'=>$user['Twitter']['id']));
+
             // acquire latest 100 statuses
             $api_params['count'] = 100;
         
@@ -79,68 +88,120 @@ class StatusesController extends AppController{
             array_shift($result);
         }
 
-        // [ToDo]save acquired data if there are
+        // save acquired data if there are
         if(count($result) > 0){
+            
+            // initialize data array 
+            $status_to_save = array();
+            $entity_to_save = array();
+
             foreach($result as $val){
-                // [debug code]
-                $text = $val['text'];
-                $id_str = $val['id_str'];
-                $created_at = strtotime($val['created_at'])-32400;// based on GMT+0
-                $created = time();// based on server's timezone 
 
-                $data_to_save = array(
-                                      'twitter_id'=>$user['Twitter']['id'],
-                                      'id_str'=>$id_str,
-                                      'created_at'=>$created_at,
-                                      'text'=>$text
-                                      );
-              
+                $created_at = strtotime($val['created_at'])-32400;// based on UTC+0
+                $possibly_sensitive = isset($val['possibly_sensitive']) ? $val['possibly_sensitive'] : null;
+                if($val['retweeted']){
+                    $retweeted = true;
+                }else{
+                    $retweeted = false;
+                }
+
+                $status_to_save = array(
+                                        'twitter_id'=>$user['Twitter']['id'],
+                                        'status_id_str'=>$val['id_str'],
+                                        'in_reply_to_status_id_str'=>$val['in_reply_to_status_id_str'],
+                                        'in_reply_to_user_id_str'=>$val['in_reply_to_user_id_str'],
+                                        'in_reply_to_screen_name'=>$val['in_reply_to_screen_name'],
+                                        'place_full_name'=>$val['place']['full_name'],
+                                        'retweet_count'=>$val['retweet_count'],
+                                        //'retweeted'=>$val['retweeted'],
+                                        'retweeted'=>$retweeted,
+                                        'favorited'=>$val['favorited'],
+                                        'created_at'=>$created_at,
+                                        'source'=>$val['source'],
+                                        'text'=>$val['text'],
+                                        'possibly_sensitive'=>$possibly_sensitive,
+                                        'created'=>time()
+                                        );
+                // save this status
                 $this->Status->create();
-                $this->Status->save($data_to_save);
-                // [ToDo] consider which entity to store from returned status
-                // [ToDo] turn initialized flag true in user model
-            }
-        }
-        
-        //                                //
-        // define the json data to return //
-        //                                //
-        
-        // determine whether continue loop in ajax or not
-        $continue = count($result) > 0 ? true : false;
-        // number of statuses added to database
-        $saved_count = count($result);
-        // status currently fetching
-        $last_status = end($result);
-        
-        $text = $last_status['text'];       
-        $id_str_oldest = $last_status['id_str'];
+                $this->Status->save($status_to_save);
+               
+                // save entities belong to this status
+                $entities = $val['entities'];
+                foreach($entities as $type=>$contents){
+                    if(count($contents)>0){
 
-        $utc_offset = $last_status['user']['utc_offset'];
-        $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-        $created_at -= 32400;// fix server's timezone offset
-        $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
-        $created_at = date("Y/m/d - H:i",$created_at);
-      
-        $ret = array(
-                     'continue' => $continue,
-                     'saved_count' => $saved_count,
-                     'id_str_oldest' => $id_str_oldest,
-                     'status' => array(
-                                       'date'=>$created_at,
-                                       'text'=>$text
-                                       )
-                     );
+                        // save each of entities
+                        foreach($contents as $content){
+                            $this->Entity->create();
+                            $entity_to_save = array(
+                                                    'status_id_str'=>$val['id_str'],
+                                                    'indices_f'=>$content['indices']['0'],
+                                                    'indices_l'=>$content['indices']['1'],
+                                                    'type'=>$type,
+                                                    'created'=>time()
+                                                    );
+                            switch($type){
+                            case "hashtags":
+                                $entity_to_save['hashtag'] = $content['text'];
+                                break;
+                            case "urls":
+                            case "media":
+                                $entity_to_save['url'] = $content['url'];
+                            break;
+                            case "user_mentions":
+                                $entity_to_save['screen_name'] = $content['screen_name'];
+                                $entity_to_save['user_id_str'] = $content['id_str'];
+                                break;
+                            default:
+                                // it's new feature 
+                            }
+                            $this->Entity->create();
+                            $this->Entity->save($entity_to_save);
+                        }
+                    }
+                }
+            }
+
+            //                                //
+            // define the json data to return //
+            //                                //
         
-        // return json
-        echo json_encode($ret);
+            // determine whether continue loop in ajax or not
+            $continue = count($result) > 0 ? true : false;
+            // number of statuses added to database
+            $saved_count = count($result);
+            // status currently fetching
+            $last_status = end($result);
+        
+            $text = $last_status['text'];       
+            $id_str_oldest = $last_status['id_str'];
+
+            $utc_offset = $last_status['user']['utc_offset'];
+            $created_at = strtotime($last_status['created_at']);// convert its format to unix time
+            $created_at -= 32400;// fix server's timezone offset
+            $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
+            $created_at = date("Y/m/d - H:i",$created_at);
+      
+            $ret = array(
+                         'continue' => $continue,
+                         'saved_count' => $saved_count,
+                         'id_str_oldest' => $id_str_oldest,
+                         'status' => array(
+                                           'date'=>$created_at,
+                                           'text'=>$text
+                                           )
+                         );
+        
+            // return json
+            echo json_encode($ret);
+        }
+    
     }
-    
-    
     //                       //
     // actions for debugging //
     //                       //
-
+    
     public function debug(){
         date_default_timezone_set('Asia/Tokyo');
         $user = $this->Auth->user();
@@ -150,8 +211,8 @@ class StatusesController extends AppController{
                             'include_rts'=>'true',
                             'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name'],
-                            'count'=>100,
-                            'max_id'=>'196267504706916352'
+                            'count'=>20,
+                            'contributor_details'=>true
                             );     
         $token = $this->User->findByTwitterId($user['Twitter']['id'],
                                               array(
@@ -163,8 +224,19 @@ class StatusesController extends AppController{
         $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
 
         echo "<meta charset='utf-8' />";
-        pr(json_decode($result,true));
+        $result = json_decode($result,true);
+        pr($result);exit;
+        foreach($result as $key=>$val){
+            
+            $entities = $val['entities'];
+            foreach($entities as $k=>$v){
+                if(count($v)>0){
+                    echo $val['text'];
+                }
+            }
+        }
     }
+    
 
     public function ajax_test(){
         $this->autoRender = false;
@@ -187,6 +259,7 @@ class StatusesController extends AppController{
             }
         }
         pr($lack_list);
+
     }
 
     public function analyze(){
@@ -220,4 +293,14 @@ class StatusesController extends AppController{
 
     }
 
+    public function foo(){
+        $num = 10;
+        switch($num){
+        case 0:
+        case 1:
+        case 2: echo "OK";
+            break;
+        default: echo "exception";
+        }
+    }
 }

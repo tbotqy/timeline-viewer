@@ -55,7 +55,7 @@ function getStatuses(params){
       error: function(){
 	//show the error message in some element
 	/* [debug] */
-	alert('ajax error');
+	alert('Ajax error');
 	return;
       }
     }
