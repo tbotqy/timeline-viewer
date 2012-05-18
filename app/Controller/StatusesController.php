@@ -30,6 +30,7 @@ class StatusesController extends AppController{
     }
 
     public function acquire_statuses(){
+
         /* This action calls twitter api to retrieve user's twitter statuses.
          * interacts with JavaScript with ajax
          * returns json string
@@ -98,13 +99,8 @@ class StatusesController extends AppController{
             foreach($result as $val){
 
                 $created_at = strtotime($val['created_at'])-32400;// based on UTC+0
-                $possibly_sensitive = isset($val['possibly_sensitive']) ? $val['possibly_sensitive'] : null;
-                if($val['retweeted']){
-                    $retweeted = true;
-                }else{
-                    $retweeted = false;
-                }
-
+                $possibly_sensitive = isset($val['possibly_sensitive']) ? $val['possibly_sensitive'] : false;
+                
                 $status_to_save = array(
                                         'twitter_id'=>$user['Twitter']['id'],
                                         'status_id_str'=>$val['id_str'],
@@ -113,8 +109,7 @@ class StatusesController extends AppController{
                                         'in_reply_to_screen_name'=>$val['in_reply_to_screen_name'],
                                         'place_full_name'=>$val['place']['full_name'],
                                         'retweet_count'=>$val['retweet_count'],
-                                        //'retweeted'=>$val['retweeted'],
-                                        'retweeted'=>$retweeted,
+                                        'retweeted'=>$val['retweeted'],
                                         'favorited'=>$val['favorited'],
                                         'created_at'=>$created_at,
                                         'source'=>$val['source'],
@@ -128,6 +123,7 @@ class StatusesController extends AppController{
                
                 // save entities belong to this status
                 $entities = $val['entities'];
+                
                 foreach($entities as $type=>$contents){
                     if(count($contents)>0){
 
@@ -136,11 +132,12 @@ class StatusesController extends AppController{
                             $this->Entity->create();
                             $entity_to_save = array(
                                                     'status_id_str'=>$val['id_str'],
-                                                    'indices_f'=>$content['indices']['0'],
-                                                    'indices_l'=>$content['indices']['1'],
+                                                    'indice_f'=>$content['indices']['0'],
+                                                    'indice_l'=>$content['indices']['1'],
                                                     'type'=>$type,
                                                     'created'=>time()
                                                     );
+                            
                             switch($type){
                             case "hashtags":
                                 $entity_to_save['hashtag'] = $content['text'];
@@ -154,7 +151,7 @@ class StatusesController extends AppController{
                                 $entity_to_save['user_id_str'] = $content['id_str'];
                                 break;
                             default:
-                                // it's new feature 
+                                // new feature 
                             }
                             $this->Entity->create();
                             $this->Entity->save($entity_to_save);
@@ -162,48 +159,48 @@ class StatusesController extends AppController{
                     }
                 }
             }
-
-            //                                //
-            // define the json data to return //
-            //                                //
-        
-            // determine whether continue loop in ajax or not
-            $continue = count($result) > 0 ? true : false;
-            // number of statuses added to database
-            $saved_count = count($result);
-            // status currently fetching
-            $last_status = end($result);
-        
-            $text = $last_status['text'];       
-            $id_str_oldest = $last_status['id_str'];
-
-            $utc_offset = $last_status['user']['utc_offset'];
-            $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-            $created_at -= 32400;// fix server's timezone offset
-            $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
-            $created_at = date("Y/m/d - H:i",$created_at);
-      
-            $ret = array(
-                         'continue' => $continue,
-                         'saved_count' => $saved_count,
-                         'id_str_oldest' => $id_str_oldest,
-                         'status' => array(
-                                           'date'=>$created_at,
-                                           'text'=>$text
-                                           )
-                         );
-        
-            // return json
-            echo json_encode($ret);
         }
-    
+        
+        //                                //
+        // define the json data to return //
+        //                                //
+        
+        // determine whether continue loop in ajax or not
+        $continue = count($result) > 0 ? true : false;
+        // number of statuses added to database
+        $saved_count = count($result);
+        // status currently fetching
+        $last_status = end($result);
+        
+        $text = $last_status['text'];       
+        $id_str_oldest = $last_status['id_str'];
+
+        $utc_offset = $last_status['user']['utc_offset'];
+        $created_at = strtotime($last_status['created_at']);// convert its format to unix time
+        $created_at -= 32400;// fix server's timezone offset
+        $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
+        $created_at = date("Y/m/d - H:i",$created_at);
+      
+        $ret = array(
+                     'continue' => $continue,
+                     'saved_count' => $saved_count,
+                     'id_str_oldest' => $id_str_oldest,
+                     'status' => array(
+                                       'date'=>$created_at,
+                                       'text'=>$text
+                                       )
+                     );
+        
+        // return json
+        echo json_encode($ret);
     }
+
     //                       //
     // actions for debugging //
     //                       //
     
     public function debug(){
-        date_default_timezone_set('Asia/Tokyo');
+        
         $user = $this->Auth->user();
         $client = $this->createClient();
         
@@ -222,7 +219,7 @@ class StatusesController extends AppController{
                                               );
         
         $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
-
+        $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json');
         echo "<meta charset='utf-8' />";
         $result = json_decode($result,true);
         pr($result);exit;
