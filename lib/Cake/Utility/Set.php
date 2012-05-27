@@ -603,8 +603,8 @@ class Set {
 
 		foreach ($path as $i => $key) {
 			if (is_numeric($key) && intval($key) > 0 || $key === '0') {
-				if (isset($data[intval($key)])) {
-					$data = $data[intval($key)];
+				if (isset($data[$key])) {
+					$data = $data[$key];
 				} else {
 					return null;
 				}
@@ -686,7 +686,7 @@ class Set {
 				$_list =& $_list[$key];
 			}
 			if (!is_array($_list)) {
-				return array();
+				$_list = array();
 			}
 		}
 		return $list;
