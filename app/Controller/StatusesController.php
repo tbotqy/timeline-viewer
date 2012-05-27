@@ -107,16 +107,15 @@ class StatusesController extends AppController{
                                         'in_reply_to_status_id_str'=>$val['in_reply_to_status_id_str'],
                                         'in_reply_to_user_id_str'=>$val['in_reply_to_user_id_str'],
                                         'in_reply_to_screen_name'=>$val['in_reply_to_screen_name'],
-                                        'place_full_name'=>$val['place']['full_name'],
-                                        'retweet_count'=>$val['retweet_count'],
-                                        'retweeted'=>$val['retweeted'],
-                                        'favorited'=>$val['favorited'],
+                                        'place_full_name'=>$val['place']['full_name'],// optional value
+                                        'retweet_count'=>$val['retweet_count'],// int
                                         'created_at'=>$created_at,
                                         'source'=>$val['source'],
                                         'text'=>$val['text'],
-                                        'possibly_sensitive'=>$possibly_sensitive,
+                                        'possibly_sensitive'=>$possibly_sensitive,// boolean
                                         'created'=>time()
                                         );
+
                 // save this status
                 $this->Status->create();
                 $this->Status->save($status_to_save);
@@ -148,7 +147,7 @@ class StatusesController extends AppController{
                             break;
                             case "user_mentions":
                                 $entity_to_save['screen_name'] = $content['screen_name'];
-                                $entity_to_save['user_id_str'] = $content['id_str'];
+                                $entity_to_save['reply_to_user_id_str'] = $content['id_str'];
                                 break;
                             default:
                                 // new feature 
@@ -218,11 +217,12 @@ class StatusesController extends AppController{
                                                     )
                                               );
         
-        $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
+        //$result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
         $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json');
         echo "<meta charset='utf-8' />";
         $result = json_decode($result,true);
-        pr($result);exit;
+        $val = $result['created_at'];
+     
         foreach($result as $key=>$val){
             
             $entities = $val['entities'];
@@ -270,7 +270,7 @@ class StatusesController extends AppController{
         foreach($statuses as $status){
             $status = $status['Status'];
 
-            $created_at = $status['created_at'] + 32400;
+            $created_at = $status['created_at'] + SERVER_UTC_OFFSET;
             $month = date('n',$created_at);
             $year = date('Y',$created_at);
             

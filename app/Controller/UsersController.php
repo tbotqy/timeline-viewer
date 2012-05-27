@@ -61,7 +61,7 @@ class UsersController extends AppController{
         $client = $this->createClient();
         // fetch access token for this user
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
-  
+       
         if( !$accessToken ){
             // if failed in fetching access token
             // show the error message
@@ -119,8 +119,14 @@ class UsersController extends AppController{
                 $data_to_save = array(
                                       'twitter_id'=>$verify_credentials->id_str,
                                       'screen_name'=>$verify_credentials->screen_name,
+                                      'time_zone'=>$verify_credentials->time_zone,
+                                      'utc_offset'=>$verify_credentials->utc_offset,
+                                      'created_at'=>(strtotime($verify_credentials->created_at)-SERVER_UTC_OFFSET),
+                                      'lang'=>$verify_credentials->lang,
                                       'token'=>$accessToken->key,
                                       'token_secret'=>$accessToken->secret,
+                                      'token_updated'=>0,
+                                      'initialized_flag'=>0,
                                       'created'=>time()
                                       );
                 $this->User->save($data_to_save);
