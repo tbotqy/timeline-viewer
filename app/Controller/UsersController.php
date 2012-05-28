@@ -16,11 +16,12 @@ class UsersController extends AppController{
     }
     
     public function index(){
+
         /*
          * This action checks if user is logged in.
          */
         
-        if( $this->Auth->loggedIn() ){
+        if($this->Auth->loggedIn()){
             $this->redirect('/users/home');
         }else{
             $this->redirect('/users/login');
@@ -28,12 +29,21 @@ class UsersController extends AppController{
     }
 
     public function login(){
+
         /*
          * This action just shows the view for login.
          */
     }
 
+    public function logout(){
+        // log the user out
+        if($this->Auth->logout()){
+            $this->redirect('/users/');
+        }
+    }
+
     public function authorize(){
+
         /*
          * This action takes Twitter OAuth process.
          */
@@ -52,6 +62,7 @@ class UsersController extends AppController{
     }
 
     public function callback(){
+
         /*
          * This is the callback action for Twitter OAuth.
          */
@@ -137,15 +148,17 @@ class UsersController extends AppController{
             }
         }
     }
+    
+    public function sent_tweets(){
 
-    public function home(){
-        // [ToDo] show the loaded user's data in the view named home.ctp
-    }
-
-    public function logout(){
-        // log the user out
-        if($this->Auth->logout()){
-            $this->redirect('/users/');
-        }
-    }
+        /*
+         * show the teewts sent by logged-in user
+         */
+        
+        // load user info 
+        $user = $this->Auth->user();
+        $twitter_id = $user['Twitter']['id'];
+        
+        // [ToDo]fetch user's statuses
+    }                                                     
 }

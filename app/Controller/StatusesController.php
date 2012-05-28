@@ -1,4 +1,5 @@
 <?php
+
 /*
  * Controller/StatusesController.php
  */
@@ -16,9 +17,15 @@ class StatusesController extends AppController{
     }
 
     public function import(){
+
+        /*
+         * show the import screen
+         */
+
         $user =  $this->Auth->user();
         $client = $this->createClient();
         $token = $this->User->findByTwitterId(
+
                                               $user['Twitter']['id'],
                                               array('User.token','User.token_secret')
                                               );
@@ -31,7 +38,8 @@ class StatusesController extends AppController{
 
     public function acquire_statuses(){
 
-        /* This action calls twitter api to retrieve user's twitter statuses.
+        /* 
+         * This action calls twitter api to retrieve user's twitter statuses.
          * interacts with JavaScript with ajax
          * returns json string
          */
@@ -192,112 +200,5 @@ class StatusesController extends AppController{
         
         // return json
         echo json_encode($ret);
-    }
-
-    //                       //
-    // actions for debugging //
-    //                       //
-    
-    public function debug(){
-        
-        $user = $this->Auth->user();
-        $client = $this->createClient();
-        
-        $api_params = array(
-                            'include_rts'=>'true',
-                            'include_entities'=>true,
-                            'screen_name'=>$user['Twitter']['screen_name'],
-                            'count'=>20,
-                            'contributor_details'=>true
-                            );     
-        $token = $this->User->findByTwitterId($user['Twitter']['id'],
-                                              array(
-                                                    'User.token',
-                                                    'User.token_secret'
-                                                    )
-                                              );
-        
-        //$result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/statuses/user_timeline.json',$api_params);
-        $result = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json');
-        echo "<meta charset='utf-8' />";
-        $result = json_decode($result,true);
-        $val = $result['created_at'];
-     
-        foreach($result as $key=>$val){
-            
-            $entities = $val['entities'];
-            foreach($entities as $k=>$v){
-                if(count($v)>0){
-                    echo $val['text'];
-                }
-            }
-        }
-    }
-    
-
-    public function ajax_test(){
-        $this->autoRender = false;
-        
-        $nullData = $this->request->data('nullData');
-        $nullData = null;
-        echo gettype($nullData);
     }    
-
-    public function checkDb(){
-        $lack_list = array();
-        for($num = 3200;$num>0;$num--){
-            $text = $num;
-            $result = $this->Status->find('count',
-                                          array('conditions'=>array('Status.text'=>$text))
-                                          );
-        
-            if($result == 0){
-                $lack_list[] = $num;
-            }
-        }
-        pr($lack_list);
-
-    }
-
-    public function analyze(){
-        echo "<meta charset='utf-8' />";
-        // sum statuses in each month 
-
-        $user = $this->Auth->user();
-
-        $statuses = $this->Status->find('all');
-
-        foreach($statuses as $status){
-            $status = $status['Status'];
-
-            $created_at = $status['created_at'] + SERVER_UTC_OFFSET;
-            $month = date('n',$created_at);
-            $year = date('Y',$created_at);
-            
-            $str = $year."年".$month."月";
-            
-
-            if(isset($result[$str])){
-                $num = $result[$str]['count'];
-                $num++;
-                $result[$str]['count'] = $num;
-            }else{
-                $result[$str]['count'] = 1;
-            }
-            
-        }
-        pr($result);
-
-    }
-
-    public function foo(){
-        $num = 10;
-        switch($num){
-        case 0:
-        case 1:
-        case 2: echo "OK";
-            break;
-        default: echo "exception";
-        }
-    }
 }
