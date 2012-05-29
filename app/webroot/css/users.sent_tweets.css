@@ -1,0 +1,48 @@
+@charset "utf-8";
+
+/* --------------------------------------------------
+   users.sent_tweets
+-------------------------------------------------- */
+
+#wrap-each-status{ 
+  float: left;
+  clear: both;
+  width: 500px;
+  font-size: 14px;
+}
+
+.profile-image{ 
+  float: left;
+  width: 58px;
+  height: 58px;
+  padding: 10px;
+}
+.profile-image .viewport{
+  width: 48px;
+  height: 48px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+.status-content{ 
+  float: left;
+  width: 412px;
+  padding: 10px 10px 10px 0;
+}
+.status-content .top .date{ 
+  float: right;
+ }
+.status-content .text{ 
+  float: left;
+  width: 100%;
+  padding: 10px 10px 10px 0;
+ }
+.status-content .top{ 
+  float: left;
+  width: 100%;
+}
+.status-content .bottom{
+  float: left;
+  width: 100%;
+}
