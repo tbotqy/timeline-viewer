@@ -9,7 +9,7 @@ class UsersController extends AppController{
     public $helpers = array('Html','Form','Session');
     public $components = array('Auth','Session');
     public $layout = 'common';
-
+    public $uses = array('User','Status','Entity');
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
@@ -72,7 +72,7 @@ class UsersController extends AppController{
         $client = $this->createClient();
         // fetch access token for this user
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
-       
+
         if( !$accessToken ){
             // if failed in fetching access token
             // show the error message
@@ -84,18 +84,26 @@ class UsersController extends AppController{
             $user = array();//contain the information about the user to get logged in.
             $user['Twitter']['id'] = $verify_credentials->id_str;
             $user['Twitter']['screen_name'] = $verify_credentials->screen_name;
-            
+            $user['Twitter']['profile_image_url_https'] = $verify_credentials->profile_image_url_https;
+
             // check if user is already registered 
-            $exist = $this->User->find('count',array('conditions'=>array('twitter_id'=>$verify_credentials->id_str)));
-            
+            $exist = $this->User->find(
+                                       'count',
+                                       array(
+                                             'conditions'=>array(
+                                                                 'twitter_id'=>$verify_credentials->id_str
+                                                                 )
+                                             )
+                                       );
+
             if( $exist ){
-                
+
                 // check if stored tokens are up-to-date
                 $stored_tokens = $this->User->findByTwitterId(
                                                               $verify_credentials->id_str,
                                                               array('User.id','User.token','User.token_secret')
                                                               );
-              
+
                 if( $stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret ){
                     // if not, update them
                     $id = $stored_tokens['User']['id'];
@@ -111,9 +119,9 @@ class UsersController extends AppController{
                 $hasBeenInitialized = $this->User->findByTwitterId($verify_credentials->id_str,
                                                                    array('User.initialized_flag')
                                                                    );
-                
+
                 if( !$hasBeenInitialized['User']['initialized_flag'] ){
-    
+
                     if( $this->Auth->login($user) ){
                         $this->redirect('/statuses/import');
                     }
@@ -125,11 +133,13 @@ class UsersController extends AppController{
                 }
             }else{
                 // register if user doesn't have his account
-                
+
                 // user's data to save
                 $data_to_save = array(
                                       'twitter_id'=>$verify_credentials->id_str,
+                                      'name'=>$verify_credentials->name,
                                       'screen_name'=>$verify_credentials->screen_name,
+                                      'profile_image_url_https'=>$verify_credentials->profile_image_url_https,
                                       'time_zone'=>$verify_credentials->time_zone,
                                       'utc_offset'=>$verify_credentials->utc_offset,
                                       'created_at'=>(strtotime($verify_credentials->created_at)-SERVER_UTC_OFFSET),
@@ -141,24 +151,45 @@ class UsersController extends AppController{
                                       'created'=>time()
                                       );
                 $this->User->save($data_to_save);
-                
+
                 if( $this->Auth->login($user) ){
                     $this->redirect('/statuses/import');
                 }
             }
         }
     }
-    
+
     public function sent_tweets(){
 
         /*
          * show the teewts sent by logged-in user
          */
-        
+
         // load user info 
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
-        
-        // [ToDo]fetch user's statuses
-    }                                                     
+      
+        // [ToDo]fetch user's 20 statuses
+        $statuses = $this->Status->find(
+                                        'all',array(
+                                                    'conditions'=>array('Status.twitter_id'=>$twitter_id),
+                                                    'limit'=>200,
+                                                    'order'=>array('Status.created_at ASC')
+                                                    )
+                                        );
+        $user_data = $this->User->find(
+                                       'first',array(
+                                                     'conditions'=>array('User.twitter_id'=>$twitter_id),
+                                                     'fields'=>array(
+                                                                     'User.twitter_id',
+                                                                     'User.name',
+                                                                     'User.screen_name',
+                                                                     'User.profile_image_url_https',
+                                                                     'User.utc_offset'
+                                                                     )
+                                                     )
+                                       );
+        $this->set('statuses',$statuses);
+        $this->set('user_data',$user_data);
+    }
 }
