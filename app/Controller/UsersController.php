@@ -169,14 +169,15 @@ class UsersController extends AppController{
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
       
-        // [ToDo]fetch user's 20 statuses
+        // fetch user's latest 20 statuses
         $statuses = $this->Status->find(
                                         'all',array(
                                                     'conditions'=>array('Status.twitter_id'=>$twitter_id),
-                                                    'limit'=>200,
-                                                    'order'=>array('Status.created_at ASC')
+                                                    'limit'=>20,
+                                                    'order'=>'Status.created_at ASC'
                                                     )
                                         );
+        // fetch user's twitter account info
         $user_data = $this->User->find(
                                        'first',array(
                                                      'conditions'=>array('User.twitter_id'=>$twitter_id),
@@ -189,7 +190,45 @@ class UsersController extends AppController{
                                                                      )
                                                      )
                                        );
-        $this->set('statuses',$statuses);
-        $this->set('user_data',$user_data);
+
+        // fetch list of all the statuses
+        $status_date_list = $this->Status->find(
+                                                'list',array(
+                                                             'conditions'=>array(
+                                                                                 'Status.twitter_id'=>$twitter_id
+                                                                                 ),
+                                                             'fields'=>array(
+                                                                             'Status.created_at'
+                                                                             ),
+                                                             'order'=>'Status.created_at DESC'
+                                                             )
+                                                );
+        // cllasify them by month
+        $utc_offset = $user_data['User']['utc_offset'];
+        $count = 0;
+        foreach($status_date_list as $key=>$created_at){
+            $created_at += $utc_offset;
+
+            $year = date('Y',$created_at);
+            $month = date('n',$created_at);
+            $day = date('j',$created_at);
+
+            $sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
+            $sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
+            $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
+ 
+        }
+        //pr($sum_by_year); 
+        //pr($sum_by_month);
+        //pr($sum_by_day);
+        
+        //        pr($sum_by_day);
+         $this->set('user_data',$user_data); 
+         $this->set('statuses',$statuses);
+      
+         $this->set('sum_by_year',$sum_by_year);
+         $this->set('sum_by_month',$sum_by_month);
+         $this->set('sum_by_day',$sum_by_day);
+       
     }
 }

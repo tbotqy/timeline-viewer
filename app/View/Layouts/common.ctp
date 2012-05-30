@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <?php
-      echo $this->Html->css('common.css');
+       echo $this->Html->css('common.css');
       //echo $this->Html->script('jquery-1.7.2.min.js');
       echo $this->Html->script('jquery-1.7.2.js');
     ?>
