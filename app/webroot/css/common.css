@@ -79,12 +79,13 @@ header#global a:hover{
    footer
 -------------------------------------------------- */
 #containerFooter{
+  float: left;
   width: 100%;
-  margin: 30px auto 0 auto;
+  //margin: 30px auto 0 auto;
   background: white;
   color: #7a6e7e;
-  position:absolute;
-  bottom: 20px;
+  //position:absolute;
+  //bottom: 20px;
   text-align: center;
 }
 
@@ -148,7 +149,7 @@ ul#navs a:hover{
 -------------------------------------------------- */
 #wrapperLogin{
   width:1200px;
-  //height: 1000px;
+  height: 600px;
   margin: 0 auto;
 }
 
