@@ -4,23 +4,52 @@ $this->Html->css('users.sent_tweets',null,array('inline'=>false));
 
 <!-- #date-list -->
 <nav id="date-list">
-  <!-- wrap-years -->
-  <?php foreach($sum_by_day as $year => $months):?> 
+  
   <ul class="wrap-years">
-    <span class="toggle">▼</span><li><?php echo $year."年";?></li>
-    <!-- wrap-months -->
-    <?php foreach($months as $month => $days):?>
-    <ul class="wrap-months">
-      <li><?php echo $month."月";?></li>
-      <?php foreach($days as $day=>$status_sum):?>
-      <ul class="wrap-days">
-        <li><?php echo $day."日";?><span class="status-sum"><?php echo $status_sum;?></span></li>
-      </ul><!-- /.wrap-days -->
-      <?php endforeach;?>  
-    </ul><!-- /.wrap-months -->
-    <?php endforeach;?>  
+
+    <?php foreach($sum_by_day as $year => $months):?>
+    
+    <!-- each year -->
+
+    <li class="wrap"><span class="toggle">▶</span><?php echo $year."年";?>
+      
+      <!-- .wrap-months -->
+      <ul class="wrap-months box-for-toggle">
+	
+	<?php foreach($months as $month => $days):?>
+	<!-- each month -->
+	<li class="wrap"><span class="toggle">▶</span><?php echo $month."月";?>
+
+	  <!-- .wrap-days -->
+	  <ul class="wrap-days box-for-toggle">
+
+	    <?php foreach($days as $day => $sum):?>
+
+	    <!-- each day -->
+	    <li class="no-wrap ajax">
+	      <a href="#">
+		<?php echo $day."日";?>
+	      </a>
+	      <span class="status-sum"><?php echo $sum;?></span>
+	    </li>
+	    <!-- /each day -->
+	    
+	    <?php endforeach;?>
+	  
+	  </ul>
+	  <!-- /.wrap-days /.box-for-toggle -->
+	  
+	</li>
+	<!-- each month -->
+	<?php endforeach;?>
+      </ul>
+      <!-- /.wrap-months /.box-for-toggle -->
+   
+    </li>
+    <!-- /each year -->
+    <?php endforeach;?>
   </ul><!-- /.wrap-years -->
-  <?php endforeach;?>
+  
 </nav><!-- /#date-list -->
 
 <?php foreach($statuses as $status): ?>
