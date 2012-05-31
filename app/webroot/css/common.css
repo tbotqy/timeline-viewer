@@ -11,6 +11,7 @@ body{
   font-size: 100%;
   font-family: Helvetica,"メイリオ", sans-serif;
   background: #f7f6f4;
+  background: url(../img/html_bg.png);
   color: #7a6e7e;
 }
 
