@@ -22,7 +22,8 @@ a:link,
 a:hover,
 a:active,
 a:visited{
-  color: #ffb515;
+  color: gray; 
+  text-decoration: none;
 }
 
 /* --------------------------------------------------
