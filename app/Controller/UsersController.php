@@ -169,14 +169,17 @@ class UsersController extends AppController{
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
       
-        // fetch user's latest 20 statuses
+        // fetch user's latest 10 statuses
         $statuses = $this->Status->find(
                                         'all',array(
                                                     'conditions'=>array('Status.twitter_id'=>$twitter_id),
-                                                    'limit'=>20,
-                                                    'order'=>'Status.created_at ASC'
+                                                    'limit'=>10,
+                                                    'order'=>'Status.created_at DESC'
                                                     )
                                         );
+        $num = count($statuses)-1;
+        $last_status_id = $statuses[$num]['Status']['id'];
+
         // fetch user's twitter account info
         $user_data = $this->User->find(
                                        'first',array(
@@ -193,15 +196,16 @@ class UsersController extends AppController{
 
         // fetch list of all the statuses
         $status_date_list = $this->Status->find(
-                                                'list',array(
-                                                             'conditions'=>array(
-                                                                                 'Status.twitter_id'=>$twitter_id
-                                                                                 ),
-                                                             'fields'=>array(
-                                                                             'Status.created_at'
-                                                                             ),
-                                                             'order'=>'Status.created_at DESC'
-                                                             )
+                                                'list',
+                                                array(
+                                                      'conditions'=>array(
+                                                                          'Status.twitter_id'=>$twitter_id
+                                                                          ),
+                                                      'fields'=>array(
+                                                                      'Status.created_at'
+                                                                      ),
+                                                      'order'=>'Status.created_at DESC'
+                                                      )
                                                 );
         // cllasify them by month
         $utc_offset = $user_data['User']['utc_offset'];
@@ -213,22 +217,17 @@ class UsersController extends AppController{
             $month = date('n',$created_at);
             $day = date('j',$created_at);
 
-            $sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
-            $sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
+            //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
+            //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
             $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
  
         }
-        //pr($sum_by_year); 
-        //pr($sum_by_month);
-        //pr($sum_by_day);
-        
-        //        pr($sum_by_day);
-         $this->set('user_data',$user_data); 
-         $this->set('statuses',$statuses);
+        $this->set('user_data',$user_data); 
+        $this->set('statuses',$statuses);
       
-         $this->set('sum_by_year',$sum_by_year);
-         $this->set('sum_by_month',$sum_by_month);
-         $this->set('sum_by_day',$sum_by_day);
-       
+        //$this->set('sum_by_year',$sum_by_year);
+        //$this->set('sum_by_month',$sum_by_month);
+        $this->set('sum_by_day',$sum_by_day);
+        $this->set('last_status_id',$last_status_id);
     }
 }

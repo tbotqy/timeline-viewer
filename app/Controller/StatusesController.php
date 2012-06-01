@@ -200,5 +200,121 @@ class StatusesController extends AppController{
         
         // return json
         echo json_encode($ret);
-    }    
+    }
+
+    public function read_more(){
+        
+        $this->autoRender = false;
+        /* uncommented for debug
+           if(!$this->request->is('Ajax')){
+           // reject that request
+           echo 'bad request';
+           exit;
+           }
+        */
+
+        // fetch more 10 statuses whose id is greater than last status id
+        $last_status_id = $this->request->data('last_status_id');       
+        $user = $this->Auth->user();
+        $twitter_id = $user['Twitter']['id'];
+        
+        // fetch user's twitter account info
+        $user_data = $this->User->find(
+                                       'first',array(
+                                                     'conditions'=>array('User.twitter_id'=>$twitter_id),
+                                                     'fields'=>array(
+                                                                     'User.twitter_id',
+                                                                     'User.name',
+                                                                     'User.screen_name',
+                                                                     'User.profile_image_url_https',
+                                                                     'User.utc_offset'
+                                                                     )
+                                                     )
+                                       );
+
+        $statuses = $this->Status->find(
+                                        'all',
+                                        array(
+                                              'conditions'=>array(
+                                                                  'Status.twitter_id'=>$user['Twitter']['id'],
+                                                                  'Status.id >'=>$last_status_id
+                                                                  ),
+                                              'limit'=>10,
+                                              'order'=>'Status.created ASC'
+                                              )
+                                        );
+        
+        $itr = count($statuses)-1;
+        $last_status_id = $statuses[$itr]['Status']['id'];
+        $html = "";
+        foreach($statuses as $status){
+            $date_right_corner = date('Y',time()) > date('Y',$status['Status']['created_at']+$user_data['User']['utc_offset']) ?
+                date('Y年n月j日',$status['Status']['created_at']+$user_data['User']['utc_offset']) : 
+                date('n月j日',$status['Status']['created_at']+$user_data['User']['utc_offset']);
+
+            $html .=
+                "  
+  <!-- #wrap-each-status -->
+  <div id=\"wrap-each-status\">
+  
+    <!-- .profile-image -->
+    <div class=\"profile-image\">
+      <div class=\"viewport\">
+          <a href=\"https://twitter.com/".$user_data['User']['screen_name']."\">
+            <img src=\"".$user_data['User']['profile_image_url_https']."\" alt=\"".$user_data['User']['screen_name']."\" />
+          </a>
+      </div>
+    </div>
+    <!-- /.profile-image -->
+
+    <!-- .status-content -->
+    <div class=\"status-content\">
+      <!-- .top -->      
+      <span class=\"top\">
+	<span class=\"name\">
+	  <a href=\"https://twitter.com/".$user_data['User']['screen_name']."\">".$user_data['User']['name']."</a>
+	</span>
+	<span class=\"screen_name\">
+	  <a href=\"https://twitter.com/".$user_data['User']['screen_name']."\">@".$user_data['User']['screen_name']."</a>
+	</span>
+	<span class=\"date\">
+       <a href=\"https://twitter.com/".$user_data['User']['screen_name']."/status/".$status['Status']['status_id_str']."\">
+  ".$date_right_corner."
+	   </a>
+	</span>
+      </span>
+      <!-- /.top -->
+      <span class=\"text\">
+	".$status['Status']['text']."
+      </span>
+      <!-- .bottom -->
+      <span class=\"bottom\">
+	<span class=\"specific-date\">
+	  ".date('Y年n月j日 - h:m',$status['Status']['created_at']+$user_data['User']['utc_offset'])."
+	</span>
+	<span class=\"source\">
+	  ".$status['Status']['source']."から
+	</span>
+	<span class=\"link-official\">
+	  <a href=\"https://twitter.com/".$user_data['User']['screen_name']."/status/".$status['Status']['status_id_str']."\">詳細</a>
+	</span> 
+      </span>
+      <!-- /.bottom -->
+    </div>
+    <!-- /.status-content -->
+  </div>
+  <!-- /#wrap-each-status -->
+  ";
+        }
+
+        
+        $ret ="{\"html\":$html,\"last_status_id\":$last_status_id}";
+        $ret = array(
+                     'html'=>$html,
+                     'last_status_id'=>$last_status_id
+                     );
+        echo json_encode($ret);exit;
+        echo $ret;
+        
+    }
 }

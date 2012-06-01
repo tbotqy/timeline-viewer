@@ -1,5 +1,5 @@
 <?php
-$this->Html->script('ajax',array('inline'=>false));
+$this->Html->script('statuses.import',array('inline'=>false));
 ?>
 <h2 class="init">Retrieve your statuses.</h2>
 
@@ -15,8 +15,8 @@ $this->Html->script('ajax',array('inline'=>false));
   </ul>
 
   <p>Retrieve your past tweets.This may take several seconds.</p>
-  
-  <input type="button" id="start" value="取得開始"/>
+  <button id="start" data-loading-text="取得中" data-complete-text="取得完了" class="btn btn-success">取得開始</button>
+
   <div id="status" style="display:none;">
     <span class="progress">Start</span>
     <p class="text"></p>
