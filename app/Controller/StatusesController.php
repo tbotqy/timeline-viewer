@@ -19,7 +19,7 @@ class StatusesController extends AppController{
     public function import(){
 
         /*
-         * show the import screen
+         * show the screen to operate import method
          */
 
         $user =  $this->Auth->user();
@@ -40,7 +40,7 @@ class StatusesController extends AppController{
     public function acquire_statuses(){
 
         /* 
-         * This action calls twitter api to retrieve user's twitter statuses.
+         * calls twitter api to retrieve user's twitter statuses.
          * interacts with JavaScript with ajax
          * returns json string
          */
@@ -107,7 +107,7 @@ class StatusesController extends AppController{
 
             foreach($result as $val){
 
-                $created_at = strtotime($val['created_at'])-SERVER_UTC_OFFSET;// based on UTC
+                $created_at = strtotime($val['created_at']);
                 $possibly_sensitive = isset($val['possibly_sensitive']) ? $val['possibly_sensitive'] : false;
                 
                 $status_to_save = array(
@@ -316,14 +316,66 @@ class StatusesController extends AppController{
         echo json_encode($ret);
     }
 
-    public function strToTerm(){
+    private function strToYearTerm($strYear){
+        
         /*
-         * convert given term to unixtime
-         * returns start/end unixtime in array
+         * given value is exected to be year format like 2012
+         * convert given value to unixtime 
+         * returning array contains begin/end unixtime of given year
          */
+        
+        // create string representing the first day of year like 2012-1-1 00:00:00
+        $strBegin = $strYear.'-1-1 00:00:00'; 
+        $timeBegin = strtotime($strBegin);
+        
+        // create string representing the last moment of year like 2012-12-31 23:59:59
+        $strEnd = $strYear.'-12-31 23:59:59';
+        $timeEnd = strtotime($strEnd);
 
-        echo time();
+        $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
+        return $ret;
+    }
 
+    private function strToMonthTerm($strMonth){
+        
+        /*
+         * given value is exected to be ike 2012-5
+         * convert given value to unixtime 
+         * returning array contains begin/end unixtime of given month
+         */
+        
+        // create string representing the first day of month like 2012-2-1 00:00:00
+        $strBegin = $strMonth.'-1 00:00:00'; 
+        $timeBegin = strtotime($strBegin);
+        
+        // create string representing the last moment of month like 2012-2-29 23:59:59
+        $last_day_of_month = date('t',strtotime($strMonth));
+        $strMonth .= '-'.$last_day_of_month;
+        $strEnd = $strMonth.' 23:59:59';
+        $timeEnd = strtotime($strEnd);
+
+        $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
+        return $ret;
+    }
+    
+    private function strToDayTerm($strDay){
+        
+        /*
+         * given value is exected to be ike 2012-5-1
+         * convert given value to unixtime 
+         * returning array contains begin/end unixtime of given day
+         */
+        
+        // create string representing the first monet of day like 2012-5-1 00:00:00
+        $strBegin = $strDay.' 00:00:00'; 
+        $timeBegin = strtotime($strBegin);
+        
+        // create string representing the last moment of day like 2012-5-1 23:59:59
+        $strEnd = $strDay.' 23:59:59'; 
+        $timeEnd = strtotime($strEnd);
+        
+        $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
+        return $ret;
     }
 
 }
