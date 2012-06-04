@@ -168,32 +168,44 @@ class UsersController extends AppController{
         // load user info 
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
-      
-        // fetch user's latest 10 statuses
-        $statuses = $this->Status->find(
-                                        'all',array(
-                                                    'conditions'=>array('Status.twitter_id'=>$twitter_id),
-                                                    'limit'=>10,
-                                                    'order'=>'Status.created_at DESC'
-                                                    )
-                                        );
-        $num = count($statuses)-1;
-        $last_status_id = $statuses[$num]['Status']['id'];
 
         // fetch user's twitter account info
         $user_data = $this->User->find(
-                                       'first',array(
-                                                     'conditions'=>array('User.twitter_id'=>$twitter_id),
-                                                     'fields'=>array(
-                                                                     'User.twitter_id',
-                                                                     'User.name',
-                                                                     'User.screen_name',
-                                                                     'User.profile_image_url_https',
-                                                                     'User.utc_offset'
-                                                                     )
-                                                     )
+                                       'first',
+                                       array(
+                                             'conditions'=>array('User.twitter_id'=>$twitter_id),
+                                             'fields'=>array(
+                                                             'User.twitter_id',
+                                                             'User.name',
+                                                             'User.screen_name',
+                                                             'User.profile_image_url_https',
+                                                             'User.utc_offset'
+                                                             )
+                                             )
                                        );
+      
+        // fetch user's latest 10 statuses
+        $statuses = $this->Status->find(
+                                        'all',
+                                        array(
+                                              'conditions'=>array('Status.twitter_id'=>$twitter_id),
+                                              'limit'=>10,
+                                              'order'=>'Status.created_at DESC'
+                                              )
+                                        );
+        
+        // get entities anchored
+        $statuses = $this->getAnchoredStatuses($statuses);        
+        
+        // get primary key of last status in fetched array
+        $num = count($statuses)-1;
+        $last_status_id = $statuses[$num]['Status']['id'];
 
+        //                                                             //
+        // create the list of all the statuses user has.               //
+        // the data created here is shown in the left area of the view //
+        //                                                             //
+        
         // fetch list of all the statuses
         $status_date_list = $this->Status->find(
                                                 'list',
@@ -207,9 +219,10 @@ class UsersController extends AppController{
                                                       'order'=>'Status.created_at DESC'
                                                       )
                                                 );
-        // cllasify them by month
+
+        // classify them by date
         $utc_offset = $user_data['User']['utc_offset'];
-        $count = 0;
+       
         foreach($status_date_list as $key=>$created_at){
             $created_at += $utc_offset;
 
@@ -222,6 +235,7 @@ class UsersController extends AppController{
             $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
  
         }
+        
         $this->set('user_data',$user_data); 
         $this->set('statuses',$statuses);
       
@@ -230,4 +244,5 @@ class UsersController extends AppController{
         $this->set('sum_by_day',$sum_by_day);
         $this->set('last_status_id',$last_status_id);
     }
+
 }

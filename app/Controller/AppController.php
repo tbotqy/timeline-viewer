@@ -36,14 +36,81 @@ App::uses('Controller', 'Controller');
 
 class AppController extends Controller {
     
-    public function pr($array){
-        echo "<pre>";
-        print_r($array);
-        echo "</pre>";
-    }
-
     public function createClient(){
         return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
     }
+
+    public function getAnchoredStatuses($statuses){
+        /* 
+         * used to add anchor tags to each status body
+         * returns array
+         */ 
         
+        // initialization of value to return 
+        $anchored_statuses = array();
+        
+        foreach($statuses as $status){
+            
+            // fetch entity belonging to status
+            $entities = $this->Entity->find(
+                                            'all',
+                                            array(
+                                                  'conditions'=>array(
+                                                                      'Entity.status_id_str'=>$status['Status']['status_id_str']
+                                                                      )
+                                                  )
+                                            );
+            
+            // apply each entity's anchor tag
+            foreach($entities as $entity){
+                $type = $entity['Entity']['type'];
+                // get entity's body
+                $entity_body = "";
+                
+                switch($type){
+                case 'urls':
+                    $entity_body = $entity['Entity']['url'];
+                    break;
+                case 'hashtags':
+                    $entity_body = $entity['Entity']['hashtag'];
+                    break;
+                case 'user_mentions':
+                    $entity_body = $entity['Entity']['mention_to_screen_name'];
+                    break;
+                }
+                $status['Status']['text'] = $this->addAnchorLinks($status['Status']['text'],$entity_body,$type);
+            }
+            $anchored_statuses[] = $status;
+        }
+    
+        return $anchored_statuses;
+    }
+ 
+    public function addAnchorLinks($tweet,$entity,$entity_type){
+      
+        // inserts anchor elements to given $tweet_body
+        // returns string
+        
+        // determine href 
+        switch($entity_type){
+        case 'urls':
+            $href = $entity;
+            break;
+        case 'hashtags':
+            $entity = "#".$entity;
+            $href = "https://twitter.com/search?q=#".urlencode($entity);
+            break;
+        case 'user_mentions':
+            $href = "https://twitter.com/".$entity;
+            $entity = "@".$entity;
+            break;
+        }
+
+        // insert <a href=...></a>
+        
+        $a_element = "<a href=\"".$href."\" target=\"_blank\">".$entity."</a>";
+        $ret = str_replace($entity,$a_element,$tweet);
+        
+        return $ret;
+    }
 }

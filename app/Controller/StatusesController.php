@@ -154,8 +154,8 @@ class StatusesController extends AppController{
                                 $entity_to_save['url'] = $content['url'];
                             break;
                             case "user_mentions":
-                                $entity_to_save['screen_name'] = $content['screen_name'];
-                                $entity_to_save['reply_to_user_id_str'] = $content['id_str'];
+                                $entity_to_save['mention_to_screen_name'] = $content['screen_name'];
+                                $entity_to_save['mention_to_user_id_str'] = $content['id_str'];
                                 break;
                             default:
                                 // new feature 
@@ -205,13 +205,12 @@ class StatusesController extends AppController{
     public function read_more(){
         
         $this->autoRender = false;
-        /* uncommented for debug
-           if(!$this->request->is('Ajax')){
-           // reject that request
-           echo 'bad request';
-           exit;
-           }
-        */
+
+        if(!$this->request->is('Ajax')){
+            // reject that request
+            echo 'bad request';
+            exit;
+        }
 
         // fetch more 10 statuses whose id is greater than last status id
         $last_status_id = $this->request->data('last_status_id');       
@@ -243,7 +242,9 @@ class StatusesController extends AppController{
                                               'order'=>'Status.created ASC'
                                               )
                                         );
-        
+        // add anchor links to each entities on the status
+        $statuses = $this->getAnchoredStatuses($statuses);
+
         $itr = count($statuses)-1;
         $last_status_id = $statuses[$itr]['Status']['id'];
         $html = "";
@@ -307,14 +308,11 @@ class StatusesController extends AppController{
   ";
         }
 
-        
-        $ret ="{\"html\":$html,\"last_status_id\":$last_status_id}";
         $ret = array(
                      'html'=>$html,
                      'last_status_id'=>$last_status_id
                      );
-        echo json_encode($ret);exit;
-        echo $ret;
-        
+        echo json_encode($ret);
+              
     }
 }
