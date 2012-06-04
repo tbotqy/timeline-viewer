@@ -111,6 +111,7 @@
   height: 58px;
   padding: 10px;
 }
+
 .profile-image .viewport{
   width: 48px;
   height: 48px;
@@ -126,22 +127,25 @@
   padding: 10px 10px 10px 0;
   color: #49360D;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  cursor: pointer;
 }
 
 .status-content .top .date{ 
   float: right;
 }
+
 .status-content .text{ 
   float: left;
   width: 100%;
   padding: 10px 10px 10px 0;
   line-height: 20px;
-  cursor: pointer;
  }
+
 .status-content .top{ 
   float: left;
   width: 100%;
 }
+
 .status-content .bottom{
   float: left;
   width: 100%;

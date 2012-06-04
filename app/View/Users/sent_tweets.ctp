@@ -118,6 +118,5 @@ echo $this->Html->script('users.sent_tweets',array('inline'=>false));
   <div class="wrap-read-more">
     <button id="read-more" data-loading-text="loading" data-complete-text="続きを読み込む" class="btn">続きを読み込む</button>
   </div>
-  
 </div>
 <!-- /#wrap-main -->
