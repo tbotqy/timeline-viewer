@@ -69,6 +69,7 @@ class AppController extends Controller {
                 
                 switch($type){
                 case 'urls':
+                case 'media':
                     $entity_body = $entity['Entity']['url'];
                     break;
                 case 'hashtags':
@@ -94,6 +95,7 @@ class AppController extends Controller {
         // determine href 
         switch($entity_type){
         case 'urls':
+        case 'media':
             $href = $entity;
             break;
         case 'hashtags':
@@ -104,6 +106,8 @@ class AppController extends Controller {
             $href = "https://twitter.com/".$entity;
             $entity = "@".$entity;
             break;
+        default:
+            echo $entity_type;echo "<br/>";
         }
 
         // insert <a href=...></a>

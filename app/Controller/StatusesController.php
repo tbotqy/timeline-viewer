@@ -7,7 +7,7 @@
 class StatusesController extends AppController{
     
     public $components = array('Auth','Session');
-    public $helpers = array('Html','Form');
+    public $helpers = array('Time','Html','Form');
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
     
@@ -29,6 +29,7 @@ class StatusesController extends AppController{
                                               $user['Twitter']['id'],
                                               array('User.token','User.token_secret')
                                               );
+        
         $verify_credentials = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json',array('screen_name'=>$user['Twitter']['screen_name']));
         $verify_credentials = json_decode($verify_credentials);
        
@@ -106,7 +107,7 @@ class StatusesController extends AppController{
 
             foreach($result as $val){
 
-                $created_at = strtotime($val['created_at'])-32400;// based on UTC+0
+                $created_at = strtotime($val['created_at'])-SERVER_UTC_OFFSET;// based on UTC
                 $possibly_sensitive = isset($val['possibly_sensitive']) ? $val['possibly_sensitive'] : false;
                 
                 $status_to_save = array(
@@ -313,6 +314,16 @@ class StatusesController extends AppController{
                      'last_status_id'=>$last_status_id
                      );
         echo json_encode($ret);
-              
     }
+
+    public function strToTerm(){
+        /*
+         * convert given term to unixtime
+         * returns start/end unixtime in array
+         */
+
+        echo time();
+
+    }
+
 }
