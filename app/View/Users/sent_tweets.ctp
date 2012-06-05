@@ -21,20 +21,20 @@ echo $this->Html->script('users.sent_tweets',array('inline'=>false));
     <ul class="wrap-years">
       <?php foreach($sum_by_day as $year => $months):?>
       <!-- each year -->
-      <li class="wrap"><span class="toggle">▶</span><?php echo $year."年";?>
+      <li class="wrap"><span class="toggle">▶</span>
+	<a href="/users/sent_tweets/<?php echo $year;?>"><?php echo $year."年";?></a>
       	<!-- .wrap-months -->
 	<ul class="wrap-months box-for-toggle">
 	  <?php foreach($months as $month => $days):?>
 	  <!-- each month -->
-	  <li class="wrap"><span class="toggle">▶</span><?php echo $month."月";?>
+	  <li class="wrap"><span class="toggle">▶</span>
+	    <a href="/users/sent_tweets/<?php echo $year;?>/<?php echo $month;?>"/><?php echo $month."月";?></a>
 	    <!-- .wrap-days -->
 	    <ul class="wrap-days box-for-toggle">
 	      <?php foreach($days as $day => $sum):?>
 	      <!-- each day -->
 	      <li class="link">
-		<a href="#">
-		  <?php echo $day."日";?>
-		</a>
+		<a href="/users/sent_tweets/<?php echo $year;?>/<?php echo $month;?>/<?php echo $day;?>"><?php echo $day."日";?></a>
 		<span class="status-sum"><?php echo $sum;?></span>
 	      </li>
 	      <!-- /each day -->

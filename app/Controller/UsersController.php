@@ -160,7 +160,6 @@ class UsersController extends AppController{
     }
 
     public function sent_tweets(){
-
         /*
          * show the teewts sent by logged-in user
          */
