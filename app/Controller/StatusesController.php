@@ -6,7 +6,7 @@
 
 class StatusesController extends AppController{
     
-    public $components = array('Auth','Session');
+    public $components = array('Auth','Session','Cookie');
     public $helpers = array('Time','Html','Form');
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
@@ -14,6 +14,9 @@ class StatusesController extends AppController{
     public function beforeFilter(){
         $this->Auth->deny('import');
         parent::beforeFilter();
+        
+        $this->Cookie->name = "v";
+        $this->Cookie->key = "djifrei";
     }
 
     public function import(){
@@ -205,7 +208,7 @@ class StatusesController extends AppController{
 
     public function read_more(){
         
-        $this->autoRender = false;
+        $this->layout = 'ajax';
 
         if(!$this->request->is('Ajax')){
             // reject that request
@@ -243,78 +246,23 @@ class StatusesController extends AppController{
                                               'order'=>'Status.created ASC'
                                               )
                                         );
+
         // add anchor links to each entities on the status
         $statuses = $this->getAnchoredStatuses($statuses);
 
         $itr = count($statuses)-1;
         $last_status_id = $statuses[$itr]['Status']['id'];
-        $html = "";
-        foreach($statuses as $status){
-            $date_right_corner = date('Y',time()) > date('Y',$status['Status']['created_at']+$user_data['User']['utc_offset']) ?
-                date('Y年n月j日',$status['Status']['created_at']+$user_data['User']['utc_offset']) : 
-                date('n月j日',$status['Status']['created_at']+$user_data['User']['utc_offset']);
-
-            $html .=
-                "  
-  <!-- #wrap-each-status -->
-  <div id=\"wrap-each-status\">
-  
-    <!-- .profile-image -->
-    <div class=\"profile-image\">
-      <div class=\"viewport\">
-          <a href=\"https://twitter.com/".$user_data['User']['screen_name']."\">
-            <img src=\"".$user_data['User']['profile_image_url_https']."\" alt=\"".$user_data['User']['screen_name']."\" />
-          </a>
-      </div>
-    </div>
-    <!-- /.profile-image -->
-
-    <!-- .status-content -->
-    <div class=\"status-content\">
-      <!-- .top -->      
-      <span class=\"top\">
-	<span class=\"name\">
-	  <a href=\"https://twitter.com/".$user_data['User']['screen_name']."\">".$user_data['User']['name']."</a>
-	</span>
-	<span class=\"screen_name\">
-	  <a href=\"https://twitter.com/".$user_data['User']['screen_name']."\">@".$user_data['User']['screen_name']."</a>
-	</span>
-	<span class=\"date\">
-       <a href=\"https://twitter.com/".$user_data['User']['screen_name']."/status/".$status['Status']['status_id_str']."\">
-  ".$date_right_corner."
-	   </a>
-	</span>
-      </span>
-      <!-- /.top -->
-      <span class=\"text\">
-	".$status['Status']['text']."
-      </span>
-      <!-- .bottom -->
-      <span class=\"bottom\">
-	<span class=\"specific-date\">
-	  ".date('Y年n月j日 - h:m',$status['Status']['created_at']+$user_data['User']['utc_offset'])."
-	</span>
-	<span class=\"source\">
-	  ".$status['Status']['source']."から
-	</span>
-	<span class=\"link-official\">
-	  <a href=\"https://twitter.com/".$user_data['User']['screen_name']."/status/".$status['Status']['status_id_str']."\">詳細</a>
-	</span> 
-      </span>
-      <!-- /.bottom -->
-    </div>
-    <!-- /.status-content -->
-  </div>
-  <!-- /#wrap-each-status -->
-  ";
-        }
-
-        $ret = array(
-                     'html'=>$html,
-                     'last_status_id'=>$last_status_id
-                     );
-        echo json_encode($ret);
+        $this->set('last_status_id',$last_status_id);        
+        $this->set('statuses',$statuses);
+        $this->set('user_data',$user_data);
     }
+
+    public function switch_term(){
+
+        
+
+    }
+
 
     private function strToYearTerm($strYear){
         

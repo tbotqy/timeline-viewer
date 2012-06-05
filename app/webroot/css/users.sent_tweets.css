@@ -45,10 +45,15 @@
   padding: 0 5px 0 10px;
 }
 
-#date-list li .link:hover{ 
+#date-list li:hover{ 
   background: #e8e0cf;
 }
 
+/*
+#date-list li .link:hover{ 
+  background: #e8e0cf;
+}
+*/
 .wrap-years{ 
   width: 200px;
   float: left;
@@ -76,7 +81,8 @@
 .box-for-toggle{ 
   float: left;
   width: 100%;
-  display: none;
+  //display: none;
+  
 }
 
 .status-sum{ 
