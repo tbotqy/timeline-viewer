@@ -6,7 +6,7 @@
 
 class StatusesController extends AppController{
     
-    public $components = array('Auth','Session','Cookie');
+    public $components = array('Auth','Session');
     public $helpers = array('Time','Html','Form');
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
@@ -14,9 +14,6 @@ class StatusesController extends AppController{
     public function beforeFilter(){
         $this->Auth->deny('import');
         parent::beforeFilter();
-        
-        $this->Cookie->name = "v";
-        $this->Cookie->key = "djifrei";
     }
 
     public function import(){
@@ -259,10 +256,66 @@ class StatusesController extends AppController{
 
     public function switch_term(){
 
+        $this->layout = 'ajax';
+        $user = $this->Auth->user();
+        $twitter_id = $user['Twitter']['id'];
+        // fetch query string
+        $date = $this->request->query['date'];
+        $date_type = $this->request->query['date_type'];
+       
+        // calculate start/end of term to fetch 
+        $term = $this->strToTerm($date,$date_type);
         
 
+        // fetch user's twitter account info
+        $user_data = $this->User->find(
+                                       'first',array(
+                                                     'conditions'=>array('User.twitter_id'=>$twitter_id),
+                                                     'fields'=>array(
+                                                                     'User.twitter_id',
+                                                                     'User.name',
+                                                                     'User.screen_name',
+                                                                     'User.profile_image_url_https',
+                                                                     'User.utc_offset'
+                                                                     )
+                                                     )
+                                       );
+
+        // fetch statuses
+        $statuses = $this->Status->find(
+                                        'all',
+                                        array(
+                                              'conditions'=>array(
+                                                                  'Status.twitter_id'=>$user['Twitter']['id'],
+                                                                  'Status.created_at >='=>$term['begin'],
+                                                                  'Status.created_at <='=>$term['end']
+                                                                  ),
+                                              'order'=>array('Status.created_at DESC')
+                                              )
+                                        );
+        $this->set('statuses',$statuses);
+        $this->set('user_data',$user_data);
+        $this->render('switch_term');
     }
 
+
+    private function strToTerm($date,$date_type){
+        $ret = "";
+
+        switch($date_type){
+        case 'year':
+            $ret = $this->strToYearTerm($date);
+            break;
+        case 'month':
+            $ret = $this->strToMonthTerm($date);
+            break;
+        case 'day':
+            $ret = $this->strToDayTerm($date);
+            break;
+        }
+        
+        return $ret;
+    }
 
     private function strToYearTerm($strYear){
         
