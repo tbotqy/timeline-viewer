@@ -7,7 +7,7 @@
 /* --------------------------------------------------
    dashbord
 -------------------------------------------------- */
-#dashbord{ 
+#wrap-dashbord{ 
   float: left;
   width: 200px;
 }
@@ -97,7 +97,12 @@
   width: 500px
 }
 
-#wrap-each-status{ 
+#wrap-timeline{ 
+  float: left;
+  width: 100%;
+}
+
+.wrap-each-status{ 
   float: left;
   clear: both;
   width: 500px;
@@ -107,7 +112,7 @@
   background: #f2eee6;
 }
 
-#wrap-each-status:hover{
+.wrap-each-status:hover{
   background: #e8e0cf;
 }
 
@@ -159,7 +164,7 @@
   display: none;
 }
 
-.wrap-read-more{ 
+#wrap-read-more{ 
   float: left;
   width: 100%;
 }
