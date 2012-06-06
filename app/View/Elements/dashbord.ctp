@@ -14,7 +14,7 @@
     </ul>
   </nav>
   <!-- /#timeline-type-list -->
-
+  
   <!-- #date-list -->
   <nav id="date-list">
     <!-- .wrap-years -->
@@ -28,13 +28,13 @@
 	  <?php foreach($months as $month => $days):?>
 	  <!-- each month -->
 	  <li class="wrap"><span class="toggle">▶</span>
-            <a class="month" name="<?php echo $year.'-'.$month;?>" href="/users/sent_tweets/<?php echo $year;?>/<?php echo $month;?>"/><?php echo $month."月";?></a>
+	    <a class="month" name="<?php echo $year.'-'.$month;?>" href="/users/sent_tweets/<?php echo $year;?>/<?php echo $month;?>"/><?php echo $month."月";?></a>
             <!-- .wrap-days -->
 	    <ul class="wrap-days box-for-toggle">
 	      <?php foreach($days as $day => $sum):?>
 	      <!-- each day -->
 	      <li class="link">
-		<a class="day" name="<?php echo $year.'-'.$month.'-'.$day; ?>" href="/users/sent_tweets/<?php echo $year;?>/<?php echo $month;?>/<?php echo $day;?>"><?php echo $day."日";?></a>
+	        <a class="day" name="<?php echo $year.'-'.$month.'-'.$day; ?>" href="/users/sent_tweets/<?php echo $year;?>/<?php echo $month;?>/<?php echo $day;?>"><?php echo $day."日";?></a>
 		<span class="status-sum"><?php echo $sum;?></span>
 	      </li>
 	      <!-- /each day -->
@@ -44,14 +44,14 @@
           </li>
           <!-- /each month -->
           <?php endforeach;?>
-         </ul>
-         <!-- /.wrap-months /.box-for-toggle -->
-       </li>
-       <!-- /each year -->
-       <?php endforeach;?>
-     </ul>
-     <!-- /.wrap-years -->
-   </nav>
+        </ul>
+        <!-- /.wrap-months /.box-for-toggle -->
+      </li>
+      <!-- /each year -->
+      <?php endforeach;?>
+    </ul>
+    <!-- /.wrap-years -->
+  </nav>
   <!-- /#date-list -->
 </div>
 <!-- /#wrap-dashbord -->

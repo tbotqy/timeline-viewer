@@ -259,14 +259,15 @@ class StatusesController extends AppController{
         $this->layout = 'ajax';
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
+        $utc_offset = $user['Twitter']['utc_offset'];
+
         // fetch query string
         $date = $this->request->query['date'];
         $date_type = $this->request->query['date_type'];
        
         // calculate start/end of term to fetch 
-        $term = $this->strToTerm($date,$date_type);
+        $term = $this->strToTerm($date,$date_type,$utc_offset);
         
-
         // fetch user's twitter account info
         $user_data = $this->User->find(
                                        'first',array(
@@ -293,31 +294,37 @@ class StatusesController extends AppController{
                                               'order'=>array('Status.created_at DESC')
                                               )
                                         );
+        $itr = count($statuses) - 1;
+        if($itr<0){
+            pr($term);exit;
+        }
+        $last_status_id = $statuses[$itr]['Status']['id'];
         $this->set('statuses',$statuses);
+        $this->set('last_status_id',$last_status_id);
         $this->set('user_data',$user_data);
         $this->render('switch_term');
     }
 
 
-    private function strToTerm($date,$date_type){
+    private function strToTerm($date,$date_type,$utc_offset){
         $ret = "";
 
         switch($date_type){
         case 'year':
-            $ret = $this->strToYearTerm($date);
+            $ret = $this->strToYearTerm($date,$utc_offset);
             break;
         case 'month':
-            $ret = $this->strToMonthTerm($date);
+            $ret = $this->strToMonthTerm($date,$utc_offset);
             break;
         case 'day':
-            $ret = $this->strToDayTerm($date);
+            $ret = $this->strToDayTerm($date,$utc_offset);
             break;
         }
         
         return $ret;
     }
 
-    private function strToYearTerm($strYear){
+    private function strToYearTerm($strYear,$utc_offset){
         
         /*
          * given value is exected to be year format like 2012
@@ -327,17 +334,17 @@ class StatusesController extends AppController{
         
         // create string representing the first day of year like 2012-1-1 00:00:00
         $strBegin = $strYear.'-1-1 00:00:00'; 
-        $timeBegin = strtotime($strBegin);
+        $timeBegin = strtotime($strBegin) - $utc_offset;
         
         // create string representing the last moment of year like 2012-12-31 23:59:59
         $strEnd = $strYear.'-12-31 23:59:59';
-        $timeEnd = strtotime($strEnd);
+        $timeEnd = strtotime($strEnd) - $utc_offset;
 
         $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
         return $ret;
     }
 
-    private function strToMonthTerm($strMonth){
+    private function strToMonthTerm($strMonth,$utc_offset){
         
         /*
          * given value is exected to be ike 2012-5
@@ -347,19 +354,19 @@ class StatusesController extends AppController{
         
         // create string representing the first day of month like 2012-2-1 00:00:00
         $strBegin = $strMonth.'-1 00:00:00'; 
-        $timeBegin = strtotime($strBegin);
+        $timeBegin = strtotime($strBegin) - $utc_offset;
         
         // create string representing the last moment of month like 2012-2-29 23:59:59
         $last_day_of_month = date('t',strtotime($strMonth));
         $strMonth .= '-'.$last_day_of_month;
         $strEnd = $strMonth.' 23:59:59';
-        $timeEnd = strtotime($strEnd);
+        $timeEnd = strtotime($strEnd) - $utc_offset;
 
         $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
         return $ret;
     }
     
-    private function strToDayTerm($strDay){
+    private function strToDayTerm($strDay,$utc_offset){
         
         /*
          * given value is exected to be ike 2012-5-1
@@ -369,11 +376,11 @@ class StatusesController extends AppController{
         
         // create string representing the first monet of day like 2012-5-1 00:00:00
         $strBegin = $strDay.' 00:00:00'; 
-        $timeBegin = strtotime($strBegin);
+        $timeBegin = strtotime($strBegin) - $utc_offset;
         
         // create string representing the last moment of day like 2012-5-1 23:59:59
         $strEnd = $strDay.' 23:59:59'; 
-        $timeEnd = strtotime($strEnd);
+        $timeEnd = strtotime($strEnd) - $utc_offset;
         
         $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
         return $ret;

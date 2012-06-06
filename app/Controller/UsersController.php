@@ -85,7 +85,7 @@ class UsersController extends AppController{
             $user['Twitter']['id'] = $verify_credentials->id_str;
             $user['Twitter']['screen_name'] = $verify_credentials->screen_name;
             $user['Twitter']['profile_image_url_https'] = $verify_credentials->profile_image_url_https;
-
+            $user['Twitter']['utc_offset'] = $verify_credentials->utc_offset;
             // check if user is already registered 
             $exist = $this->User->find(
                                        'count',
