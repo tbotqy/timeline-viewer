@@ -28,7 +28,6 @@ $(document).ready(function(){
 	
 	// insert loaded html code 
 	$(".land-mark").before(responce);
-
 	$("#read-more").button('complete');	
       },
       error: function(responce){
@@ -38,7 +37,7 @@ $(document).ready(function(){
     });
   });
 
-  // change statuses period
+  // change statuses term to show
   $("#date-list a").click(function(e){
     
     e.preventDefault();
@@ -51,7 +50,8 @@ $(document).ready(function(){
       url:'/statuses/switch_term',
       data:{"date":date,"date_type":date_type},
       success: function(responce){
-	alert(responce);
+	// update screen 
+	$("#wrap-timeline").html(responce);
       },
       error: function(responce){
 
