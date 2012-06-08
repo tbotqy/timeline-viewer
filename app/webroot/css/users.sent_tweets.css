@@ -9,22 +9,71 @@
 -------------------------------------------------- */
 #wrap-dashbord{ 
   float: left;
-  width: 200px;
+  width: 100%;
 }
 
+#wrap-timeline-mode-nav{ 
+  float: left;
+  width: 100%;
+}
+
+#wrap-term-selectors{
+  float: left;
+  width: 100%;
+}
+
+#wrap-list-years{ 
+  float: left;
+  width: 100%;
+}
+
+#wrap-list-months{ 
+  float: left;
+  width: 100%;
+}
+
+#wrap-list-days{ 
+  float: left;
+  width: 100%;
+}
+
+.list-years{ 
+  width: 100%;
+}
+
+.list-months{
+  display: none ;
+}
+.list-days{ 
+  display: none;
+ }
+
+.list-years li{ 
+  float: left;
+}
+.list-months li{ 
+  float: left;
+}
+.list-days li{ 
+  float: left;
+}
+
+/*
 #timeline-type-list{ 
   float:left;
   width: 100%;
   font-size: 11px;
 }
-
+*/
+/*
 #timeline-type-list li{ 
   float: left;
   width: 33%;
   height: 20px;
   line-height: 20px;
  }
-
+*/
+/*
 #date-list{ 
   float: left;
   width: 100%;
@@ -48,12 +97,13 @@
 #date-list li:hover{ 
   background: #e8e0cf;
 }
-
+*/
 /*
 #date-list li .link:hover{ 
   background: #e8e0cf;
 }
 */
+/*
 .wrap-years{ 
   width: 200px;
   float: left;
@@ -88,7 +138,7 @@
 .status-sum{ 
   float: right;
 }
-
+*/
 /* --------------------------------------------------
    contents main
 -------------------------------------------------- */

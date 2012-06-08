@@ -6,8 +6,6 @@
 
 class StatusesController extends AppController{
     
-    public $components = array('Auth','Session');
-    public $helpers = array('Time','Html','Form');
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
     
@@ -24,17 +22,9 @@ class StatusesController extends AppController{
 
         $user =  $this->Auth->user();
         $client = $this->createClient();
-        $token = $this->User->findByTwitterId(
-
-                                              $user['Twitter']['id'],
-                                              array('User.token','User.token_secret')
-                                              );
-        
-        $verify_credentials = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json',array('screen_name'=>$user['Twitter']['screen_name']));
-        $verify_credentials = json_decode($verify_credentials);
-       
+     
         $this->set('screen_name',$user['Twitter']['screen_name']);
-        $this->set('profile_image',$verify_credentials->profile_image_url_https);
+        $this->set('profile_image',$user['Twitter']['profile_image_url_https']);
     }
 
     public function acquire_statuses(){
@@ -45,7 +35,7 @@ class StatusesController extends AppController{
          * returns json string
          */
         
-        if(!$this->request->is('Ajax')){
+        if(!$this->request->is('ajax')){
             // reject any request if not ajax
             echo "bad request";
             exit;
@@ -207,7 +197,7 @@ class StatusesController extends AppController{
         
         $this->layout = 'ajax';
 
-        if(!$this->request->is('Ajax')){
+        if(!$this->request->is('ajax')){
             // reject that request
             echo 'bad request';
             exit;
@@ -256,6 +246,11 @@ class StatusesController extends AppController{
 
     public function switch_term(){
 
+        /*
+         * change which term of statuses to show
+         * returns html responce
+         */
+
         $this->layout = 'ajax';
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
@@ -294,10 +289,9 @@ class StatusesController extends AppController{
                                               'order'=>array('Status.created_at DESC')
                                               )
                                         );
+        $statuses = $this->getAnchoredStatuses($statuses);
         $itr = count($statuses) - 1;
-        if($itr<0){
-            pr($term);exit;
-        }
+        
         $last_status_id = $statuses[$itr]['Status']['id'];
         $this->set('statuses',$statuses);
         $this->set('last_status_id',$last_status_id);
@@ -385,5 +379,4 @@ class StatusesController extends AppController{
         $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
         return $ret;
     }
-
 }

@@ -39,7 +39,7 @@
     <!-- .bottom -->
     <span class="bottom">
       <span class="specific-date">
-	<?php echo date('Y年n月j日 - h:m',$status['Status']['created_at']+$user_data['User']['utc_offset']);?>
+	<?php echo date('Y年n月j日 - H:i',$status['Status']['created_at']+$user_data['User']['utc_offset']);?>
       </span>
       <span class="source">
 	<?php echo $status['Status']['source'];?>から

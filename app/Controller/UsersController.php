@@ -6,10 +6,10 @@
 class UsersController extends AppController{
 
     /* settings */
-    public $helpers = array('Html','Form','Session');
-    public $components = array('Auth','Session');
+
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
+    
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
@@ -240,36 +240,7 @@ class UsersController extends AppController{
       
         //$this->set('sum_by_year',$sum_by_year);
         //$this->set('sum_by_month',$sum_by_month);
-        $this->set('sum_by_day',$sum_by_day);
+        $this->set('date_list',$sum_by_day);
         $this->set('last_status_id',$last_status_id);
     }
-
-    public function debug(){
-       
-        $user = $this->Auth->user();
-        $client = $this->createClient();
-        $token = $this->User->findByTwitterId(
-                                              $user['Twitter']['id'],
-                                              array('User.token','User.token_secret')
-                                              );
-        $verify_credentials = $client->get($token['User']['token'],$token['User']['token_secret'],'https://api.twitter.com/1/account/verify_credentials.json');
-        $verify_credentials = json_decode($verify_credentials);
-        
-        $created_at = $verify_credentials->created_at;
-        $uinfo = $this->User->find(
-                                   'first',
-                                   array(
-                                         'conditions'=>array(
-                                                       'User.twitter_id'=>$user['Twitter']['id']
-                                                       )
-                                         )
-                                   );
-        $created_at = time();
-        echo $created_at;
-        echo "strtotime:".strtotime($created_at);echo "<br/>";
-        date_default_timezone_set('Asia/Tokyo');
-        echo date('Y:m:d G:i:s',$created_at);
-    
-    }
-
 }

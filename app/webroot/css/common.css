@@ -1,5 +1,5 @@
 @charset "utf-8";
-@import "reset.css";
+@import "bootstrap.css";
 
 /* --------------------------------------------------
    body
@@ -18,12 +18,17 @@ body{
 /* --------------------------------------------------
    elements
 -------------------------------------------------- */
+/*
 a:link,
 a:hover,
 a:active,
 a:visited{
   color: gray; 
   text-decoration: none;
+}
+*/
+ul{ 
+  list-style: none;
 }
 
 /* --------------------------------------------------
@@ -76,6 +81,15 @@ header#global a:hover{
   text-align: center;
   line-height: 30px;
 }
+
+/* --------------------------------------------------
+   main
+-------------------------------------------------- */
+#container-main{ 
+  width: 1200px;
+  margin: 10px auto;
+ }
+
 
 /* --------------------------------------------------
    footer
@@ -361,4 +375,34 @@ ul#userInfo .init{
   //float: left;
   width: 1000px;
   margin: 0 auto;
+}
+
+.to-page-top{ 
+  width: 120px;
+  position: fixed;
+  bottom: 5px;
+  right: 15px;
+  background: black;
+  opacity: 0.5;
+  border-radius: 10px;
+}
+
+.to-page-top a{ 
+  float: left;
+  width: 100%;
+}
+
+.to-page-top span{ 
+  float: left;
+  width: 94px;
+  font-size: 13px;
+  line-height: 29px;
+  text-align: center;
+  color: white;
+}
+.to-page-top img{ 
+  float: left;
+  width: 16px;
+  height: 16px;
+  padding: 5px 0 5px 5px;
 }
