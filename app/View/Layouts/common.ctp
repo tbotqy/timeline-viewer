@@ -3,11 +3,13 @@
   <head>
     <meta charset="UTF-8" />
     <?php
-      echo $this->Html->css('bootstrap.css');
-      echo $this->Html->css('common.css');
-      //echo $this->Html->script('jquery-1.7.2.min.js');
+      echo $this->Html->css('bootstrap');
+      echo $this->Html->css('common');
+ //echo $this->Html->script('jquery-1.7.2.min.js');
       echo $this->Html->script('jquery-1.7.2.js');
+      echo $this->Html->script('bootstrap.js');
       echo $this->Html->script('bootstrap-button.js');
+      echo $this->Html->script('bootstrap-tab.js');
     ?>
     <?php
       echo $this->fetch('meta');
@@ -31,9 +33,14 @@
 	</div>
       </header>
     </div><!-- container header end -->
+    <div id="container-main">
     <?php
       echo $this->fetch('content');
     ?>
+    </div>
+    <div class="to-page-top">
+      <a href="#"><img src="/img/icons/Arrow Up.png" title="ページトップへ" /><span>ページトップ</span></a>
+    </div>
     <div id="containerFooter">
       <footer>
 	copyright @ <?php

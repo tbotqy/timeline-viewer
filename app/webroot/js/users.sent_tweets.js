@@ -1,5 +1,37 @@
 $(document).ready(function(){
-  
+
+  // action for dashbord
+  $(".list-years li").hover(function(){
+
+    $(".list-years a").removeClass("btn-primary active");
+    $(this).find('a').addClass("btn-primary");
+   
+    $("#wrap-list-months ul").css('display','none');
+    $("#wrap-list-days ul").css('display','none');
+
+    // get the class value in hovering element > a
+    var year = $(this).attr('data-date');
+    
+    // show the ul element with fetched year
+    $("#wrap-list-months").find("."+year).css('display','block');
+    
+    //$("#wrap-list-months").find("."+year).animate({opacity:"toggle"},500);}
+  });
+
+  $(".list-months li").hover(function(){
+    
+    $(".list-months li a").removeClass("btn-primary active");
+    $(this).find('a').addClass("btn-primary");
+
+    $("#wrap-list-days ul").css('display','none');
+
+    // get the class value in hovering element > a
+    var month = $(this).attr('data-date');
+    // show the ul element with fetched year
+    //$("#wrap-list-months").find("."+year).toggle();
+    $("#wrap-list-days").find("."+month).css('display','block');
+  });
+
   // action for toggle in date-list 
   $("#date-list .toggle").click(function(){
    
@@ -38,11 +70,13 @@ $(document).ready(function(){
   });
 
   // change statuses term to show
-  $("#date-list a").click(function(e){
+  $("#wrap-term-selectors a").click(function(e){
     
     e.preventDefault();
-    var date = $(this).attr('name');
-    var date_type = $(this).attr('class');
+    var d = $(this);
+    $(this).button('loading');
+    var date = $(this).attr('data-date');
+    var date_type = $(this).attr('data-date-type');
 
     $.ajax({
       type: 'GET',
@@ -52,6 +86,7 @@ $(document).ready(function(){
       success: function(responce){
 	// update screen 
 	$("#wrap-timeline").html(responce);
+	$("#wrap-term-selectors a").button('complete');
       },
       error: function(responce){
 

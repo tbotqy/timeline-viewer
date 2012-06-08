@@ -1,5 +1,15 @@
 $(document).ready(function(){
 
+  // to-page-top
+  $(".top-page-top a").click(function(e){
+    e.preventDefault();
+    window.scrollTo('0','0');
+/* 
+   $('html,body').animate({ scrollTop: $($(this).attr("href")).offset().top }, 'slow','swing');
+    return false;*/
+    //$('html,body').animate({ scrollTop: 0 }, 'slow');
+  });
+
   // action for toggle in date-list 
   $("#date-list .toggle").click(function(){
    
