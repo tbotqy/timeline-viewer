@@ -1,53 +1,57 @@
 $(document).ready(function(){
-
-  // action for dashbord
-  $(".list-years li").hover(function(){
-
-    $(".list-years a").removeClass("btn-primary active");
-    $(this).find('a').addClass("btn-primary");
-   
+  
+  // mouseover action for year list in dashbord
+  $(".list-years li").mouseover(function(){
+    
+    // normalize all the buttons for years
+    $(".list-years a").removeClass("btn-primary selected");
+    // apply unique css feature only to focused button 
+    $(this).find('a').addClass("btn-primary selected");
+    
+    // hide all the lists for months and days
     $("#wrap-list-months ul").css('display','none');
     $("#wrap-list-days ul").css('display','none');
-
-    // get the class value in hovering element > a
-    var year = $(this).attr('data-date');
     
-    // show the ul element with fetched year
+    // get the data-date value in hovered button
+    var year = $(this).attr('data-date');
+
+    // show the months list whose class is equal to var year
     $("#wrap-list-months").find("."+year).css('display','block');
     
-    //$("#wrap-list-months").find("."+year).animate({opacity:"toggle"},500);}
   });
 
-  $(".list-months li").hover(function(){
+  // mouseover action for months list in dashbord
+  $(".list-months li").mouseover(function(){
     
-    $(".list-months li a").removeClass("btn-primary active");
-    $(this).find('a').addClass("btn-primary");
+    // normalize all the buttons for months
+    $(".list-months li a").removeClass("btn-primary selected");
+    // apply unique css feature only to focused button 
+    $(this).find('a').addClass("btn-primary selected");
 
+    // hide all the days lists
     $("#wrap-list-days ul").css('display','none');
 
-    // get the class value in hovering element > a
+    // get the data-date value in hovered button 
     var month = $(this).attr('data-date');
-    // show the ul element with fetched year
-    //$("#wrap-list-months").find("."+year).toggle();
-    $("#wrap-list-days").find("."+month).css('display','block');
-  });
-
-  // action for toggle in date-list 
-  $("#date-list .toggle").click(function(){
    
-    $(this).parent().find(".box-for-toggle:first").slideToggle();
-    
+    // show the days list whose class is equal to var month
+    $("#wrap-list-days").find("."+month).css('display','block');
+ 
   });
 
-  // action for each status
+  // click action for each status
+  // hide and show the bottom line in each status
   $(".status-content").live("click",function(){
     $(this).find(".bottom").slideToggle('fast');
   });
 
-  // read more
+  // click action for read more button
   $("#read-more").click(function(){
-  
+    
+    // let button say 'loading'
     $("#read-more").button('loading');
+    
+    // fetch more statuses to show
     $.ajax({
 
       type:"POST",
@@ -55,41 +59,69 @@ $(document).ready(function(){
       data:{"last_status_id":$("#last-status-id").attr("value")},
       url: '/statuses/read_more',
       success: function(responce){
-	// remove element representing last status id
+	// remove the element representing last status id
 	$("#last-status-id").remove();
 	
 	// insert loaded html code 
 	$(".land-mark").before(responce);
+
+	// let button say that process has been done
 	$("#read-more").button('complete');	
       },
       error: function(responce){
-	// handle with error
-	alert("error");
+	alert("読み込みに失敗しました。画面をリロードしてください");
       }
     });
   });
 
-  // change statuses term to show
+  // click action to change the term of statuses to show
   $("#wrap-term-selectors a").click(function(e){
     
+    // prevent the page from reloading
     e.preventDefault();
-    var d = $(this);
+    
+    // get href attr in clicked button
+    var href =$(this).attr('href');
+    
+    // let button say loading
     $(this).button('loading');
+
+    // change the color of buttons
+    var parent = $("#wrap-term-selectors");
+    parent.find(".loaded").removeClass("btn-warning loaded");
+    parent.find(".selected").addClass("btn-warning loaded");
+    parent.find(".selected").removeClass("btn-primary selected");
+
+    // acquire the date to fetch from clicked button
     var date = $(this).attr('data-date');
     var date_type = $(this).attr('data-date-type');
-
+    
+    // show the loading icon over the statuses area
+    $(".land-mark").before("<div class=\"cover\"><span>Loading</span></div>");
+    var loading_element = $("#wrap-timeline .cover")
+    loading_element.css("height",$("#wrap-timeline").height());
+    loading_element.animate({
+      opacity: 0.8
+    },200);
+    
+    // fetch statuses 
     $.ajax({
       type: 'GET',
       dataType: 'html',
       url:'/statuses/switch_term',
       data:{"date":date,"date_type":date_type},
       success: function(responce){
-	// update screen 
+	// update statuses
 	$("#wrap-timeline").html(responce);
+	// let the button say that process has been done
 	$("#wrap-term-selectors a").button('complete');
+
+	// record requested url in the histry
+	window.history.pushState(null,null,href);
+	
       },
       error: function(responce){
-
+	alert("読み込みに失敗しました。画面をリロードしてください");	
       }
     });
   });

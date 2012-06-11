@@ -1,5 +1,5 @@
 <?php
-$this->Html->script('statuses.import',array('inline'=>false));
+  echo $this->Html->script('statuses.import',array('inline'=>false));
 ?>
 <h2 class="init">Retrieve your statuses.</h2>
 

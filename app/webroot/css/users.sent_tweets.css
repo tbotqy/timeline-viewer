@@ -9,12 +9,27 @@
 -------------------------------------------------- */
 #wrap-dashbord{ 
   float: left;
-  width: 100%;
+  width: 1200px;
+  height: 200px;
+  //box-shadow: 0 0 2px 0 #000;
+  
+}
+
+#wrap-dashbord .inner{ 
+  height: 200px;
+  position: fixed;
+  top: 40px;
+  border-bottom: solid 2px #808080;
+  background: black;
+  z-index: 1000;
+  opacity: 1;
+  background: url(../img/html_bg.png);
 }
 
 #wrap-timeline-mode-nav{ 
   float: left;
   width: 100%;
+  margin: 10px 0 0 0;
 }
 
 #wrap-term-selectors{
@@ -22,7 +37,7 @@
   width: 100%;
 }
 
-#wrap-list-years{ 
+#wrap-list-yexars{ 
   float: left;
   width: 100%;
 }
@@ -37,7 +52,10 @@
   width: 100%;
 }
 
-.list-years{ 
+.list-years,
+.list-months,
+.list-days{ 
+  float: left;
   width: 100%;
 }
 
@@ -58,87 +76,6 @@
   float: left;
 }
 
-/*
-#timeline-type-list{ 
-  float:left;
-  width: 100%;
-  font-size: 11px;
-}
-*/
-/*
-#timeline-type-list li{ 
-  float: left;
-  width: 33%;
-  height: 20px;
-  line-height: 20px;
- }
-*/
-/*
-#date-list{ 
-  float: left;
-  width: 100%;
-  font-size: 14px;
-}
-
-#date-list li{ 
-  float: left;
-  width: 100%;
-}
-
-#date-list li .link{ 
-  float: left;
-  width: 170px;
-  height: 40px;
-  cursor: pointer;
-  line-height: 40px;
-  padding: 0 5px 0 10px;
-}
-
-#date-list li:hover{ 
-  background: #e8e0cf;
-}
-*/
-/*
-#date-list li .link:hover{ 
-  background: #e8e0cf;
-}
-*/
-/*
-.wrap-years{ 
-  width: 200px;
-  float: left;
-  display: block;
-}
-
-.wrap-months{ 
-  width: 190px;
-  float: left;
-  margin: 0 0 0 10px;
-}
-
-.wrap-days{ 
-  width: 180px;
-  float: left;
-  margin: 0 0 0 10px;
-}
-
-.toggle{
-  float: left;
-  width: 14px;
-  cursor: pointer;
-}
-
-.box-for-toggle{ 
-  float: left;
-  width: 100%;
-  //display: none;
-  
-}
-
-.status-sum{ 
-  float: right;
-}
-*/
 /* --------------------------------------------------
    contents main
 -------------------------------------------------- */
@@ -150,6 +87,32 @@
 #wrap-timeline{ 
   float: left;
   width: 100%;
+}
+
+#wrap-timeline .cover{ 
+  width: 100%;
+  position: relative;
+  top: 0;
+  background: black;
+  opacity: 0;
+  //height: 100px;
+  z-index: 100;
+  color: white;
+}
+
+#wrap-timeline .cover span{ 
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  font-size: 200%;
+  font-family: impact;
+  color: #08C;
+}
+
+#wrap-timeline a{ 
+  color:#CD8500;
 }
 
 .wrap-each-status{ 
@@ -217,4 +180,9 @@
 #wrap-read-more{ 
   float: left;
   width: 100%;
+}
+
+#read-more{ 
+  width: 100%;
+  height: 50px;
 }

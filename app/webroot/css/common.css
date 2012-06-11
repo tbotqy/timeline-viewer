@@ -10,7 +10,6 @@ body{
   margin: 0;
   font-size: 100%;
   font-family: Helvetica,"メイリオ", sans-serif;
-  background: #f7f6f4;
   background: url(../img/html_bg.png);
   color: #7a6e7e;
 }
@@ -18,86 +17,44 @@ body{
 /* --------------------------------------------------
    elements
 -------------------------------------------------- */
-/*
-a:link,
-a:hover,
-a:active,
-a:visited{
-  color: gray; 
-  text-decoration: none;
-}
-*/
+
 ul{ 
   list-style: none;
 }
 
 /* --------------------------------------------------
-   header
+   nav
 -------------------------------------------------- */
-#containerHeader{
+#container-header{ 
+  float: left;
   width: 100%;
-  margin: 0;
+  height: 40px;
 }
 
-header#global{
-  width: 100%;
-  height: 30px;
-  margin: 0;
-  background: #2a2a2a;
-  color: white;
-}
-
-header#global a{
-  text-decoration: none;
-  color: white;
-}
-
-header#global a:hover{
-  background: #bf4040;
-}
-
-.header_inner{
+.navbar .container{ 
   width: 1200px;
-  margin: 0 auto;
-}
-
-.page_logo{
-  float: left;
-}
-
-.link_top{
-  float: left;
-  width: 100px;
-  height: 30px;
-  font-weight: bold;
-  text-align: center;
-  line-height: 30px;
-}
-
-.link_logout{
-  float: right;
-  width: 100px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
 }
 
 /* --------------------------------------------------
    main
 -------------------------------------------------- */
 #container-main{ 
-  width: 1200px;
+  float: left;
+  width: 100%;
   margin: 10px auto;
  }
 
-
+#container-main .inner{ 
+  width: 1200px;
+  margin: 0 auto;
+}
 /* --------------------------------------------------
    footer
 -------------------------------------------------- */
-#containerFooter{
+#container-footer{
   float: left;
   width: 100%;
-  //margin: 30px auto 0 auto;
+  margin: 30px auto 0 auto;
   background: white;
   color: #7a6e7e;
   //position:absolute;
@@ -105,10 +62,15 @@ header#global a:hover{
   text-align: center;
 }
 
-#containerFooter a:link,
-#containerFooter a:hover,
-#containerFooter a:active,
-#containerFooter a:visited{
+#container-footer .inner{ 
+  width: 1200px;
+  margin: 0 auto;
+}
+
+#container-footer a:link,
+#container-footer a:hover,
+#container-footer a:active,
+#container-footer a:visited{
   text-decoration: none;
   color: #7a6e7e;
 }
@@ -125,40 +87,6 @@ header#global a:hover{
    nav
 -------------------------------------------------- */
 
-#wrapperNav{
-  float: left;
-  width: 1200px;
-  margin: 0 auto;
-}
-
-nav,
-ul#navs{
-  float: left;
-  width: 1200px;
-}
-
-ul#navs li{
-  float: left;
-  width: 100px;
-  height: 30px;
-  margin: 10px 10px 0 0;
-}
-
-ul#navs a{
-  float: left;
-  width: 100px;
-  height: 30px;
-  text-align: center;
-  line-height: 30px;
-  text-decoration: none;
-  color: white;
-  background: #c4cde0;
-  border-radius: 5px;
-}
-
-ul#navs a:hover{
-  background: #5f6d9e;
-}
 
 /* --------------------------------------------------
    index
