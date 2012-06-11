@@ -167,7 +167,7 @@ class UsersController extends AppController{
         // load user info 
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
-
+      
         // fetch user's twitter account info
         $user_data = $this->User->find(
                                        'first',
@@ -182,16 +182,58 @@ class UsersController extends AppController{
                                                              )
                                              )
                                        );
-      
-        // fetch user's latest 10 statuses
-        $statuses = $this->Status->find(
-                                        'all',
-                                        array(
-                                              'conditions'=>array('Status.twitter_id'=>$twitter_id),
-                                              'limit'=>10,
-                                              'order'=>'Status.created_at DESC'
-                                              )
-                                        );
+        // check if requested uri includes query string
+        $term = isset($this->params['pass']['0']) ? $this->params['pass']['0'] : false;
+        if($term){
+          
+            // check the date format by counting number of hyphen in term
+            $count_hyphen = substr_count($term,'-');
+            $date_type = "";
+           
+            switch($count_hyphen){
+
+            case 0:
+                $date_type = "year";
+                break;
+            case 1:
+                $date_type = "month";
+                break;
+            case 2:
+                $date_type = "day";
+                break;
+            default:
+                $date_type = null;
+                break;
+            }
+
+            $utc_offset = $user_data['User']['utc_offset'];
+            $term = $this->strToTerm($term,$date_type,$utc_offset);
+
+            $statuses = $this->Status->find(
+                                            'all',
+                                            array(
+                                                  'conditions'=>array(
+                                                                      'Status.twitter_id'=>$twitter_id,
+                                                                      'Status.created_at >=' => $term['begin'],
+                                                                      'Status.created_at <=' => $term['end']
+                                                                      ),
+                                                  'limit'=>10,
+                                                  'order'=>'Status.created_at DESC'
+                                                  )
+                                            );
+
+        }else{
+
+            // fetch user's latest 10 statuses
+            $statuses = $this->Status->find(
+                                            'all',
+                                            array(
+                                                  'conditions'=>array('Status.twitter_id'=>$twitter_id),
+                                                  'limit'=>10,
+                                                  'order'=>'Status.created_at DESC'
+                                                  )
+                                            );
+        }
         
         // get entities anchored
         $statuses = $this->getAnchoredStatuses($statuses);        
