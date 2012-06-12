@@ -42,6 +42,7 @@ class AppController extends Controller {
     }
 
     public function getAnchoredStatuses($statuses){
+        
         /* 
          * used to add anchor tags to each status body
          * returns array

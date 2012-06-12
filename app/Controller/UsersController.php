@@ -9,7 +9,8 @@ class UsersController extends AppController{
 
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
-    
+    public $components = array('Twitter');
+
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
@@ -285,4 +286,28 @@ class UsersController extends AppController{
         $this->set('date_list',$sum_by_day);
         $this->set('last_status_id',$last_status_id);
     }
+
+    public function home_timeline(){
+        /*
+         * shows the home timeline 
+         * tweets are fetched from database, not via API
+         */
+        
+        // load user's account info
+        $user = $this->Auth->user();
+        $this->Twitter->initialize($this);
+        // instantiate twitter OAuth class
+        //$client = $this->createClient();
+        
+        //
+        // fetch as much stweets as API can retrieve
+        //
+        
+        // create a list of following users
+        $twitterUserList = $this->Twitter->get('statuses/user_timeline');
+        debug($twitterUserList);
+      
+    }
+        
+
 }
