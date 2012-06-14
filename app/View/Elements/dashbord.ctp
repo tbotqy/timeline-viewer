@@ -4,23 +4,18 @@
    * contains navigation to switch timeline type, list of date with all the statuses user has.
    */
 ?>
+
+<?php
+  echo $this->Html->css('element.dashbord',null,array('inline'=>false));
+?>
+
 <!-- #wrap-dashbord -->
 <div id="wrap-dashbord">
   <!-- .inner -->
   <div class="inner">
-    <div class="toggle">
-      <a href="#"><i class="icon-eject"></i></a>
-    </div>
-    <!-- #wrap-mode-nav" -->
-    <div id="wrap-timeline-mode-nav">
-      <nav>
-	<ul class="nav nav-pills">
-	  <li class="active"><a>You</a></li>
-	  <li><a>Following</a></li>
-	</ul>
-      </nav>
-    </div>
-    <!-- /#wrap-timeline-mode-nav -->
+ 
+    <div class="space"></div>
+
     <!-- #wrap-term-selectors -->
     <div id="wrap-term-selectors">
     

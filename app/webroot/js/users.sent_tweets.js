@@ -65,18 +65,20 @@ $(document).ready(function(){
 	// insert loaded html code 
 	$(".land-mark").before(responce);
 
-	// let button say that process has been done
-	$("#read-more").button('complete');	
       },
       error: function(responce){
 	alert("読み込みに失敗しました。画面をリロードしてください");
+      },
+      complete: function(){
+	// let button say that process has been done
+	$("#read-more").button('complete');	
       }
     });
   });
 
   // click action to change the term of statuses to show
   $("#wrap-term-selectors a").click(function(e){
-    
+  
     // prevent the page from reloading
     e.preventDefault();
     
@@ -84,47 +86,62 @@ $(document).ready(function(){
     var href =$(this).attr('href');
     
     // let button say loading
-    $(this).button('loading');
-
+    //$(this).button('loading');
+   
     // change the color of buttons
-    var parent = $("#wrap-term-selectors");
-    parent.find(".loaded").removeClass("btn-warning loaded");
-    parent.find(".selected").addClass("btn-warning loaded");
-    parent.find(".selected").removeClass("btn-primary selected");
+    /* 
+       var parent = $("#wrap-term-selectors");
+       parent.find(".loaded").removeClass("btn-warning loaded");
+       parent.find(".selected").addClass("btn-warning loaded");
+       parent.find(".selected").removeClass("btn-primary selected");
+    */
 
     // acquire the date to fetch from clicked button
     var date = $(this).attr('data-date');
     var date_type = $(this).attr('data-date-type');
     
+    $("#wrap-read-more").fadeOut('fast'); 
+    
     // show the loading icon over the statuses area
     $(".land-mark").before("<div class=\"cover\"><span>Loading</span></div>");
-    var loading_element = $("#wrap-timeline .cover")
-    loading_element.css("height",$("#wrap-timeline").height());
-    loading_element.animate({
+    var cover = $("#wrap-timeline .cover");
+    var wrap_timeline = $("#wrap-timeline"); 
+    cover.css("height",wrap_timeline.height());
+    
+    cover.animate({
       opacity: 0.8
     },200);
-    
+
     // fetch statuses 
     $.ajax({
       type: 'GET',
       dataType: 'html',
       url:'/statuses/switch_term',
       data:{"date":date,"date_type":date_type},
+      async: true,
       success: function(responce){
-	// update statuses
-	$("#wrap-timeline").html(responce);
-	// let the button say that process has been done
-	$("#wrap-term-selectors a").button('complete');
+	// insert recieved html
+	wrap_timeline.html(responce);
 
-	// record requested url in the histry
-	window.history.pushState(null,null,href);
-	
       },
       error: function(responce){
 	alert("読み込みに失敗しました。画面をリロードしてください");	
+      },
+      complete: function(){
+	
+	// show the loaded html
+	wrap_timeline.fadeIn('fast');
+	
+	$("#wrap-read-more").fadeIn('fast');
+
+	// let the button say that process has been done
+	$("#wrap-term-selectors a").button('complete');
+	
+	// record requested url in the histry
+	window.history.pushState(null,null,href);
+	
       }
     });
   });
  
 });
-			       

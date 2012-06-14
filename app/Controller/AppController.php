@@ -36,7 +36,17 @@ class AppController extends Controller {
 
     public $components = array('Auth','Session');
     public $helpers = array('Html','Form','Session');
-    
+  
+
+    public function beforeFilter(){
+        parent::beforeFilter();
+        
+        // check if user is logged in
+        $loggedIn = $this->Auth->loggedIn();
+        // pass it to view
+        $this->set('loggedIn',$loggedIn);
+    }
+
     public function createClient(){
         return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
     }

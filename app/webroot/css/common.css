@@ -1,5 +1,6 @@
 @charset "utf-8";
 @import "bootstrap.css";
+@import url(http://fonts.googleapis.com/css?family=Emblema+One);
 
 /* --------------------------------------------------
    body
@@ -35,6 +36,10 @@ ul{
   width: 1200px;
 }
 
+.navbar .brand{ 
+  font-family: 'Emblema One', cursive;
+}
+
 /* --------------------------------------------------
    main
 -------------------------------------------------- */
@@ -42,12 +47,13 @@ ul{
   float: left;
   width: 100%;
   margin: 10px auto;
- }
+}
 
 #container-main .inner{ 
   width: 1200px;
   margin: 0 auto;
 }
+
 /* --------------------------------------------------
    footer
 -------------------------------------------------- */
@@ -76,235 +82,8 @@ ul{
 }
 
 /* --------------------------------------------------
-   main
+   scroller toward top
 -------------------------------------------------- */
-#containerMain{
-  width: 1200px;
-  margin: 0 auto;
-}
-
-/* --------------------------------------------------
-   nav
--------------------------------------------------- */
-
-
-/* --------------------------------------------------
-   index
--------------------------------------------------- */
-#wrapperLogin{
-  width:1200px;
-  height: 600px;
-  margin: 0 auto;
-}
-
-#wrapperLogin .welcome{
-  width: 980px;
-  margin: 200px auto;
-}
-
-#wrapperLogin span{
-  width: 980px;
-  font-size: 30px;
-  float: left;
-  text-align: center;
-  margin: 0 0 80px 0;
-}
-
-#wrapperLogin .wrapper_btn_auth{
-  width:980px;
-  margin: 100px auto;
-  text-align:center;
-}
-
-#wrapperLogin a.btn_auth:link,
-a.btn_auth:visited{
-  background: #39D url(http://s.twimg.com/a/1277334364/images/bg-btn-blue.png) repeat-x 0 0;
-  border: 1px solid #39D;
-  color: #FFF;
-  font-weight: 700;
-  margin: 0 5px 0 0;
-  padding: 4px 10px 5px;
-  text-shadow: 0 -1px 0 #39D;
-  text-decoration: none;
-  border-radius: 4px;
-  -moz-border-radius: 4px;
-  -webkit-border-radius: 4px;
-  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
-  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
-  border:none;
-}
-
-#wrapperLogin a.btn_auth:hover{
-  //background: #fc9200;
-}
-
-#wrapperLogin a.btn_auth:active{
-  //background: #fc9200;
-  position: relative;
-  top:1px;
-  -moz-box-shadow: none;
-  -webkit-box-shadow: none;
-  border:none;
-}
-
-/*
--webkit-gradient(linear, 開始する位置, 終了する位置, from(開始する色), to(#ff0)終了する色));
-*/
-
-/* --------------------------------------------------
-   wrapper content
--------------------------------------------------- */
-
-#wrapperContent{
-  float: left;
-  width: 1200px;
-  margin: 10px 0 0 0;
-}
-
-/* --------------------------------------------------
-   user info
--------------------------------------------------- */
-
-ul#userInfo{
-  float:left;
-  width: 100px;
-  background: white;
-  border-radius: 10px;
-  text-align: center;
-}
-
-#userInfo li.img,#userInfo li.sc_name{
-  margin:5px 0;
-}
-
-/* --------------------------------------------------
-   year list
--------------------------------------------------- */
-#listYears{
-  float: left;
-  width: 1000px;
-  height: 100px;
-  padding: 0 0 0 10px;
-}
-
-#listYears input.left{
-  float: left;
-  width: 30px;
-  height: 100px;
-}
-
-#listYears input.right{
-  float: right;
-  width: 30px;
-  height: 100px;
-}
-
-
-#listYears ul li{
-  float: left;
-  width: 200px;
-  hight: 100px;
-  text-align: center;
-  line-height: 100px;
-  margin: 0 10px 0 0;
-}
-
-/* --------------------------------------------------
-   list months
--------------------------------------------------- */
-#listMonth{
-  float: left;
-  width: 100px;
-  height: 1000px;
-}
-
-#listMonths ul{
-  float: left;
-  width: 100px;
-}
-#listMonths li{
-  float: left;
-  width:100px;
-  height: 20px;
-  margin: 10px 0 10px 0;
-  background: white;
-  text-align: right;
-}
-
-/* --------------------------------------------------
-   list days
--------------------------------------------------- */
-#listDays{
-  float: left;
-  //width: 100px;
-  height: 1000px;
-}
-
-#listDays ul{
-  float: left;
-  //width: 100px;
-}
-#listDays li{
-  float: left;
-  clear: both;
-  width: 50px;
-  height: 20px;
-  margin: 10px 0 10px 0;
-  background: white;
-  text-align: right;
-}
-
-/* --------------------------------------------------
-   list tweets
--------------------------------------------------- */
-#listTweets{
-  float: left;
-  //width: 100px;
-  height: 1000px;
-}
-
-#listTweets ul{
-  float: left;
-  //width: 100px;
-}
-#listTweets li{
-  float: left;
-  width: 50px;
-  height: 20px;
-  margin: 10px 0 10px 0;
-}
-
-/* --------------------------------------------------
-   style for initialize page
--------------------------------------------------- */
-
-h2.init{
-  width: 1200px;
-  float: left;
-  text-align:center;
-  font-size: 200%;
-  border-bottom: solid 1px #998877;
-  margin: 20px 0 0 0;
-}
-
-ul#userInfo .init{
-  float:left;
-  width: 100px;
-  background: white;
-  border-radius: 10px;
-  text-align: center;
-}
-
-#userInfo.init li.img,#userInfo.init li.sc_name{
-  margin:5px 0;
-}
-
-#areaInit{
-  //float: left;
-  width: 1000px;
-  margin: 0 auto;
-}
-
 .to-page-top{ 
   width: 120px;
   position: fixed;
@@ -313,6 +92,7 @@ ul#userInfo .init{
   background: black;
   opacity: 0.5;
   border-radius: 10px;
+  display: none;
 }
 
 .to-page-top a{ 
@@ -328,6 +108,7 @@ ul#userInfo .init{
   text-align: center;
   color: white;
 }
+
 .to-page-top img{ 
   float: left;
   width: 16px;

@@ -10,7 +10,7 @@ class UsersController extends AppController{
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
     public $components = array('Twitter');
-
+    
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
@@ -34,6 +34,7 @@ class UsersController extends AppController{
         /*
          * This action just shows the view for login.
          */
+
     }
 
     public function logout(){
@@ -295,6 +296,7 @@ class UsersController extends AppController{
         
         // load user's account info
         $user = $this->Auth->user();
+        $twitter_id = $user['Twitter']['id'];
         $this->Twitter->initialize($this);
         // instantiate twitter OAuth class
         //$client = $this->createClient();
@@ -304,9 +306,18 @@ class UsersController extends AppController{
         //
         
         // create a list of following users
-        $twitterUserList = $this->Twitter->get('statuses/user_timeline');
-        debug($twitterUserList);
-      
+        $options = array('user_id'=>$twitter_id);
+        $followList = $this->Twitter->get('friends/ids',$options);
+        $followList = json_decode($followList,true);
+        /*       foreach($followList['ids'] as $id){
+            $options = array('user_id'=>$id,'count'=>10,'include_rts'=>true);
+            $statuses[] = $this->Twitter->get('statuses/user_timeline',$options);
+            }*/
+        $options = array('count'=>200,'include_rts'=>true);
+        $statuses = $this->Twitter->get('statuses/home_timeline',$options);
+        
+        pr(json_decode($statuses,true));
+    
     }
         
 
