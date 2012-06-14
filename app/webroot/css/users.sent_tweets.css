@@ -3,82 +3,6 @@
 /* --------------------------------------------------
    users.sent_tweets
 -------------------------------------------------- */
-
-/* --------------------------------------------------
-   dashbord
--------------------------------------------------- */
-#wrap-dashbord{ 
-  float: left;
-  width: 1200px;
-  height: 200px;
-  //box-shadow: 0 0 2px 0 #000;
-  
-}
-
-#wrap-dashbord .inner{ 
-  height: 200px;
-  position: fixed;
-  top: 40px;
-  border-bottom: solid 2px #808080;
-  background: black;
-  z-index: 1000;
-  opacity: 1;
-  background: url(../img/html_bg.png);
-}
-
-#wrap-timeline-mode-nav{ 
-  float: left;
-  width: 100%;
-  margin: 10px 0 0 0;
-}
-
-#wrap-term-selectors{
-  float: left;
-  width: 100%;
-}
-
-#wrap-list-yexars{ 
-  float: left;
-  width: 100%;
-}
-
-#wrap-list-months{ 
-  float: left;
-  width: 100%;
-}
-
-#wrap-list-days{ 
-  float: left;
-  width: 100%;
-}
-
-.list-years,
-.list-months,
-.list-days{ 
-  float: left;
-  width: 100%;
-}
-
-.list-months{
-  display: none ;
-}
-.list-days{ 
-  display: none;
- }
-
-.list-years li{ 
-  float: left;
-}
-.list-months li{ 
-  float: left;
-}
-.list-days li{ 
-  float: left;
-}
-
-/* --------------------------------------------------
-   contents main
--------------------------------------------------- */
 #wrap-main{ 
   float: left;
   width: 500px
@@ -93,7 +17,7 @@
   width: 100%;
   position: relative;
   top: 0;
-  background: black;
+  background: #F2EEE6;
   opacity: 0;
   //height: 100px;
   z-index: 100;
@@ -109,6 +33,7 @@
   font-size: 200%;
   font-family: impact;
   color: #08C;
+  //background: url(../img/ajax-loader.gif) no-repeat;
 }
 
 #wrap-timeline a{ 

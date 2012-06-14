@@ -9,7 +9,6 @@
 tags
 *~
 *.log
-#*
-*#
+#*#
 empty
 /app/webroot/img/

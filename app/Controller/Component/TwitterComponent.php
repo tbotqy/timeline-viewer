@@ -16,7 +16,7 @@ class TwitterComponent extends Component{
         $this->controller = $controller;
     }
 
-    public function get($method,$tokens = null,$options = array()){
+    public function get($method,$options = array(),$tokens = null){
  
         /* 
          * $method : something like... statuses/user_timeline
