@@ -5,17 +5,25 @@
 
 class UsersController extends AppController{
 
-    /* settings */
-
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
-    public $components = array('Twitter');
-    
+      
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
     }
     
+    public function test(){
+        $user = $this->Auth->user();
+        $twitter_id = "151427378";
+     
+        if($this->User->existByTwitterId($twitter_id)){
+            echo "T";
+        }else{
+            echo "F";
+        }
+    }
+
     public function index(){
 
         /*
@@ -23,7 +31,7 @@ class UsersController extends AppController{
          */
         
         if($this->Auth->loggedIn()){
-            $this->redirect('/users/home');
+            $this->redirect('/users/sent_tweets');
         }else{
             $this->redirect('/users/login');
         }
@@ -34,10 +42,15 @@ class UsersController extends AppController{
         /*
          * This action just shows the view for login.
          */
-
+        
+        if($this->Auth->loggedIn()){
+            $this->redirect('/users/index');
+        }
+        
     }
 
     public function logout(){
+        
         // log the user out
         if($this->Auth->logout()){
             $this->redirect('/users/');
@@ -50,10 +63,11 @@ class UsersController extends AppController{
          * This action takes Twitter OAuth process.
          */
 
-        $client = $this->createClient();
+        $client = $this->Twitter->createClient();
         $requestToken = $client->getRequestToken('https://api.twitter.com/oauth/request_token', 'http://' . $_SERVER['HTTP_HOST'] . '/users/callback');
 
-        if( $requestToken ){
+        if($requestToken){
+            
             // redirect to api.twitter.com
             $this->Session->write('twitter_request_token', $requestToken);
             /* test mode */ $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
@@ -72,95 +86,98 @@ class UsersController extends AppController{
         // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
         $client = $this->createClient();
+        
         // fetch access token for this user
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
+        
+        if(!$accessToken){
 
-        if( !$accessToken ){
-            // if failed in fetching access token
-            // show the error message
+            // if failed in fetching access token,show the error message
             $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
+            return ;
+        }
+
+        $tokens['token'] = $accessToken->key;
+        $tokens['token_secret'] = $accessToken->secret;
+
+        $verify_credentials = $this->Twitter->get('account/verify_credentials',array(),$tokens);
+        $verify_credentials = json_decode($verify_credentials,true);
+        
+        //
+        // check if user with authorized twitter id exists 
+        //
+
+        if($this->User->existByTwitterId($verify_credentials['id_str'])){
+
+            // get user id
+            $user_id = $this->User->getIdByTwitterId($verify_credentials['id_str']);
+            
+            // check if stored tokens are up-to-date by comparing with acquired tokens
+            $stored_tokens = $this->User->getTokens($user_id);
+
+            if( $stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret ){
+
+                // if not, update them
+                $data = array(
+                              'id' =>  $user_id,
+                              'token' => $accessToken->key,
+                              'token_secret' => $accessToken->secret,
+                              'token_updated' => time(),
+                              'updated' => time()
+                              );
+                
+                $this->User->save($data);
+            }
+                      
         }else{
+            // register if user doesn't have account
 
-            $verify_credentials = $client->get($accessToken->key,$accessToken->secret,'https://api.twitter.com/1/account/verify_credentials.json');
-            $verify_credentials = json_decode($verify_credentials);
-            $user = array();//contain the information about the user to get logged in.
-            $user['Twitter']['id'] = $verify_credentials->id_str;
-            $user['Twitter']['screen_name'] = $verify_credentials->screen_name;
-            $user['Twitter']['profile_image_url_https'] = $verify_credentials->profile_image_url_https;
-            $user['Twitter']['utc_offset'] = $verify_credentials->utc_offset;
-            // check if user is already registered 
-            $exist = $this->User->find(
-                                       'count',
-                                       array(
-                                             'conditions'=>array(
-                                                                 'twitter_id'=>$verify_credentials->id_str
-                                                                 )
-                                             )
-                                       );
-
-            if( $exist ){
-
-                // check if stored tokens are up-to-date
-                $stored_tokens = $this->User->findByTwitterId(
-                                                              $verify_credentials->id_str,
-                                                              array('User.id','User.token','User.token_secret')
-                                                              );
-
-                if( $stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret ){
-                    // if not, update them
-                    $id = $stored_tokens['User']['id'];
-                    $data = array('id' => $id,
-                                  'token' => $accessToken->key,
-                                  'token_secret' => $accessToken->secret,
-                                  'token_updated' => time()
+            // user's data to save
+            $data_to_save = array(
+                                  'twitter_id'=>$verify_credentials['id_str'],
+                                  'name'=>$verify_credentials['name'],
+                                  'screen_name'=>$verify_credentials['screen_name'],
+                                  'profile_image_url_https'=>$verify_credentials['profile_image_url_https'],
+                                  'time_zone'=>$verify_credentials['time_zone'],
+                                  'utc_offset'=>$verify_credentials['utc_offset'],
+                                  'created_at'=>strtotime($verify_credentials['created_at']),
+                                  'lang'=>$verify_credentials['lang'],
+                                  'token'=>$accessToken->key,
+                                  'token_secret'=>$accessToken->secret,
+                                  'token_updated'=>0,
+                                  'initialized_flag'=>0,
+                                  'created'=>time()
                                   );
-                    $this->User->save($data);
-                }
+            $this->User->save($data_to_save);
+        }
 
-                // check if user has aleady imported his status on twitter
-                $hasBeenInitialized = $this->User->findByTwitterId($verify_credentials->id_str,
-                                                                   array('User.initialized_flag')
-                                                                   );
+        // 
+        // execute login and redirect user
+        // 
 
-                if( !$hasBeenInitialized['User']['initialized_flag'] ){
-
-                    if( $this->Auth->login($user) ){
-                        $this->redirect('/statuses/import');
-                    }
-                }else{
-
-                    if( $this->Auth->login($user) ){
-                        $this->redirect('/users/home');
-                    }
-                }
+        // prepare user data to get logged in
+        $user['id'] = $this->User->getIdByTwitterId($verify_credentials['id_str']);
+        $user['Twitter']['id'] = $verify_credentials['id_str'];
+        $user['Twitter']['screen_name'] = $verify_credentials['screen_name'];
+        $user['Twitter']['profile_image_url_https'] = $verify_credentials['profile_image_url_https'];
+        $user['Twitter']['utc_offset'] = $verify_credentials['utc_offset'];
+            
+        // log the user in
+        if($this->Auth->login($user)){
+          
+            $user_id = $this->Auth->user('id');
+                    
+            // check if user has aleady imported his status on twitter
+            $hasBeenInitialized = $this->User->isInitialized($user_id);
+            
+            if(!$hasBeenInitialized){
+                $this->redirect('/statuses/import');
             }else{
-                // register if user doesn't have his account
-
-                // user's data to save
-                $data_to_save = array(
-                                      'twitter_id'=>$verify_credentials->id_str,
-                                      'name'=>$verify_credentials->name,
-                                      'screen_name'=>$verify_credentials->screen_name,
-                                      'profile_image_url_https'=>$verify_credentials->profile_image_url_https,
-                                      'time_zone'=>$verify_credentials->time_zone,
-                                      'utc_offset'=>$verify_credentials->utc_offset,
-                                      'created_at'=>strtotime($verify_credentials->created_at),
-                                      'lang'=>$verify_credentials->lang,
-                                      'token'=>$accessToken->key,
-                                      'token_secret'=>$accessToken->secret,
-                                      'token_updated'=>0,
-                                      'initialized_flag'=>0,
-                                      'created'=>time()
-                                      );
-                $this->User->save($data_to_save);
-
-                if( $this->Auth->login($user) ){
-                    $this->redirect('/statuses/import');
-                }
+                $this->redirect('/users/sent_tweets');
             }
         }
     }
-
+    
     public function sent_tweets(){
         /*
          * show the teewts sent by logged-in user
@@ -168,77 +185,51 @@ class UsersController extends AppController{
 
         // load user info 
         $user = $this->Auth->user();
-        $twitter_id = $user['Twitter']['id'];
-      
+
         // fetch user's twitter account info
-        $user_data = $this->User->find(
-                                       'first',
-                                       array(
-                                             'conditions'=>array('User.twitter_id'=>$twitter_id),
-                                             'fields'=>array(
-                                                             'User.twitter_id',
-                                                             'User.name',
-                                                             'User.screen_name',
-                                                             'User.profile_image_url_https',
-                                                             'User.utc_offset'
-                                                             )
-                                             )
-                                       );
+        $user_data = $this->User->findById($user['id']);
+
         // check if requested uri includes query string
         $term = isset($this->params['pass']['0']) ? $this->params['pass']['0'] : false;
+        
         if($term){
           
-            // check the date format by counting number of hyphen in term
-            $count_hyphen = substr_count($term,'-');
-            $date_type = "";
-           
-            switch($count_hyphen){
+            // check the type of given term
+            $date_type = $this->Url->getParamType($term);
 
-            case 0:
-                $date_type = "year";
-                break;
-            case 1:
-                $date_type = "month";
-                break;
-            case 2:
-                $date_type = "day";
-                break;
-            default:
-                $date_type = null;
-                break;
-            }
-
+            // load user's utc offset
             $utc_offset = $user_data['User']['utc_offset'];
-            $term = $this->strToTerm($term,$date_type,$utc_offset);
-
-            $statuses = $this->Status->find(
-                                            'all',
-                                            array(
-                                                  'conditions'=>array(
-                                                                      'Status.twitter_id'=>$twitter_id,
-                                                                      'Status.created_at >=' => $term['begin'],
-                                                                      'Status.created_at <=' => $term['end']
-                                                                      ),
-                                                  'limit'=>10,
-                                                  'order'=>'Status.created_at DESC'
-                                                  )
-                                            );
-
+            
+            // convert given term from string to unixtime
+            $term = $this->termToTime($term,$date_type,$utc_offset);
+            
+            // fetch statuses in specified term
+            $statuses = $this->Status->getStatusInTerm($user_id,$begin,$end,$order,$limit);
+            
         }else{
 
             // fetch user's latest 10 statuses
-            $statuses = $this->Status->find(
-                                            'all',
-                                            array(
-                                                  'conditions'=>array('Status.twitter_id'=>$twitter_id),
-                                                  'limit'=>10,
-                                                  'order'=>'Status.created_at DESC'
-                                                  )
-                                            );
+            $statuses = $this->Status->getLatestStatus($user['id']);
         }
         
-        // get entities anchored
-        $statuses = $this->getAnchoredStatuses($statuses);        
+        // fetch entities and add them to $statuses
+        $tmp_statuses = $statuses;
+        $itr = 0;
+        
+        foreach($statuses as $status){
+            $status_id = $status['Status']['status_id_str'];
+            $entities = $this->Entity->find(
+                                            'all',
+                                            array(
+                                                  'conditions'=>array('Entity.status_id_str'=>$status_id)
+                                                  )
+                                            );
+            
+            $tmp_statuses[$itr]['Status']['entities'] = $entities;
+            $itr++;
+        }
+
+        $statuses = $tmp_statuses;
         
         // get primary key of last status in fetched array
         $num = count($statuses)-1;
@@ -291,34 +282,23 @@ class UsersController extends AppController{
     public function home_timeline(){
         /*
          * shows the home timeline 
-         * tweets are fetched from database, not via API
+         * acquire user's hometimeline via API 
          */
         
         // load user's account info
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
+
+        // initialize Twitter component class
         $this->Twitter->initialize($this);
-        // instantiate twitter OAuth class
-        //$client = $this->createClient();
         
         //
-        // fetch as much stweets as API can retrieve
+        // fetch as much tweets as API can retrieve
         //
         
-        // create a list of following users
-        $options = array('user_id'=>$twitter_id);
-        $followList = $this->Twitter->get('friends/ids',$options);
-        $followList = json_decode($followList,true);
-        /*       foreach($followList['ids'] as $id){
-            $options = array('user_id'=>$id,'count'=>10,'include_rts'=>true);
-            $statuses[] = $this->Twitter->get('statuses/user_timeline',$options);
-            }*/
         $options = array('count'=>200,'include_rts'=>true);
         $statuses = $this->Twitter->get('statuses/home_timeline',$options);
         
         pr(json_decode($statuses,true));
-    
     }
-        
-
 }
