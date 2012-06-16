@@ -8,7 +8,7 @@ class TwitterComponent extends Component{
 
     public $components = array('Auth');
 
-    private function createClient(){
+    public function createClient(){
         return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
     }
 
@@ -48,5 +48,4 @@ class TwitterComponent extends Component{
         return $client->get($token,$token_secret,$url,$options);
     }
 
-        
 }

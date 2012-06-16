@@ -34,10 +34,9 @@ App::uses('Controller', 'Controller');
 
 class AppController extends Controller {
 
-    public $components = array('Auth','Session');
-    public $helpers = array('Html','Form','Session');
+    public $components = array('Auth','Session','Twitter');
+    public $helpers = array('Html','Form','Session','Text');
   
-
     public function beforeFilter(){
         parent::beforeFilter();
         
@@ -76,9 +75,9 @@ class AppController extends Controller {
             // apply each entity's anchor tag
             foreach($entities as $entity){
                 $type = $entity['Entity']['type'];
-                // get entity's body
+            
                 $entity_body = "";
-                
+                // get entity body    
                 switch($type){
                 case 'urls':
                 case 'media':
@@ -98,7 +97,7 @@ class AppController extends Controller {
     
         return $anchored_statuses;
     }
- 
+     
     public function addAnchorLinks($tweet,$entity,$entity_type){
       
         // inserts anchor elements to given $tweet_body
@@ -107,6 +106,7 @@ class AppController extends Controller {
         // determine href 
         switch($entity_type){
         case 'urls':
+            return $tweet;
         case 'media':
             $href = $entity;
             break;
@@ -130,7 +130,7 @@ class AppController extends Controller {
         return $ret;
     }
 
-    public function strToTerm($date,$date_type,$utc_offset){
+    public function termToTime($date,$date_type,$utc_offset){
         $ret = "";
 
         switch($date_type){

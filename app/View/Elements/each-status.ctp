@@ -33,7 +33,10 @@
     <!-- /.top -->
     
     <span class="text">
-      <?php echo $status['Status']['text'];?>
+      <?php 
+          //echo $this->Text->autoLinkUrls($status['Status']['text']);
+          echo $this->Link->addLinks($status['Status']['text'],$status['Status']['entities']);
+      ?>
     </span>
     
     <!-- .bottom -->
