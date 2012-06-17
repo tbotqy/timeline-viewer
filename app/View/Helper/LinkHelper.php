@@ -6,7 +6,7 @@ class LinkHelper extends AppHelper{
 
     public $helpers = array('Text');
 
-    public function addLinks(string $text,array $entities){
+    public function addLinks($text,$entities){
         
         /*
          * This function adds anchor links to the given text.
@@ -22,7 +22,7 @@ class LinkHelper extends AppHelper{
         foreach($entities as $entity){
 
             // check type of the entity
-            $type = $entity['Entity']['type'];
+            $type = $entity['type'];
             
             // load entity body
             $entity_body = "";
@@ -30,17 +30,17 @@ class LinkHelper extends AppHelper{
             switch($type){
            
             case 'hashtags':
-                $entity_body = $entity['Entity']['hashtag'];
+                $entity_body = $entity['hashtag'];
                 break;
             case 'user_mentions':
-                $entity_body = $entity['Entity']['mention_to_screen_name'];
+                $entity_body = $entity['mention_to_screen_name'];
                 break;
             default:
                 break;
             }
 
             if($type != 'urls' || $type != 'media'){
-                $ret = $this->addAnchorLinks($anchored_text,$entity_body,$type);
+                $ret = $this->addAnchorLinks($ret,$entity_body,$type);
             }
         }
 

@@ -35,7 +35,7 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
     public $components = array('Auth','Session','Twitter');
-    public $helpers = array('Html','Form','Session','Text');
+    public $helpers = array('Html','Form','Session','Text','Link');
   
     public function beforeFilter(){
         parent::beforeFilter();

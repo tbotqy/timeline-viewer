@@ -1,6 +1,6 @@
 <?php foreach($statuses as $status): ?>
 <!-- #wrap-each-status -->
-<div id="wrap-each-status">
+<div class="wrap-each-status">
 
   <!-- .profile-image -->
   <div class="profile-image">
@@ -52,5 +52,6 @@
   </div>
   <!-- /.status-content -->
 </div>
-<!-- /#wrap-each-status -->
+<!-- /.wrap-each-status -->
 <?php endforeach; ?>
+<input type="hidden" id="last-status-id" value="<?php echo $last_status_id; ?>" />

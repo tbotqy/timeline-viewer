@@ -14,24 +14,24 @@ class UrlComponent extends Component{
          * returns false if failed in detecting the type
          */
 
-            $count_hyphen = substr_count($param,'-');
-            $date_type = "";
+        $count_hyphen = substr_count($param,'-');
+        $date_type = "";
            
-            switch($count_hyphen){
+        switch($count_hyphen){
 
-            case 0:
-                $date_type = "year";
-                break;
-            case 1:
-                $date_type = "month";
-                break;
-            case 2:
-                $date_type = "day";
-                break;
-            default:
-                return false;
-            }
+        case 0:
+            $date_type = "year";
+            break;
+        case 1:
+            $date_type = "month";
+            break;
+        case 2:
+            $date_type = "day";
+            break;
+        default:
+            return false;
+        }
 
-            return $date_type;
+        return $date_type;
     }
 }
