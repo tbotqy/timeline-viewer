@@ -1,0 +1,1 @@
+takuya@LinuxMint.7167:1339907814
