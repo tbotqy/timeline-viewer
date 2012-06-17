@@ -13,17 +13,6 @@ class UsersController extends AppController{
         parent::beforeFilter();
     }
     
-    public function test(){
-        $user = $this->Auth->user();
-        $twitter_id = "151427378";
-     
-        if($this->User->existByTwitterId($twitter_id)){
-            echo "T";
-        }else{
-            echo "F";
-        }
-    }
-
     public function index(){
 
         /*
