@@ -7,7 +7,7 @@ class UsersController extends AppController{
 
     public $layout = 'common';
     public $uses = array('User','Status','Entity');
-      
+    public $components = array('Url');
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
@@ -15,8 +15,8 @@ class UsersController extends AppController{
     
     public function index(){
 
-        /*
-         * This action checks if user is logged in.
+        /**
+         * checks if user is logged in.
          */
         
         if($this->Auth->loggedIn()){
@@ -28,8 +28,8 @@ class UsersController extends AppController{
 
     public function login(){
 
-        /*
-         * This action just shows the view for login.
+        /**
+         * just shows the view for login.
          */
         
         if($this->Auth->loggedIn()){
@@ -40,7 +40,10 @@ class UsersController extends AppController{
 
     public function logout(){
         
-        // log the user out
+        /**
+         *log the user out
+         */
+
         if($this->Auth->logout()){
             $this->redirect('/users/');
         }
@@ -48,8 +51,8 @@ class UsersController extends AppController{
 
     public function authorize(){
 
-        /*
-         * This action takes Twitter OAuth process.
+        /**
+         * go to api.twitter.com to make Twitter OAuth process.
          */
 
         $client = $this->Twitter->createClient();
@@ -68,8 +71,8 @@ class UsersController extends AppController{
 
     public function callback(){
 
-        /*
-         * This is the callback action for Twitter OAuth.
+        /**
+         * callback action for Twitter OAuth.
          */
         
         // aqcuire request token from session
@@ -103,41 +106,15 @@ class UsersController extends AppController{
             
             // check if stored tokens are up-to-date by comparing with acquired tokens
             $stored_tokens = $this->User->getTokens($user_id);
-
-            if( $stored_tokens['User']['token'] != $accessToken->key || $stored_tokens['User']['token_secret'] != $accessToken->secret ){
-
+            if( $stored_tokens['User']['token'] != $tokens['token'] || $stored_tokens['User']['token_secret'] != $tokens['token_secret'] ){
                 // if not, update them
-                $data = array(
-                              'id' =>  $user_id,
-                              'token' => $accessToken->key,
-                              'token_secret' => $accessToken->secret,
-                              'token_updated' => time(),
-                              'updated' => time()
-                              );
-                
-                $this->User->save($data);
+                $this->User->updateTokens($user_id,$tokens);
             }
-                      
-        }else{
-            // register if user doesn't have account
 
-            // user's data to save
-            $data_to_save = array(
-                                  'twitter_id'=>$verify_credentials['id_str'],
-                                  'name'=>$verify_credentials['name'],
-                                  'screen_name'=>$verify_credentials['screen_name'],
-                                  'profile_image_url_https'=>$verify_credentials['profile_image_url_https'],
-                                  'time_zone'=>$verify_credentials['time_zone'],
-                                  'utc_offset'=>$verify_credentials['utc_offset'],
-                                  'created_at'=>strtotime($verify_credentials['created_at']),
-                                  'lang'=>$verify_credentials['lang'],
-                                  'token'=>$accessToken->key,
-                                  'token_secret'=>$accessToken->secret,
-                                  'token_updated'=>0,
-                                  'initialized_flag'=>0,
-                                  'created'=>time()
-                                  );
-            $this->User->save($data_to_save);
+        }else{
+            
+            // register if user doesn't have account
+            $this->User->register($tokens,$verify_credentials);
         }
 
         // 
@@ -150,7 +127,7 @@ class UsersController extends AppController{
         $user['Twitter']['screen_name'] = $verify_credentials['screen_name'];
         $user['Twitter']['profile_image_url_https'] = $verify_credentials['profile_image_url_https'];
         $user['Twitter']['utc_offset'] = $verify_credentials['utc_offset'];
-            
+        
         // log the user in
         if($this->Auth->login($user)){
           
@@ -166,10 +143,12 @@ class UsersController extends AppController{
             }
         }
     }
+
     
     public function sent_tweets(){
-        /*
-         * show the teewts sent by logged-in user
+        
+        /**
+         * shows the teewts sent by logged-in user
          */
 
         // load user info 
@@ -193,33 +172,14 @@ class UsersController extends AppController{
             $term = $this->termToTime($term,$date_type,$utc_offset);
             
             // fetch statuses in specified term
-            $statuses = $this->Status->getStatusInTerm($user_id,$begin,$end,$order,$limit);
+            $statuses = $this->Status->getStatusInTerm($this->Auth->user('id'),$term['begin'],$term['end'],'DESC',$limit = '10');
             
         }else{
 
             // fetch user's latest 10 statuses
             $statuses = $this->Status->getLatestStatus($user['id']);
         }
-        
-        // fetch entities and add them to $statuses
-        $tmp_statuses = $statuses;
-        $itr = 0;
-        
-        foreach($statuses as $status){
-            $status_id = $status['Status']['status_id_str'];
-            $entities = $this->Entity->find(
-                                            'all',
-                                            array(
-                                                  'conditions'=>array('Entity.status_id_str'=>$status_id)
-                                                  )
-                                            );
-            
-            $tmp_statuses[$itr]['Status']['entities'] = $entities;
-            $itr++;
-        }
-
-        $statuses = $tmp_statuses;
-        
+                
         // get primary key of last status in fetched array
         $num = count($statuses)-1;
         $last_status_id = $statuses[$num]['Status']['id'];
@@ -234,7 +194,7 @@ class UsersController extends AppController{
                                                 'list',
                                                 array(
                                                       'conditions'=>array(
-                                                                          'Status.twitter_id'=>$twitter_id
+                                                                          'Status.user_id'=>$user['id']
                                                                           ),
                                                       'fields'=>array(
                                                                       'Status.created_at'

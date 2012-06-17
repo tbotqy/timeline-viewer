@@ -20,6 +20,24 @@ class StatusesController extends AppController{
         parent::beforeFilter();
     }
 
+    public function test(){
+        $api_params = array('include_entities'=>true);
+        $statuses = $this->Twitter->get('statuses/user_timeline',$api_params);
+        $statuses = json_decode($statuses['body'],true);
+        
+        foreach($statuses as $status){
+            $entities = $status['entities'];
+            foreach($entities as $type=>$val){
+                
+                if(count($val)>0){
+                    echo "saved<br/>";
+                }
+                
+            }
+        }
+
+    }
+    
     public function import(){
 
         /*
@@ -39,10 +57,12 @@ class StatusesController extends AppController{
          * returns json string
          */
         
+       
         if(!( $this->request->is('ajax') && $this->request->is('post'))){
             echo "bad request";
             exit;
         }
+        
 
         $this->autoRender = false;
         $this->Twitter->initialize($this);
@@ -60,7 +80,7 @@ class StatusesController extends AppController{
                             'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name']
                             );
-
+        
         // this is the oldest tweet's id among those which have imported so far
         $max_id = $this->request->data('id_str_oldest');
                 
@@ -69,11 +89,13 @@ class StatusesController extends AppController{
             // this is the case for first ajax request
 
             // turn initialized flag true in user model
-            $this->User->updateAll(
-                                   array('initialized_flag'=>true),
-                                   array('User.id'=>$user['id'])
-                                   );
-
+            /*
+              [ToDo] uncomment this when release
+              $this->User->updateAll(
+              array('initialized_flag'=>true),
+              array('User.id'=>$user['id'])
+              );
+            */
             // set 100 as the number of statuses to acquire
             $api_params['count'] = 100;
             
@@ -94,88 +116,14 @@ class StatusesController extends AppController{
             // remove the newest status from result because it has been already saved in previous loop
             array_shift($statuses);
         }
-
+        
         // save acquired data if any
         if($statuses){
-            
-            // initialize data array 
-            $status_to_save = array();
-            $entity_to_save = array();
-
-            foreach($statuses as $status){
-
-                // convert date format 
-                $created_at = strtotime($status['created_at']);
-                
-                // this value doesn't always exist in returned data.
-                $possibly_sensitive = isset($status['possibly_sensitive']) ? $status['possibly_sensitive'] : false;
-                
-                // create an array to pass to model
-                $status_to_save = array(
-                                        'twitter_id'=>$user['Twitter']['id'],
-                                        'status_id_str'=>$status['id_str'],
-                                        'in_reply_to_status_id_str'=>$status['in_reply_to_status_id_str'],
-                                        'in_reply_to_user_id_str'=>$status['in_reply_to_user_id_str'],
-                                        'in_reply_to_screen_name'=>$status['in_reply_to_screen_name'],
-                                        'place_full_name'=>$status['place']['full_name'],// optional value
-                                        'retweet_count'=>$status['retweet_count'],// int
-                                        'created_at'=>$created_at,
-                                        'source'=>$status['source'],
-                                        'text'=>$status['text'],
-                                        'possibly_sensitive'=>$possibly_sensitive,// boolean
-                                        'created'=>time()
-                                        );
-
-                // primary key ++
-                $this->Status->create();
-                // save the status
-                $this->Status->save($status_to_save);
-               
-                //
-                // save entities belong to this status
-                //
-                
-                $entities = $status['entities'];
-                
-                // First,check if specifying type has its node(type means hashtags,urls,ect..)
-                foreach($entities as $type=>$contents){
-                    if(count($contents)>0){
-                        
-                        // if the type has, save nodes belonging to the type
-                        foreach($contents as $content){
- 
-                            $entity_to_save = array(
-                                                    'status_id_str'=>$status['id_str'],
-                                                    'indice_f'=>$content['indices']['0'],
-                                                    'indice_l'=>$content['indices']['1'],
-                                                    'type'=>$type,
-                                                    'created'=>time()
-                                                    );
-                            
-                            switch($type){
-                            case "hashtags":
-                                $entity_to_save['hashtag'] = $content['text'];
-                                break;
-                            case "urls":
-                            case "media":
-                                $entity_to_save['url'] = $content['url'];
-                            break;
-                            case "user_mentions":
-                                $entity_to_save['mention_to_screen_name'] = $content['screen_name'];
-                                $entity_to_save['mention_to_user_id_str'] = $content['id_str'];
-                                break;
-                            default:
-                                // new feature 
-                            }
-                            
-                            $this->Entity->create();
-                            $this->Entity->save($entity_to_save);
-                        }
-                    }
-                }
-            }
-        }
         
+            $this->Status->saveStatuses($user,$statuses);
+       
+        }
+           
         //                                
         // define the json data to return 
         //                                
@@ -227,31 +175,10 @@ class StatusesController extends AppController{
         $twitter_id = $user['Twitter']['id'];
         
         // fetch user's twitter account info
-        $user_data = $this->User->find(
-                                       'first',array(
-                                                     'conditions'=>array('User.twitter_id'=>$twitter_id),
-                                                     'fields'=>array(
-                                                                     'User.twitter_id',
-                                                                     'User.name',
-                                                                     'User.screen_name',
-                                                                     'User.profile_image_url_https',
-                                                                     'User.utc_offset'
-                                                                     )
-                                                     )
-                                       );
-
-        $statuses = $this->Status->find(
-                                        'all',
-                                        array(
-                                              'conditions'=>array(
-                                                                  'Status.twitter_id'=>$user['Twitter']['id'],
-                                                                  'Status.id >'=>$last_status_id
-                                                                  ),
-                                              'limit'=>10,
-                                              'order'=>'Status.created ASC'
-                                              )
-                                        );
-
+        $user_data = $this->User->findById($user['id']);
+        
+        $statuses = $this->Status->getStatusOlderThanId($user['id'],$last_status_id);
+        
         $itr = count($statuses)-1;
         $last_status_id = $statuses[$itr]['Status']['id'];
         $this->set('last_status_id',$last_status_id);        
@@ -276,101 +203,22 @@ class StatusesController extends AppController{
         $date_type = $this->request->query['date_type'];
        
         // calculate start/end of term to fetch 
-        $term = $this->strToTerm($date,$date_type,$utc_offset);
+        $term = $this->termToTime($date,$date_type,$utc_offset);
         
         // fetch user's twitter account info
-        $user_data = $this->User->find(
-                                       'first',array(
-                                                     'conditions'=>array('User.twitter_id'=>$twitter_id),
-                                                     'fields'=>array(
-                                                                     'User.twitter_id',
-                                                                     'User.name',
-                                                                     'User.screen_name',
-                                                                     'User.profile_image_url_https',
-                                                                     'User.utc_offset'
-                                                                     )
-                                                     )
-                                       );
+        $user_data = $this->User->findById($user['id']);
 
-        // fetch statuses
-        $statuses = $this->Status->find(
-                                        'all',
-                                        array(
-                                              'conditions'=>array(
-                                                                  'Status.twitter_id'=>$user['Twitter']['id'],
-                                                                  'Status.created_at >='=>$term['begin'],
-                                                                  'Status.created_at <='=>$term['end']
-                                                                  ),
-                                              'order'=>array('Status.created_at DESC')
-                                              )
-                                        );
-        $statuses = $this->getAnchoredStatuses($statuses);
+        // fetch 10 statsues in specified term
+        $statuses = $this->Status->getStatusInTerm($user['id'],$term['begin'],$term['end']);
+        
         $itr = count($statuses) - 1;
         
         $last_status_id = $statuses[$itr]['Status']['id'];
+
         $this->set('statuses',$statuses);
         $this->set('last_status_id',$last_status_id);
         $this->set('user_data',$user_data);
         $this->render('switch_term');
     }
 
-    private function convertEntityArrayToSave(array $entities,$parent_status_id){        
-       
-        /**
-         * format given entity array for saving
-         * returns array
-         * returned array can be passed to Entity->save()
-         */
-        
-        // initialize array to return 
-        $entity_to_save = array();
-        
-        // dive into each entity on array
-        foreach($entities as $type=>$contents){
-            
-            if(count($contents)>0){// if seeing entity array has any content inside
-
-                // save each of entities
-                foreach($contents as $content){
-                    // set common values 
-                    $entity_to_save = array(
-                                            'status_id_str'=>$parent_status_id,
-                                            'indice_f'=>$content['indices']['0'],
-                                            'indice_l'=>$content['indices']['1'],
-                                            'type'=>$type,
-                                            'created'=>time()
-                                            );
-                    
-                    // add some values varying in types
-                    switch($type){
-                    case "hashtags":
-                        $entity_to_save['hashtag'] = $content['text'];
-                        break;
-                    case "urls":
-                    case "media":
-                        $entity_to_save['url'] = $content['url'];
-                    break;
-                    case "user_mentions":
-                        $entity_to_save['mention_to_screen_name'] = $content['screen_name'];
-                        $entity_to_save['mention_to_user_id_str'] = $content['id_str'];
-                        break;
-                    default:
-                        // new feature 
-                    }
-                }
-            }
-        }
-
-        return $entity_to_save;
-    }
-
-    public function getEntity(){
- 
-        $this->Twitter->initialize($this);
-        $user = $this->Auth->user();
-        $param = array('include_entities'=>true,'max_id'=>'18131468815437824');
-        $result = $this->Twitter->get('statuses/user_timeline',$param);
-        pr($result = json_decode($result,true));exit;
-        $this->set('text',$result['0']['text']);
-    }
 }

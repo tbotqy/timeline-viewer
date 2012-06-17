@@ -35,7 +35,7 @@
     <span class="text">
       <?php 
           //echo $this->Text->autoLinkUrls($status['Status']['text']);
-          echo $this->Link->addLinks($status['Status']['text'],$status['Status']['entities']);
+          echo $this->Link->addLinks($status['Status']['text'],$status['Entity']);
       ?>
     </span>
     

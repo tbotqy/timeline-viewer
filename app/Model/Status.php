@@ -3,16 +3,56 @@
 class Status extends AppModel{
     
     public $name = 'Status';
+    
     public $hasMany = array(
                             'Entity' => array(
                                               'className'=>'Entity',
-                                              'foreignKey'=>'status_id_str',
+                                              'foreignKey'=>'status_id',
                                               'order'=>'Entity.id',
                                               'dependent'=>true
                                               )
                             );
+    
+    public function saveStatuses($user,$statuses){
 
-    public function getLatestStatus(int $user_id,int $limit = '10'){
+        foreach($statuses as $status){
+
+            // convert date format 
+            $created_at = strtotime($status['created_at']);
+                
+            // this value doesn't always exist in returned data.
+            $possibly_sensitive = isset($status['possibly_sensitive']) ? $status['possibly_sensitive'] : false;
+                
+            // create an array to pass to model
+            $status_to_save = array(
+                                    'user_id'=>$user['id'],
+                                    'twitter_id'=>$user['Twitter']['id'],
+                                    'status_id_str'=>$status['id_str'],
+                                    'in_reply_to_status_id_str'=>$status['in_reply_to_status_id_str'],
+                                    'in_reply_to_user_id_str'=>$status['in_reply_to_user_id_str'],
+                                    'in_reply_to_screen_name'=>$status['in_reply_to_screen_name'],
+                                    'place_full_name'=>$status['place']['full_name'],// optional value
+                                    'retweet_count'=>$status['retweet_count'],// int
+                                    'created_at'=>$created_at,
+                                    'source'=>$status['source'],
+                                    'text'=>$status['text'],
+                                    'possibly_sensitive'=>$possibly_sensitive,// boolean
+                                    'created'=>time()
+                                    );
+
+            // primary key ++
+            $this->create();
+            // save the status
+            $this->save($status_to_save);
+               
+            // save entities belong to this status
+            $this->Entity->saveEntities($this->id,$status,$user);
+            
+        }
+    }
+
+
+    public function getLatestStatus($user_id,$limit = '10'){
 
         /**
          * acquire user's latest statsues
@@ -33,7 +73,24 @@ class Status extends AppModel{
         
     }
 
-    public function getStatusInTerm(int $user_id,int $begin,int $end,$order = 'DESC',$limit = '10'){
+    public function getStatusOlderThanId($user_id,$threshold_id,$limit = '10'){
+        
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>array(
+                                                          'Status.user_id'=>$user_id,
+                                                          'Status.id >'=>$threshold_id
+                                                          ),
+                                      'limit'=>$limit,
+                                      'order'=>'Status.created ASC'
+                                      )
+                                );
+        
+        return $this->checkNum($statuses);
+    }
+
+    public function getStatusInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
         
         /**
          * acquire user's statuses in specified term
@@ -45,7 +102,7 @@ class Status extends AppModel{
                                 'all',
                                 array(
                                       'conditions'=>array(
-                                                          'Status.id'=>$user_id,
+                                                          'Status.user_id'=>$user_id,
                                                           'Status.created_at >=' => $begin,
                                                           'Status.created_at <=' => $end
                                                           ),
