@@ -12,6 +12,12 @@ class UsersController extends AppController{
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
     }
+  
+    public function test(){
+        $user_id = $this->Auth->user('id');
+        $arr = $this->Status->getLatestStatus($user_id);
+        pr($arr);
+    }
     
     public function index(){
 
