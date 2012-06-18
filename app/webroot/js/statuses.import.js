@@ -18,7 +18,7 @@ function getStatuses(params){
   var data_to_post = params;
   $.ajax(
     {
-      url: "acquire_statuses",
+      url: "/ajax/acquire_statuses",
       type: "POST",
       dataType:"json",
       data: data_to_post,

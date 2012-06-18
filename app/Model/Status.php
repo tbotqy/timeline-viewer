@@ -12,6 +12,58 @@ class Status extends AppModel{
                                               'dependent'=>true
                                               )
                             );
+
+    public $belongsTo = array(
+                           'User'=>array(
+                                         'className'=>'User',
+                                         'foreignKey'=>'user_id',
+                                         'dependent'=>true
+                                         )
+                           );
+
+    public function getDateList($user_id){
+        
+        $user_data = $this->User->findById($user_id);
+        $status_date_list = $this->getListOfCreatedAt($user_id);
+        
+        // classify them by date
+        $utc_offset = $user_data['User']['utc_offset'];
+       
+        foreach($status_date_list as $key=>$created_at){
+            $created_at += $utc_offset;
+
+            $year = date('Y',$created_at);
+            $month = date('n',$created_at);
+            $day = date('j',$created_at);
+
+            //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
+            //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
+            $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
+
+        }
+        
+        return $this->checkNum($sum_by_day);
+
+    }
+    
+    public function getListOfCreatedAt($user_id){
+
+        $ret = $this->find(
+                           'list',
+                           array(
+                                 'conditions'=>array(
+                                                     'Status.user_id'=>$user_id
+                                                     ),
+                                 'fields'=>array(
+                                                 'Status.created_at'
+                                                 ),
+                                 'order'=>'Status.created_at DESC'
+                                 )
+                           );
+    
+        return $this->checkNum($ret);
+
+    }
     
     public function saveStatuses($user,$statuses){
 

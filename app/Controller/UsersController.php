@@ -190,48 +190,13 @@ class UsersController extends AppController{
         $num = count($statuses)-1;
         $last_status_id = $statuses[$num]['Status']['id'];
 
-        //                                                             //
-        // create the list of all the statuses user has.               //
-        // the data created here is shown in the left area of the view //
-        //                                                             //
-        
-        // fetch list of all the statuses
-        $status_date_list = $this->Status->find(
-                                                'list',
-                                                array(
-                                                      'conditions'=>array(
-                                                                          'Status.user_id'=>$user['id']
-                                                                          ),
-                                                      'fields'=>array(
-                                                                      'Status.created_at'
-                                                                      ),
-                                                      'order'=>'Status.created_at DESC'
-                                                      )
-                                                );
-
-        // classify them by date
-        $utc_offset = $user_data['User']['utc_offset'];
-       
-        foreach($status_date_list as $key=>$created_at){
-            $created_at += $utc_offset;
-
-            $year = date('Y',$created_at);
-            $month = date('n',$created_at);
-            $day = date('j',$created_at);
-
-            //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
-            //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
-            $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
- 
-        }
+        // create the list of all the statuses user has.           
+        $date_list = $this->Status->getDateList($user['id']);
         
         $this->set('user_data',$user_data); 
         $this->set('statuses',$statuses);
-      
-        //$this->set('sum_by_year',$sum_by_year);
-        //$this->set('sum_by_month',$sum_by_month);
-        $this->set('date_list',$sum_by_day);
-        $this->set('last_status_id',$last_status_id);
+        $this->set('last_status_id',$last_status_id);      
+        $this->set('date_list',$date_list);
     }
 
     public function home_timeline(){
@@ -254,6 +219,5 @@ class UsersController extends AppController{
         $options = array('count'=>200,'include_rts'=>true);
         $statuses = $this->Twitter->get('statuses/home_timeline',$options);
         
-        pr(json_decode($statuses,true));
     }
 }

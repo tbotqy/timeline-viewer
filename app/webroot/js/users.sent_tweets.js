@@ -39,12 +39,6 @@ $(document).ready(function(){
  
   });
 
-  // click action for each status
-  // hide and show the bottom line in each status
-  $(".status-content").live("click",function(){
-    $(this).find(".bottom").slideToggle('fast');
-  });
-
   // click action for read more button
   $("#read-more").click(function(){
     
@@ -57,7 +51,7 @@ $(document).ready(function(){
       type:"POST",
       dataType:"html",
       data:{"last_status_id":$("#last-status-id").attr("value")},
-      url: '/statuses/read_more',
+      url: '/ajax/read_more',
       success: function(responce){
 	// remove the element representing last status id
 	$("#last-status-id").remove();
@@ -116,7 +110,7 @@ $(document).ready(function(){
     $.ajax({
       type: 'GET',
       dataType: 'html',
-      url:'/statuses/switch_term',
+      url:'/ajax/switch_term',
       data:{"date":date,"date_type":date_type},
       async: true,
       success: function(responce){
