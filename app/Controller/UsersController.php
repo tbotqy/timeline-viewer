@@ -188,15 +188,17 @@ class UsersController extends AppController{
                 
         // get primary key of last status in fetched array
         $num = count($statuses)-1;
-        $last_status_id = $statuses[$num]['Status']['id'];
+        $oldest_timestamp = $statuses[$num]['Status']['created_at'];
+        $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
 
         // create the list of all the statuses user has.           
         $date_list = $this->Status->getDateList($user['id']);
         
         $this->set('user_data',$user_data); 
         $this->set('statuses',$statuses);
-        $this->set('last_status_id',$last_status_id);      
+        $this->set('oldest_timestamp',$oldest_timestamp);      
         $this->set('date_list',$date_list);
+        $this->set('hasNext',$hasNext);
     }
 
     public function home_timeline(){

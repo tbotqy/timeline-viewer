@@ -1,4 +1,8 @@
 <?php
-  echo $this->element('each-status');
+  if($statuses){
+      echo $this->element('each-status');
+      echo $this->element('read-more');
+  }else{
+      echo $this->element('no-more-status');
+  }
 ?>
-<input type="hidden" id="last-status-id" value="<?php echo $last_status_id; ?>" />
