@@ -9,6 +9,7 @@
       echo $this->Html->script('libs/bootstrap');
       echo $this->Html->script('libs/bootstrap-button');
       echo $this->Html->script('libs/bootstrap-tab');
+      echo $this->Html->script('functions');
       echo $this->Html->script('common');
       echo $this->fetch('meta');
       echo $this->fetch('css');

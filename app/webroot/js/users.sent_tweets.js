@@ -39,37 +39,6 @@ $(document).ready(function(){
  
   });
 
-  // click action for read more button
-  $("#read-more").click(function(){
-    
-    // let button say 'loading'
-    $("#read-more").button('loading');
-    
-    // fetch more statuses to show
-    $.ajax({
-
-      type:"POST",
-      dataType:"html",
-      data:{"last_status_id":$("#last-status-id").attr("value")},
-      url: '/ajax/read_more',
-      success: function(responce){
-	// remove the element representing last status id
-	$("#last-status-id").remove();
-	
-	// insert loaded html code 
-	$(".land-mark").before(responce);
-
-      },
-      error: function(responce){
-	alert("読み込みに失敗しました。画面をリロードしてください");
-      },
-      complete: function(){
-	// let button say that process has been done
-	$("#read-more").button('complete');	
-      }
-    });
-  });
-
   // click action to change the term of statuses to show
   $("#wrap-term-selectors a").click(function(e){
   
@@ -79,28 +48,16 @@ $(document).ready(function(){
     // get href attr in clicked button
     var href =$(this).attr('href');
     
-    // let button say loading
-    //$(this).button('loading');
-   
-    // change the color of buttons
-    /* 
-       var parent = $("#wrap-term-selectors");
-       parent.find(".loaded").removeClass("btn-warning loaded");
-       parent.find(".selected").addClass("btn-warning loaded");
-       parent.find(".selected").removeClass("btn-primary selected");
-    */
-
     // acquire the date to fetch from clicked button
     var date = $(this).attr('data-date');
     var date_type = $(this).attr('data-date-type');
     
-    $("#wrap-read-more").fadeOut('fast'); 
-    
     // show the loading icon over the statuses area
-    $(".land-mark").before("<div class=\"cover\"><span>Loading</span></div>");
-    var cover = $("#wrap-timeline .cover");
     var wrap_timeline = $("#wrap-timeline"); 
-    cover.css("height",wrap_timeline.height());
+    wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
+
+    var cover = wrap_timeline.find('.cover');
+    cover.css("height","200px");
     
     cover.animate({
       opacity: 0.8
@@ -112,21 +69,19 @@ $(document).ready(function(){
       dataType: 'html',
       url:'/ajax/switch_term',
       data:{"date":date,"date_type":date_type},
-      async: true,
       success: function(responce){
 	// insert recieved html
-	wrap_timeline.html(responce);
-
+	$("#wrap-main").html(responce);
       },
       error: function(responce){
 	alert("読み込みに失敗しました。画面をリロードしてください");	
       },
       complete: function(){
-	
+	// scroll to top
+	scrollToPageTop(e);
+
 	// show the loaded html
-	wrap_timeline.fadeIn('fast');
-	
-	$("#wrap-read-more").fadeIn('fast');
+	$("#wrap-main").fadeIn('fast');
 
 	// let the button say that process has been done
 	$("#wrap-term-selectors a").button('complete');

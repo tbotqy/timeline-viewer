@@ -58,6 +58,6 @@
     <!-- /.bottom -->
   </div>
   <!-- /.status-content -->
-</div>
-<!-- /.wrap-each-status -->
+</div><!-- /.wrap-each-status -->
 <?php endforeach;?>
+<input type="hidden" id="oldest-timestamp" value="<?php echo $oldest_timestamp;?>"/>

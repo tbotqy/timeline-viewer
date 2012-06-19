@@ -14,12 +14,35 @@ class Status extends AppModel{
                             );
 
     public $belongsTo = array(
-                           'User'=>array(
-                                         'className'=>'User',
-                                         'foreignKey'=>'user_id',
-                                         'dependent'=>true
-                                         )
-                           );
+                              'User'=>array(
+                                            'className'=>'User',
+                                            'foreignKey'=>'user_id',
+                                            'dependent'=>true
+                                            )
+                              );
+    
+    public function hasOlderStatus($user_id,$timestamp){
+
+        /**
+         * checks if user has status whose created_at is smaller than specified $timestamp
+         * @param int $user_id
+         * @param int $timestamp
+         * @return boolean
+         */
+
+        
+        $count_older_status = $this->find(
+                                          'count',
+                                          array(
+                                                'conditions'=>array(
+                                                                    'Status.user_id' => $user_id,
+                                                                    'Status.created_at <' => $timestamp
+                                                                    ),
+                                                )
+                                          );
+        return ($count_older_status > 0) ? true : false;
+    }
+
 
     public function getDateList($user_id){
         
@@ -125,14 +148,22 @@ class Status extends AppModel{
         
     }
 
-    public function getStatusOlderThanId($user_id,$threshold_id,$limit = '10'){
+    public function getOlderStatus($user_id,$threshold_timestamp,$limit = '10'){
         
+        /**
+         * retrieve statuses whose created_at value is smaller than specified $threshold_timestamp
+         * @param string $user_id
+         * @param int $threshold_timestamp
+         * @param int $limit
+         * @return array if retrieved any status, otherwise false
+         */
+                
         $statuses = $this->find(
                                 'all',
                                 array(
                                       'conditions'=>array(
                                                           'Status.user_id'=>$user_id,
-                                                          'Status.id >'=>$threshold_id
+                                                          'Status.created_at <'=>$threshold_timestamp
                                                           ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created ASC'
