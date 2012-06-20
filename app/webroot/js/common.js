@@ -1,4 +1,12 @@
 $(document).ready(function(){
+  
+  // set background image to dashbord same with html's background
+  var urlToBg = "/img/html_bg_linen.png";
+  var urlToDashbord = "/img/html_bg_linen.png";
+
+  $("body").css("background-image","url("+urlToBg+")");
+  $("#wrap-dashbord .inner").css("background-image","url("+urlToDashbord+")");
+  //$("#wrap-dashbord").css("background",$("body").css("background"));
 
   // [ToDo]event handler for browser's previous/next button
   /*

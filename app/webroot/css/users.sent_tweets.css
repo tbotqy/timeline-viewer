@@ -11,6 +11,8 @@
 #wrap-timeline{ 
   float: left;
   width: 100%;
+  font-family: 'PT Sans', sans-serif;
+
 }
 
 #wrap-timeline .cover{ 
@@ -19,7 +21,6 @@
   top: 0;
   background: #F2EEE6;
   opacity: 0;
-  //height: 100px;
   z-index: 100;
   color: white;
 }
@@ -33,7 +34,7 @@
   font-size: 200%;
   font-family: impact;
   color: #08C;
-  //background: url(../img/ajax-loader.gif) no-repeat;
+  font-family: 'Questrial', sans-serif;
 }
 
 #wrap-timeline a{ 
@@ -110,4 +111,19 @@
 #read-more{ 
   width: 100%;
   height: 50px;
+}
+
+#wrap-main .alert{ 
+  float: left;
+  width: 498px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+#wrap-main .alert p{ 
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  line-height: 40px;
 }

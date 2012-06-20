@@ -53,11 +53,13 @@ $(document).ready(function(){
     var date_type = $(this).attr('data-date-type');
     
     // show the loading icon over the statuses area
-    var wrap_timeline = $("#wrap-timeline"); 
+    var wrap_timeline = $("#wrap-timeline");
+    var height = wrap_timeline.height();
     wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
 
     var cover = wrap_timeline.find('.cover');
-    cover.css("height","200px");
+ 
+    cover.css("height",height);
     
     cover.animate({
       opacity: 0.8
@@ -70,6 +72,7 @@ $(document).ready(function(){
       url:'/ajax/switch_term',
       data:{"date":date,"date_type":date_type},
       success: function(responce){
+
 	// insert recieved html
 	$("#wrap-main").html(responce);
       },
@@ -77,6 +80,7 @@ $(document).ready(function(){
 	alert("読み込みに失敗しました。画面をリロードしてください");	
       },
       complete: function(){
+
 	// scroll to top
 	scrollToPageTop(e);
 
