@@ -11,7 +11,7 @@ function scrollToPageTop(e){
 
 function scrollDownToDestination(e,distance){
   e.preventDefault();
-  distance -= 190;
+  distance -= 160;
   $("html, body").animate(
     {scrollTop: distance},
     {easing:"swing",duration:500}

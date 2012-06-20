@@ -6,7 +6,8 @@
 #wrap-dashbord{ 
   float: left;
   width: 1200px;
-  height: 150px;
+  height: 123px;
+  font-family: 'Questrial', sans-serif;
 }
 
 #wrap-dashbord .space{ 
@@ -15,14 +16,17 @@
 }
 
 #wrap-dashbord .inner{ 
-  height: 150px;
+  height: 123px;
   position: fixed;
   top: 40px;
   border-bottom: solid 2px #808080;
   background: black;
   z-index: 1000;
   opacity: 1;
-  background: url(../img/html_bg.png);
+  //background: url(../img/html_bg.png);
+  //background: url(http://subtlepatterns.com/patterns/lightpaperfibers.png);  
+  //background: url( http://subtlepatterns.com/patterns/exclusive_paper.png);  
+ 
 }
 
 #wrap-term-selectors{

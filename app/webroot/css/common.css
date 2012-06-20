@@ -1,6 +1,8 @@
 @charset "utf-8";
 @import "bootstrap.css";
 @import url(http://fonts.googleapis.com/css?family=Emblema+One);
+@import url(http://fonts.googleapis.com/css?family=Questrial);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans);
 
 /* --------------------------------------------------
    body
@@ -10,9 +12,13 @@ body{
   width: 100%;
   margin: 0;
   font-size: 100%;
-  font-family: Helvetica,"メイリオ", sans-serif;
-  background: url(../img/html_bg.png);
-  color: #7a6e7e;
+  font-family:'Questrial', Helvetica,"メイリオ", sans-serif;
+  //background: url(../img/html_bg_gray.png);
+  //background: url(http://subtlepatterns.com/patterns/exclusive_paper.png);
+  //background: url(http://subtlepatterns.com/patterns/lightpaperfibers.png);  
+  //background: url(http://subtlepatterns.com/patterns/crisp_paper_ruffles.png);  
+  
+color: #7a6e7e;
 }
 
 /* --------------------------------------------------
