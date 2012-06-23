@@ -14,6 +14,7 @@ class AjaxController extends AppController{
     
     public function beforeFilter(){
         parent::beforeFilter();
+        $this->Twitter->initialize($this);
     }
             
     public function acquire_statuses(){
@@ -23,14 +24,11 @@ class AjaxController extends AppController{
          * returns json string
          */
                
-        if(!( $this->request->is('ajax') && $this->request->is('post'))){
+        if(!( $this->request->isAjax() && $this->request->is('post'))){
             echo "bad request";
             exit;
         }
         
-        $this->autoRender = false;
-        $this->Twitter->initialize($this);
-
         $user = $this->Auth->user();
         $token = $this->User->getTokens($user['id']);
             
@@ -105,9 +103,8 @@ class AjaxController extends AppController{
 
         $utc_offset = $last_status['user']['utc_offset'];
         $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-        $created_at -= 32400;// [ToDo] check if this process is necessary or not -> fix server's timezone offset
         $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
-        $created_at = date("Y/m/d - H:i",$created_at);
+        $created_at = date("Y年m月d日 - H:i",$created_at);
       
         $ret = array(
                      'continue' => $continue,
@@ -120,7 +117,7 @@ class AjaxController extends AppController{
                      );
         
         // return json
-        echo json_encode($ret);
+        $this->set('responce',json_encode($ret));
     }
 
     public function switch_term(){
@@ -165,7 +162,7 @@ class AjaxController extends AppController{
          * renders html
          */
 
-        if(!$this->request->is('ajax')){
+        if(!$this->request->isAjax()){
             // reject the request
             echo 'bad request';
             exit;

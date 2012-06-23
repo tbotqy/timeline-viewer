@@ -1,30 +1,68 @@
 <?php
-  echo $this->Html->script('statuses.import',array('inline'=>false)
-);
+  echo $this->Html->script('statuses.import',array('inline'=>false));
   echo $this->Html->css('statuses.import',null,array('inline'=>false));
 ?>
+
 <!-- #wrap-import -->
 <div id="wrap-import">
+  
+  <!-- .wrap-upper -->
+  <div class="wrap-upper">
+    <h2>タイムラインを取り込む</h2>
 
-  <h1>Retrieve your statuses.</h1>
-
-  <ul class="user-info">
-    <li class="img"><img src="<?php echo $profile_image; ?>" title="it's you" /></li>
-    <li class="sc_name">
-	<?php
-          echo $this->Html->link($screen_name,"https://twitter.com/#!/".$screen_name);
-	?>
-    </li>
-  </ul>
-
-  <p>Retrieve your past tweets.This may take several seconds.</p>
-  <button id="start" data-loading-text="取得中" data-complete-text="取得完了" class="btn btn-success">取得開始</button>
-
-  <div id="status" style="display:none;">
-    <span class="progress">Start</span>
-    <p class="text"></p>
-    <span class="date"></span>
+    <h4>
+      <a href="https://twitter.com/<?php echo $screen_name;?>" target="_blank">
+	<img width="30" src="/img/twitter-bird-light-bgs.png"/>
+	@<?php echo $screen_name;?></a>のツイートを
+      <button id="start-import" data-loading-text="保存中..." data-complete-text="取得完了" class="btn btn-success">取り込み開始</button>
+    </h4>
   </div>
 
+  <!-- .wrap-progress-bar -->
+  <div class="wrap-progress-bar">
+    <input type="hidden" id="statuses-count" value="<?php echo $statuses_count;?>" />
+    <p class="total"></p>
+    <div class="progress progress-striped progress-primary active">
+      <div class="bar" style="width: 0%;height: 30px;"></div>
+    </div>
+  </div>
+  <!-- /.wrap-progress-bar -->
+    
+
+  <!-- /.wrap-upper -->
+  
+  <!-- .wrap-lower -->
+  <div class="wrap-lower">
+        
+    <!-- .wrap-importing-status -->
+    <div class="wrap-importing-status" style="display:none;">
+      <!-- .wrap-tweet -->
+      <div class="wrap-tweet">
+	<div class="inner">
+	  <p class="body"></p>
+	  <p class="date"></p>	
+	</div>
+	<div class="triangle"></div>
+      </div>
+      <!-- /.wrap-tweet -->
+
+      <!-- .wrap-profile-image -->
+      <div class="wrap-profile-image">
+	<div class="profile-image">
+	  <div class="viewport">
+            <a href="https://twitter.com/<?php echo $screen_name; ?>"><img src="<?php echo $profile_image_url_https;?>" alt="<?php echo $screen_name; ?>" /></a>
+	  </div>
+	</div>
+      </div>
+      <!-- /.wrap-profile-image -->   
+            
+    </div>
+    <!-- /.wrap-importing-status -->
+    
+      
+
+  </div>
+  <!-- /.wrap-lower -->
+  
 </div>
 <!-- /#wrap-import" -->

@@ -36,7 +36,8 @@ class AppController extends Controller {
 
     public $components = array('Auth','Session','Twitter');
     public $helpers = array('Html','Form','Session','Text','Link');
-  
+    public $uses = array('User');
+
     public function beforeFilter(){
         parent::beforeFilter();
         
@@ -44,6 +45,15 @@ class AppController extends Controller {
         $loggedIn = $this->Auth->loggedIn();
         // pass it to view
         $this->set('loggedIn',$loggedIn);
+        
+        if($loggedIn){
+            $loggingUser = $this->Auth->user();
+            $this->set('loggingUser',$loggingUser);
+            
+            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
+            $this->set('userIsInitialized',$userIsInitialized);
+        }
+        
     }
 
     public function createClient(){

@@ -3,8 +3,9 @@
 
      <?php 
      if($statuses){
-    
-         echo $this->element('each-status');
+         foreach($statuses as $status){
+             echo $this->element('each-status');
+         }
      }
      ?>
   

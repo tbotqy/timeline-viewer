@@ -1,0 +1,63 @@
+@charset "utf-8";
+
+.wrap-each-status{ 
+  float: left;
+  clear: both;
+  width: 500px;
+  font-size: 14px;
+  border-top: solid 1px #fefefe;
+  border-bottom: solid 1px #d7d7d7;  
+  background: #f2eee6;
+}
+
+.wrap-each-status:hover{
+  background: #e8e0cf;
+}
+
+.wrap-each-status .profile-image{ 
+  float: left;
+  width: 58px;
+  height: 58px;
+  padding: 10px;
+}
+
+.wrap-each-status .profile-image .viewport{
+  width: 48px;
+  height: 48px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.wrap-each-status .status-content{ 
+  float: left;
+  width: 412px;
+  padding: 10px 10px 10px 0;
+  color: #49360D;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.wrap-each-status .status-content .top .date{ 
+  float: right;
+}
+
+.wrap-each-status .status-content .text{ 
+  float: left;
+  width: 100%;
+  padding: 10px 10px 10px 0;
+  line-height: 20px;
+ }
+
+.wrap-each-status .status-content .top{ 
+  float: left;
+  width: 100%;
+}
+
+.wrap-each-status .status-content .bottom{
+  float: left;
+  width: 100%;
+  color: gray;
+  display: none;
+}
