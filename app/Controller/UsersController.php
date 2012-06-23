@@ -9,9 +9,22 @@ class UsersController extends AppController{
     public $uses = array('User','Status','Entity');
     public $components = array('Url');
     public function beforeFilter(){
-        $this->Auth->allow('index','login','authorize','callback','logout');
+        $this->Auth->allow('index','login','authorize','callback','logout','hoge');
         parent::beforeFilter();
     }
+    
+    public function hoge(){
+        
+        $result = $this->Twitter->get('account/rate_limit_status');
+        pr(json_decode($result));
+
+    }
+
+    public function isTen($num){
+
+        return $num == 10 ? true : false;
+    }
+        
   
     public function test(){
         $user_id = $this->Auth->user('id');

@@ -11,13 +11,11 @@ class UsersControllerTest extends CakeTestCase{
     }
 
     public function testIsTen(){
-        
-        $result = $this->ctr->isTen(10);
-        $this->assertEquals('true',$result);
-        $result = $this->ctr->isTen(11);
-        $this->assertEquals('false',$result);
+
+        $num = 10;
+        $this->assertTrue($this->ctr->isTen($num));
+        $num = 11;
+        $this->assertFalse($this->ctr->isTen($num));
         
     }
-
-
 }

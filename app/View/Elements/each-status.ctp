@@ -1,8 +1,19 @@
 <?php
-  echo $this->Html->script('element.each-status.js',array('inline'=>false));
+
+  /**
+   * the params required to present this element are...
+   *  the data belongs to User and Status model
+   *  User musts be contained in value $user_data,
+   *  Status musts be contained in value $status
+   */
 ?>
 
-<?php foreach($statuses as $status): ?>
+<?php
+  echo $this->Html->script('element.each-status.js',array('inline'=>false));
+  echo $this->Html->css('element.each-status',null,array('inline'=>false));
+?>
+
+<?php foreach($statuses as $status):?>
 <!-- .wrap-each-status -->
 <div class="wrap-each-status">
   
@@ -60,4 +71,6 @@
   <!-- /.status-content -->
 </div><!-- /.wrap-each-status -->
 <?php endforeach;?>
+<?php if(isset($oldest_timestamp)):?>
 <input type="hidden" id="oldest-timestamp" value="<?php echo $oldest_timestamp;?>"/>
+<?php endif;?>

@@ -13,12 +13,7 @@ body{
   margin: 0;
   font-size: 100%;
   font-family:'Questrial', Helvetica,"メイリオ", sans-serif;
-  //background: url(../img/html_bg_gray.png);
-  //background: url(http://subtlepatterns.com/patterns/exclusive_paper.png);
-  //background: url(http://subtlepatterns.com/patterns/lightpaperfibers.png);  
-  //background: url(http://subtlepatterns.com/patterns/crisp_paper_ruffles.png);  
-  
-color: #7a6e7e;
+  color: #7a6e7e;
 }
 
 /* --------------------------------------------------
@@ -46,6 +41,13 @@ ul{
   font-family: 'Emblema One', cursive;
 }
 
+#container-header .twitter-profile{ 
+  margin: 0 10px;
+}
+
+.twitter-profile img{ 
+  margin: 0 10px;
+}
 /* --------------------------------------------------
    main
 -------------------------------------------------- */

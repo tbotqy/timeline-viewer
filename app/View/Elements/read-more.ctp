@@ -1,3 +1,7 @@
+<?php
+  echo $this->Html->css('element.read-more',null,array('inline'=>false));
+?>
+
 <!-- #wrap-read-more -->
 <div id="wrap-read-more">
 
