@@ -60,7 +60,7 @@ class UsersController extends AppController{
     public function logout(){
         
         /**
-         *log the user out
+         * log the user out
          */
 
         if($this->Auth->logout()){
@@ -71,7 +71,7 @@ class UsersController extends AppController{
     public function authorize(){
 
         /**
-         * go to api.twitter.com to make Twitter OAuth process.
+         * redirect user to api.twitter.com to make Twitter OAuth process.
          */
 
         $client = $this->Twitter->createClient();

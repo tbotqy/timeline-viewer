@@ -19,7 +19,7 @@
   </div>
 
   <!-- .wrap-progress-bar -->
-  <div class="wrap-progress-bar">
+  <div class="wrap-progress-bar" style="display:none;">
     <input type="hidden" id="statuses-count" value="<?php echo $statuses_count;?>" />
     <p class="total"></p>
     <div class="progress progress-striped progress-primary active">
@@ -36,6 +36,7 @@
         
     <!-- .wrap-importing-status -->
     <div class="wrap-importing-status" style="display:none;">
+
       <!-- .wrap-tweet -->
       <div class="wrap-tweet">
 	<div class="inner">
@@ -58,8 +59,6 @@
             
     </div>
     <!-- /.wrap-importing-status -->
-    
-      
 
   </div>
   <!-- /.wrap-lower -->
