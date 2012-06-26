@@ -6,7 +6,7 @@
 
 class StatusesController extends AppController{
     
-    // chose the layout to render
+    // chose the layout to render in
     public $layout = 'common';
     
     // set the models to be used
@@ -37,4 +37,5 @@ class StatusesController extends AppController{
         $this->set('screen_name',$user['Twitter']['screen_name']);
         $this->set('profile_image_url_https',$user['Twitter']['profile_image_url_https']);
     }
+    
 }

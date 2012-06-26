@@ -24,6 +24,14 @@ ul{
   list-style: none;
 }
 
+.cake-sql-log{
+  position: absolute;
+  bottom:30px;
+  background: #DFF0D8;
+}
+.cake-sql-log caption{ 
+  background: #D9EDF7;
+ }
 /* --------------------------------------------------
    nav
 -------------------------------------------------- */

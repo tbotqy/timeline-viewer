@@ -21,7 +21,7 @@
     
     <?php echo $this->element('global-header');?>
     
-    <?php //echo $this->element('sql_dump');?>
+
     
     <div id="container-main">
       <div class="inner">
@@ -36,6 +36,6 @@
     </div>
 
     <?php //echo $this->element('footer');?>
-    
+    <?php //echo $this->element('sql_dump');?>    
   </body>
 </html>
