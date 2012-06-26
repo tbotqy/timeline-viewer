@@ -54,6 +54,7 @@ class User extends AppModel{
         return $this->User->save($data) ? true : false;
     }
 
+
     public function getIdByTwitterId($twitter_id){
         /**
          * acquires id with given $twitter_id

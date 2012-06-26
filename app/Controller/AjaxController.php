@@ -144,10 +144,11 @@ class AjaxController extends AppController{
         // fetch 10 statsues in specified term
         $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
         
-        $itr = count($statuses) - 1;
-        $oldest_timestamp = $statuses[$itr]['Status']['created_at'];
-        $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);        
-        
+        $last_status = $this->getLastLine($statuses);
+        $oldest_timestamp = $last_status['Status']['created_at'];
+        //$hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);        
+        $hasNext = $this->Status->hasNext;
+
         $this->set('oldest_timestamp',$oldest_timestamp);
         $this->set('hasNext',$hasNext);
         $this->set('statuses',$statuses);       
@@ -176,8 +177,9 @@ class AjaxController extends AppController{
         $user_data = $this->User->findById($user['id']);
         
         $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
-        $itr = count($statuses)-1;
-        $oldest_timestamp = $statuses[$itr]['Status']['created_at'];
+        $last_status = $this->getLastLine($statuses);
+
+        $oldest_timestamp = $last_statuse['Status']['created_at'];
 
         $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
         

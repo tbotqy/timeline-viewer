@@ -56,6 +56,18 @@ class AppController extends Controller {
         
     }
 
+    public function getLastLine($array){
+        /**
+         * returns the last element of given $array
+         * @param array $array
+         * @return array
+         */
+
+        $itr_last = count($array) - 1;
+        return $array[$itr_last];
+    }
+
+
     public function createClient(){
         return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
     }

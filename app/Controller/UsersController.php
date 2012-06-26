@@ -13,25 +13,6 @@ class UsersController extends AppController{
         parent::beforeFilter();
     }
     
-    public function hoge(){
-        
-        $result = $this->Twitter->get('account/rate_limit_status');
-        pr(json_decode($result));
-
-    }
-
-    public function isTen($num){
-
-        return $num == 10 ? true : false;
-    }
-        
-  
-    public function test(){
-        $user_id = $this->Auth->user('id');
-        $arr = $this->Status->getLatestStatus($user_id);
-        pr($arr);
-    }
-    
     public function index(){
 
         /**
@@ -215,7 +196,8 @@ class UsersController extends AppController{
     }
 
     public function home_timeline(){
-        /*
+
+        /**
          * shows the home timeline 
          * acquire user's hometimeline via API 
          */
@@ -227,12 +209,23 @@ class UsersController extends AppController{
         // initialize Twitter component class
         $this->Twitter->initialize($this);
         
-        //
-        // fetch as much tweets as API can retrieve
-        //
+        // get user's following list via api
+        $params = array('user_id'=>$twitter_id,'stringify_ids'=>true);
+        $following_list = json_decode($this->Twitter->get('friends/ids',$params), true);
+        $following_list = $following_list['ids'];
         
-        $options = array('count'=>200,'include_rts'=>true);
-        $statuses = $this->Twitter->get('statuses/home_timeline',$options);
+        // fetch statuses filtering with each twitter ids in $following_list
+        $statuses = $this->Status->getFollowingStatuses($following_list,$limit = 10);
         
+        // get oldest status's created_at timestamp
+        $last_status = $this->getLastLine($statuses);
+        $oldest_timestamp = $last_status['Status']['created_at'];
+        $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
+ 
+        $date_list = $this->Status->getDateList($user['id']);
+        
+        $this->set('statuses',$statuses);
+        $this->set('date_list',$date_list);
+        $this->set('hasNext',$hasNext);
     }
 }
