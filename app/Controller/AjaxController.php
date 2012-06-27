@@ -146,9 +146,8 @@ class AjaxController extends AppController{
         
         $last_status = $this->getLastLine($statuses);
         $oldest_timestamp = $last_status['Status']['created_at'];
-        //$hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);        
-        $hasNext = $this->Status->hasNext;
-
+        $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);        
+        
         $this->set('oldest_timestamp',$oldest_timestamp);
         $this->set('hasNext',$hasNext);
         $this->set('statuses',$statuses);       
@@ -169,23 +168,49 @@ class AjaxController extends AppController{
             exit;
         }
 
-        // fetch more 10 statuses whose id is greater than last status id
-        $oldest_timestamp = $this->request->data('oldest_timestamp');       
+        $oldest_timestamp = $this->request->data('oldest_timestamp');
+        $destination_data_type = $this->request->data('destination_data_type');
         $user = $this->Auth->user();
+ 
+        switch($destination_data_type){
 
-        // fetch user's twitter account info
-        $user_data = $this->User->findById($user['id']);
-        
-        $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
-        $last_status = $this->getLastLine($statuses);
+        case 'sent_tweets':
+            // fetch older statuses
+            $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
 
-        $oldest_timestamp = $last_statuse['Status']['created_at'];
+            // set created_at of last status 
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
 
-        $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
-        
+            // check if any older status exists
+            $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
+           
+            break;
+
+        case 'home_timeline':
+            // get user's twitter id
+            $twitter_id = $user['Twitter']['id'];
+            
+            // fetch twitter ids user is following
+            $params = array('user_id'=>$twitter_id,'stringify_ids'=>true);
+            $following_list = json_decode($this->Twitter->get('friends/ids',$params), true);
+            $following_list = $following_list['ids'];
+ 
+            // fetch older timeline
+            $statuses = $this->Status->getOlderTimeline($following_list,$oldest_timestamp);
+           
+            // set created_at of last status 
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
+          
+            break;
+        }
+
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldest_timestamp);        
         $this->set('statuses',$statuses);
-        $this->set('user_data',$user_data);
     }
 }

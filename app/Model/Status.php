@@ -82,7 +82,7 @@ class Status extends AppModel{
     public function getDateList($user_id){
 
         /**
-         * creates date list of user's status
+         * creates date list of user's statuses
          * @param int $user_id
          * @return array
          */
@@ -100,13 +100,13 @@ class Status extends AppModel{
             $month = date('n',$created_at);
             $day = date('j',$created_at);
 
-            //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
-            //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
+            $sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
+            $sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
             $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
 
         }
         
-        return $this->checkNum($sum_by_day);
+        //return $this->checkNum($sum_by_day);
 
     }
     
@@ -174,34 +174,32 @@ class Status extends AppModel{
                                                           'Status.created_at <'=>$threshold_timestamp
                                                           ),
                                       'limit'=>$limit,
-                                      'order'=>'Status.created ASC'
+                                      'order'=>'Status.created_at DESC'
                                       )
                                 );
         
-        if($statuses){
-            // check if there is any older status
-            $itr= count($statuses)-1;
-            $oldest_timestamp = $statuses[$itr]['Status']['created_at'];
-            
-            $count = $this->find(
-                                 'count',
-                                 array(
-                                       'conditions'=>array(
-                                                           'Status.user_id' => $user_id,
-                                                           'Status.created_at <' => $oldest_timestamp
-                                                           )
-                                       )
-                                 );
-
-            if($count > 0){
-                $this->hasNext = true;
-            }else{
-                $this->hasNext = false;
-            }
-        }
-
         return $this->checkNum($statuses);
     }
+
+    public function getOlderTimeline($twitter_id_list,$timestamp,$limit = 10){
+
+        // retrieve statuses
+        $conditions = array(
+                            'Status.twitter_id' => $twitter_id_list,
+                            'Status.created_at <' => $timestamp
+                            );
+
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>$conditions,
+                                      'order'=>'Status.created_at DESC',
+                                      'limit'=>$limit
+                                      )
+                                );
+        return $this->checkNum($statuses);
+    }
+                                        
 
     public function saveStatuses($user,$statuses){
 

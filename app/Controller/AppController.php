@@ -54,6 +54,8 @@ class AppController extends Controller {
             $this->set('userIsInitialized',$userIsInitialized);
         }
         
+        $this->set('actionType',$this->request->params['action']);
+
     }
 
     public function getLastLine($array){

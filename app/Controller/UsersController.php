@@ -193,6 +193,7 @@ class UsersController extends AppController{
         $this->set('oldest_timestamp',$oldest_timestamp);      
         $this->set('date_list',$date_list);
         $this->set('hasNext',$hasNext);
+
     }
 
     public function home_timeline(){
@@ -201,7 +202,7 @@ class UsersController extends AppController{
          * shows the home timeline 
          * acquire user's hometimeline via API 
          */
-        
+
         // load user's account info
         $user = $this->Auth->user();
         $twitter_id = $user['Twitter']['id'];
@@ -220,6 +221,7 @@ class UsersController extends AppController{
         // get oldest status's created_at timestamp
         $last_status = $this->getLastLine($statuses);
         $oldest_timestamp = $last_status['Status']['created_at'];
+   
         $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
  
         $date_list = $this->Status->getDateList($user['id']);
@@ -227,5 +229,34 @@ class UsersController extends AppController{
         $this->set('statuses',$statuses);
         $this->set('date_list',$date_list);
         $this->set('hasNext',$hasNext);
+        $this->set('oldest_timestamp',$oldest_timestamp);
+    }
+
+    public function test(){
+
+        echo $id = $this->Auth->user('id');
+        $twitter_id_list = json_decode($this->Twitter->get('friends/ids',array('user_id'=>'','stringify'=>true)),true);
+        $dlist = $this->Status->find
+            (
+             'list',
+             array(
+                   'conditions'=>array('Status.twitter_id'=>$twitter_id_list['ids']),
+                   'fields'=>array('Status.created_at'),
+                   'order'=>array('Status.created_at DESC')
+                   )
+             );
+        
+        foreach($dlist as $val){
+            $time = $val;
+            $count = $this->Status->find
+                (
+                 'count',
+                 array(
+                       'conditions'=>array('Status.created_at'=>$time)
+                       )
+                 );
+            echo $val."=>".$count."<br/>";
+        }
+
     }
 }
