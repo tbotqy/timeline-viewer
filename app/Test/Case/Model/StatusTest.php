@@ -4,13 +4,24 @@ App::uses('Status','Model');
 
 class StatusTest extends CakeTestCase{
     
-    public $fixtures = array('app.status','app.user','app.entity');
+    public $fixtures = array('app.status','app.user','app.entity','app.friend');
     
     public function setUp(){
         parent::setUp();
         $this->Status = ClassRegistry::init('Status');
     }
 
+    public function testGetCreatedAtList(){
+        $user_id = 1;
+        $mode = "home_timeline";
+
+        $result = $this->Status->getCreatedAtList($user_id,$mode);
+
+        $this->assertTrue($result,$result);
+
+    }
+
+    /*
     public function testHasOlderStatus(){
 
         $user_id = 2;
@@ -26,9 +37,7 @@ class StatusTest extends CakeTestCase{
 
         $timestamp = 1335628795;
         $this->assertTrue($this->Status->hasOlderStatus($user_id,$timestamp),$timestamp);
-        
-       
-                           
+                                 
     }
-    
+    */
 }

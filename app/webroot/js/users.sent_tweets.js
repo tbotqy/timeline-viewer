@@ -1,16 +1,17 @@
 $(document).ready(function(){
   
   // mouseover action for year list in dashbord
-  $(".list-years li").mouseover(function(){
+  $(".list-years").find("li").mouseover(function(){
     
     // normalize all the buttons for years
-    $(".list-years a").removeClass("btn-primary selected");
+    $(".list-years").find("a").removeClass("btn-primary selected");
+ 
     // apply unique css feature only to focused button 
     $(this).find('a').addClass("btn-primary selected");
     
     // hide all the lists for months and days
-    $("#wrap-list-months ul").css('display','none');
-    $("#wrap-list-days ul").css('display','none');
+    $("#wrap-list-months").find("ul").css('display','none');
+    $("#wrap-list-days").find("ul").css('display','none');
     
     // get the data-date value in hovered button
     var year = $(this).attr('data-date');
@@ -21,15 +22,16 @@ $(document).ready(function(){
   });
 
   // mouseover action for months list in dashbord
-  $(".list-months li").mouseover(function(){
+  $(".list-months").find("li").mouseover(function(){
     
     // normalize all the buttons for months
-    $(".list-months li a").removeClass("btn-primary selected");
+    $(".list-months").find("li").find("a").removeClass("btn-primary selected");
+  
     // apply unique css feature only to focused button 
     $(this).find('a').addClass("btn-primary selected");
 
     // hide all the days lists
-    $("#wrap-list-days ul").css('display','none');
+    $("#wrap-list-days").find("ul").css('display','none');
 
     // get the data-date value in hovered button 
     var month = $(this).attr('data-date');
@@ -40,7 +42,7 @@ $(document).ready(function(){
   });
 
   // click action to change the term of statuses to show
-  $("#wrap-term-selectors a").click(function(e){
+  $("#wrap-term-selectors").find("a").click(function(e){
   
     // prevent the page from reloading
     e.preventDefault();
@@ -88,7 +90,7 @@ $(document).ready(function(){
 	$("#wrap-main").fadeIn('fast');
 
 	// let the button say that process has been done
-	$("#wrap-term-selectors a").button('complete');
+	$("#wrap-term-selectors").find("a").button('complete');
 	
 	// record requested url in the histry
 	window.history.pushState(null,null,href);
@@ -96,5 +98,16 @@ $(document).ready(function(){
       }
     });
   });
- 
+
+  // click event for day selector
+  $("#wrap-list-days").find("a").click(function(){
+    
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-days").find(".selected").removeClass("selected btn-primary");
+
+    // make clicked button selected
+    $(this).addClass("selected btn-primary");
+    
+  });
+				       
 });

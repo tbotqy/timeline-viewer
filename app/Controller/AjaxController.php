@@ -10,12 +10,20 @@ class AjaxController extends AppController{
     public $layout = 'ajax';
     
     // set the models to be used
-    public $uses = array('User','Status','Entity');
+    public $uses = array('User','Status','Entity','Friend');
     
     public function beforeFilter(){
         parent::beforeFilter();
         $this->Twitter->initialize($this);
+        
+        // reject non-ajax requests
+        if(!( $this->request->isAjax())){
+            echo "bad request";
+            exit;
+        }
+
     }
+    
             
     public function acquire_statuses(){
 
@@ -24,7 +32,7 @@ class AjaxController extends AppController{
          * returns json string
          */
                
-        if(!( $this->request->isAjax() && $this->request->is('post'))){
+        if(!$this->request->isPost()){
             echo "bad request";
             exit;
         }
@@ -65,6 +73,10 @@ class AjaxController extends AppController{
             $statuses = $this->Twitter->get('statuses/user_timeline',$api_params);
             $statuses = json_decode($statuses['body'],true);
 
+            // retrieve following list
+            $following_list = json_decode($this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true)),true);
+            $this->Friend->saveFriends($user['id'],$following_list['ids']);
+            
         }else{
             
             // acquire 101 statuses which are older than the status with max_id
@@ -162,12 +174,6 @@ class AjaxController extends AppController{
          * renders html
          */
 
-        if(!$this->request->isAjax()){
-            // reject the request
-            echo 'bad request';
-            exit;
-        }
-
         $oldest_timestamp = $this->request->data('oldest_timestamp');
         $destination_data_type = $this->request->data('destination_data_type');
         $user = $this->Auth->user();
@@ -193,8 +199,7 @@ class AjaxController extends AppController{
             
             // fetch twitter ids user is following
             $params = array('user_id'=>$twitter_id,'stringify_ids'=>true);
-            $following_list = json_decode($this->Twitter->get('friends/ids',$params), true);
-            $following_list = $following_list['ids'];
+            $following_list = $this->Friend->getFriendIds($user['id']);
  
             // fetch older timeline
             $statuses = $this->Status->getOlderTimeline($following_list,$oldest_timestamp);
@@ -213,4 +218,5 @@ class AjaxController extends AppController{
         $this->set('oldest_timestamp',$oldest_timestamp);        
         $this->set('statuses',$statuses);
     }
+
 }

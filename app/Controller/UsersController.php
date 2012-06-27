@@ -6,7 +6,7 @@
 class UsersController extends AppController{
 
     public $layout = 'common';
-    public $uses = array('User','Status','Entity');
+    public $uses = array('User','Status','Entity','Friend');
     public $components = array('Url');
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout','hoge');
@@ -218,45 +218,26 @@ class UsersController extends AppController{
         // fetch statuses filtering with each twitter ids in $following_list
         $statuses = $this->Status->getFollowingStatuses($following_list,$limit = 10);
         
-        // get oldest status's created_at timestamp
-        $last_status = $this->getLastLine($statuses);
-        $oldest_timestamp = $last_status['Status']['created_at'];
+        if($statuses){
+            // get oldest status's created_at timestamp
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
    
-        $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
+            $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
  
-        $date_list = $this->Status->getDateList($user['id']);
-        
-        $this->set('statuses',$statuses);
-        $this->set('date_list',$date_list);
-        $this->set('hasNext',$hasNext);
-        $this->set('oldest_timestamp',$oldest_timestamp);
-    }
-
-    public function test(){
-
-        echo $id = $this->Auth->user('id');
-        $twitter_id_list = json_decode($this->Twitter->get('friends/ids',array('user_id'=>'','stringify'=>true)),true);
-        $dlist = $this->Status->find
-            (
-             'list',
-             array(
-                   'conditions'=>array('Status.twitter_id'=>$twitter_id_list['ids']),
-                   'fields'=>array('Status.created_at'),
-                   'order'=>array('Status.created_at DESC')
-                   )
-             );
-        
-        foreach($dlist as $val){
-            $time = $val;
-            $count = $this->Status->find
-                (
-                 'count',
-                 array(
-                       'conditions'=>array('Status.created_at'=>$time)
-                       )
-                 );
-            echo $val."=>".$count."<br/>";
+            $date_list = $this->Status->getDateList($user['id'],'home_timeline');
+            
+            $this->set('statuses',$statuses);
+            $this->set('date_list',$date_list);
+            $this->set('hasNext',$hasNext);
+            $this->set('oldest_timestamp',$oldest_timestamp);
+        }else{
+            //[ToDo] render certain view
+            echo "nothing to present";
+            exit;
         }
 
     }
+
+
 }

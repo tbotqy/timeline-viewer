@@ -5,8 +5,7 @@ $(document).ready(function(){
   var urlToDashbord = "/img/html_bg_linen.png";
 
   $("body").css("background-image","url("+urlToBg+")");
-  $("#wrap-dashbord .inner").css("background-image","url("+urlToDashbord+")");
-  //$("#wrap-dashbord").css("background",$("body").css("background"));
+  $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
 
   // [ToDo]event handler for browser's previous/next button
   /*
@@ -23,7 +22,7 @@ $(document).ready(function(){
     }
   });
   
-  $(".to-page-top a").click (function(e) {
+  $(".to-page-top").find("a").click (function(e) {
     scrollToPageTop(e);
   });
   

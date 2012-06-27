@@ -21,10 +21,6 @@ class Status extends AppModel{
                                             )
                               );
 
-    // this value is set when any action named get* has executed
-    // represents if retrieved data has neighbor record in each condition
-    public $hasNext = "";
-
     public function getStatusInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
         
         /**
@@ -79,7 +75,7 @@ class Status extends AppModel{
 
     }
 
-    public function getDateList($user_id){
+    public function getDateList($user_id,$mode="sent_tweets"){
 
         /**
          * creates date list of user's statuses
@@ -88,7 +84,7 @@ class Status extends AppModel{
          */
         
         $user_data = $this->User->findById($user_id);
-        $status_date_list = $this->getCreatedAtList($user_id);
+        $status_date_list = $this->getCreatedAtList($user_id,$mode);
         
         // classify them by date
         $utc_offset = $user_data['User']['utc_offset'];
@@ -100,37 +96,64 @@ class Status extends AppModel{
             $month = date('n',$created_at);
             $day = date('j',$created_at);
 
-            $sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
-            $sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
+            //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
+            //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
             $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
 
         }
         
-        //return $this->checkNum($sum_by_day);
+        return $this->checkNum($sum_by_day);
 
     }
     
-    private function getCreatedAtList($user_id,$order = 'DESC'){
+    public function getCreatedAtList($user_id,$mode,$order = 'DESC'){
 
         /**
          * creates the list of posted timestamp of user's tweets
          * @param int $user_id
          * @order string
          */
-
-        $ret = $this->find(
-                           'list',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.user_id'=>$user_id
+        
+        switch($mode){
+        case 'sent_tweets':
+            $ret = $this->find(
+                               'list',
+                               array(
+                                     'conditions'=>array(
+                                                         'Status.user_id'=>$user_id
+                                                         ),
+                                     'fields'=>array(
+                                                     'Status.created_at'
                                                      ),
-                                 'fields'=>array(
-                                                 'Status.created_at'
-                                                 ),
-                                 'order'=>'Status.created_at '.$order
-                                 )
-                           );
-    
+                                     'order'=>'Status.created_at '.$order
+                                     )
+                               );
+            break;
+        case 'home_timeline':
+            $ids = $this->User->Friend->getFriendIds($user_id);
+            
+            $ret = $this->find
+                (
+                 'list',
+                 array
+                 (
+                  'conditions'=>array(
+                                      'Status.twitter_id'=>$ids
+                                      ),
+                  'fields'=>array(
+                                  'Status.created_at'
+                                  ),
+                  'order'=>'Status.created_at '.$order
+                  )
+                 );
+                       
+            return $ret;
+
+            break;
+        default:
+            return false;
+        }
+
         return $this->checkNum($ret);
 
     }
@@ -286,22 +309,6 @@ class Status extends AppModel{
         
         return ($count_older_status > 0) ? true : false;
             
-    }
-
-    private function checkNum($statuses){
-
-        /**
-         * check if given $statuses contains any status
-         * returns array if there is any
-         * returns false if none
-         */
-     
-        if(count($statuses) > 0){
-            return $statuses;
-        }else{
-            return false;
-        }
-   
     }
 
 }
