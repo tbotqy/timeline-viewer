@@ -10,7 +10,7 @@
 ?>
 
 <!-- #wrap-dashbord -->
-<div id="wrap-dashbord">
+<div id="wrap-dashbord" data-type="<?php echo $actionType;?>">
   <!-- .inner -->
   <div class="inner">
  
