@@ -31,4 +31,22 @@ App::uses('Model', 'Model');
  * @package       app.Model
  */
 class AppModel extends Model {
+
+    public function checkNum($result){
+
+        /**
+         * check if given $result contains any record
+         * returns array if there is any
+         * returns false if none
+         */
+     
+        if(count($result) > 0){
+            return $result;
+        }else{
+            return false;
+        }
+   
+    }
+
+
 }

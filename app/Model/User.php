@@ -4,6 +4,16 @@ class User extends AppModel{
 
     public $name = 'User';
 
+    public $hasMany = array(
+                            'Friend' => array(
+                                              'className'=>'Friend',
+                                              'foreignKey'=>'user_id',
+                                              'order'=>'Friend.id',
+                                              'dependent'=>true
+                                              )
+                            );
+
+
     public function register($tokens,$verify_credentials){
  
         /**
@@ -12,6 +22,7 @@ class User extends AppModel{
          * @param array $verify_credentials
          * @return true if success otherwise false
          */
+        
 
         // user's data to save
         $data_to_save = array(
@@ -72,6 +83,26 @@ class User extends AppModel{
                           );
         
         return $id ? $id['User']['id'] : false;
+    }
+
+    public function getTwitterId($user_id){
+        /**
+         * acquires twitter id with given $user_id
+         * @param int $user_id
+         * @return string user's twitter id
+         */
+
+        $twitter_id = find(
+                           'first',
+                           array('conditions'=>array(
+                                                     'User.id'=>$user_id
+                                                     ),
+                                 'fields'=>array('User.twitter_id')
+                                 )
+                           );
+
+        return $twitter_id ? $twitter_id['User']['twitter_id'] : false;
+
     }
 
     public function getTokens($user_id){
