@@ -56,12 +56,12 @@ $(document).ready(function(){
     
    // show the loading icon over the statuses area
     var wrap_timeline = $("#wrap-timeline");
-    var height = wrap_timeline.height();
+ 
     wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
 
     var cover = wrap_timeline.find('.cover');
  
-    cover.css("height",height);
+    cover.css("height",160);
     
     cover.animate({
       opacity: 0.8
