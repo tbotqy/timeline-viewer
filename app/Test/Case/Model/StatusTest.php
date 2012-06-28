@@ -10,7 +10,7 @@ class StatusTest extends CakeTestCase{
         parent::setUp();
         $this->Status = ClassRegistry::init('Status');
     }
-
+    /*
     public function testGetCreatedAtList(){
         $user_id = 1;
         $mode = "home_timeline";
@@ -18,6 +18,18 @@ class StatusTest extends CakeTestCase{
         $result = $this->Status->getCreatedAtList($user_id,$mode);
 
         $this->assertTrue($result,$result);
+
+    }
+    */
+
+    public function testHasOlderTimeline(){
+
+        $user_id = 1;
+        $timestamp = 1338576538;
+
+        $result = $this->Status->hasOlderTimeline($user_id,$timestamp);
+
+        $this->assertTrue($result);
 
     }
 

@@ -8,11 +8,6 @@
    */
 ?>
 
-<?php
-  echo $this->Html->script('element.each-status.js',array('inline'=>false));
-  echo $this->Html->css('element.each-status',null,array('inline'=>false));
-?>
-
 <?php foreach($statuses as $status):?>
 <!-- .wrap-each-status -->
 <div class="wrap-each-status">

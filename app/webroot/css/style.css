@@ -1,0 +1,538 @@
+@charset "utf-8";
+@import "bootstrap.css";
+@import url(http://fonts.googleapis.com/css?family=Emblema+One);
+@import url(http://fonts.googleapis.com/css?family=Questrial);
+@import url(http://fonts.googleapis.com/css?family=PT+Sans);
+
+/* --------------------------------------------------
+   body
+-------------------------------------------------- */
+
+body{
+  width: 100%;
+  margin: 0;
+  font-size: 100%;
+  font-family:'Questrial', Helvetica,"メイリオ", sans-serif;
+  color: #7a6e7e;
+}
+
+/* --------------------------------------------------
+   elements
+-------------------------------------------------- */
+
+ul{ 
+  list-style: none;
+}
+
+.cake-sql-log{
+  position: absolute;
+  bottom:30px;
+  background: #DFF0D8;
+}
+.cake-sql-log caption{ 
+  background: #D9EDF7;
+ }
+/* --------------------------------------------------
+   nav
+-------------------------------------------------- */
+#container-header{ 
+  float: left;
+  width: 100%;
+  height: 40px;
+}
+
+.navbar .container{ 
+  width: 1200px;
+}
+
+.navbar .brand{ 
+  font-family: 'Emblema One', cursive;
+}
+
+#container-header .twitter-profile{ 
+  margin: 0 10px;
+}
+
+.twitter-profile img{ 
+  margin: 0 10px;
+}
+/* --------------------------------------------------
+   main
+-------------------------------------------------- */
+#container-main{ 
+  float: left;
+  width: 100%;
+  margin: 10px auto;
+}
+
+#container-main .inner{ 
+  width: 1200px;
+  margin: 0 auto;
+}
+
+/* --------------------------------------------------
+   footer
+-------------------------------------------------- */
+#container-footer{
+  float: left;
+  width: 100%;
+  margin: 30px auto 0 auto;
+  background: white;
+  color: #7a6e7e;
+  //position:absolute;
+  //bottom: 20px;
+  text-align: center;
+}
+
+#container-footer .inner{ 
+  width: 1200px;
+  margin: 0 auto;
+}
+
+#container-footer a:link,
+#container-footer a:hover,
+#container-footer a:active,
+#container-footer a:visited{
+  text-decoration: none;
+  color: #7a6e7e;
+}
+
+/* --------------------------------------------------
+   scroller toward top
+-------------------------------------------------- */
+.to-page-top{ 
+  width: 120px;
+  position: fixed;
+  bottom: 5px;
+  right: 15px;
+  background: black;
+  opacity: 0.5;
+  border-radius: 10px;
+  display: none;
+}
+
+.to-page-top a{ 
+  float: left;
+  width: 100%;
+}
+
+.to-page-top span{ 
+  float: left;
+  width: 94px;
+  font-size: 13px;
+  line-height: 29px;
+  text-align: center;
+  color: white;
+}
+
+.to-page-top img{ 
+  float: left;
+  width: 16px;
+  height: 16px;
+  padding: 5px 0 5px 5px;
+}
+
+/* --------------------------------------------------
+   dashbord
+-------------------------------------------------- */
+#wrap-dashbord{ 
+  float: left;
+  width: 1200px;
+  height: 123px;
+  font-family: 'Questrial', sans-serif;
+}
+
+#wrap-dashbord .space{ 
+  width: 100%;
+  height: 10px;
+}
+
+#wrap-dashbord .inner{ 
+  height: 123px;
+  position: fixed;
+  top: 40px;
+  border-bottom: solid 2px #808080;
+  background: black;
+  z-index: 1000;
+  opacity: 1;
+  //background: url(../img/html_bg.png);
+  //background: url(http://subtlepatterns.com/patterns/lightpaperfibers.png);  
+  //background: url( http://subtlepatterns.com/patterns/exclusive_paper.png);  
+ 
+}
+
+#wrap-term-selectors{
+  float: left;
+  width: 100%;
+}
+
+#wrap-list-years{ 
+  float: left;
+  width: 100%;
+}
+
+#wrap-list-months{ 
+  float: left;
+  width: 100%;
+}
+
+#wrap-list-days{ 
+  float: left;
+  width: 100%;
+}
+
+.list-years,
+.list-months,
+.list-days{ 
+  float: left;
+  width: 100%;
+}
+
+.list-months{
+  display: none ;
+}
+
+.list-days{ 
+  display: none;
+}
+
+.list-years li a,
+.list-months li a,
+.list-days li a{ 
+  float: left;
+}
+
+.list-months li a,
+.list-days li a{ 
+  width: 15px;
+}
+
+/* --------------------------------------------------
+   each-status
+-------------------------------------------------- */
+
+.wrap-each-status{ 
+  float: left;
+  clear: both;
+  width: 500px;
+  font-size: 14px;
+  border-top: solid 1px #fefefe;
+  border-bottom: solid 1px #d7d7d7;  
+  background: #f2eee6;
+}
+
+.wrap-each-status:hover{
+  background: #e8e0cf;
+}
+
+.wrap-each-status .profile-image{ 
+  float: left;
+  width: 58px;
+  height: 58px;
+  padding: 10px;
+}
+
+.wrap-each-status .profile-image .viewport{
+  width: 48px;
+  height: 48px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.wrap-each-status .status-content{ 
+  float: left;
+  width: 412px;
+  padding: 10px 10px 10px 0;
+  color: #49360D;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+}
+
+.wrap-each-status .status-content .top .date{ 
+  float: right;
+}
+
+.wrap-each-status .status-content .text{ 
+  float: left;
+  width: 100%;
+  padding: 10px 10px 10px 0;
+  line-height: 20px;
+ }
+
+.wrap-each-status .status-content .top{ 
+  float: left;
+  width: 100%;
+}
+
+.wrap-each-status .status-content .bottom{
+  float: left;
+  width: 100%;
+  color: gray;
+  display: none;
+}
+
+/* --------------------------------------------------
+   read-more
+-------------------------------------------------- */
+
+#wrap-read-more{ 
+  float: left;
+  width: 100%;
+}
+
+#read-more{ 
+  width: 100%;
+  height: 50px;
+}
+
+/* --------------------------------------------------
+   statuses.import
+-------------------------------------------------- */
+#wrap-import{ 
+  float: left;
+  width: 100%;
+}
+
+/* --------------------------------------------------
+   upper area
+-------------------------------------------------- */
+#wrap-import .wrap-upper{ 
+  width: 100%;
+  float: left;
+}
+
+#wrap-import .wrap-upper h2{
+  width: 100%;
+  float: left;
+  text-align:center;
+  border-bottom: solid 1px #987;
+  margin: 20px 0 0 0;
+}
+
+#wrap-import .wrap-upper h4{ 
+  float: left;
+  width: 100%;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  margin: 40px 0 0 0;
+}
+
+#wrap-import .wrap-upper h4 a{ 
+  margin: 0 5px 0 0;
+}
+
+#wrap-import .wrap-upper .btn{ 
+  margin: -5px 0 0 5px;
+}
+
+/* --------------------------------------------------
+   lower area
+-------------------------------------------------- */
+#wrap-import .wrap-lower{ 
+  width: 100%;
+  float: left;
+}
+
+#wrap-import .wrap-importing-status{ 
+  width: 500px;
+  margin: 40px auto 0 auto;
+}
+
+#wrap-import .wrap-tweet{ 
+  float: left;
+  width: 500px;
+  margin: 0 auto;
+}
+
+#wrap-import .wrap-tweet .inner{ 
+  width: 400px;
+  padding:10px;
+  color: #111;
+  text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.4), 0 1px 1px );
+  border-radius:10px;
+  webkit-border-radius:10px;
+  moz-border-radius:10px;
+
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(1.00, #b7ad70), color-stop(0.00, #d5cea6));
+  background: -webkit-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
+  background: -moz-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
+  background: -o-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
+  background: -ms-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
+  background: linear-gradient(to bottom, #d5cea6 0%, #b7ad70 100%);
+
+  box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 10px #999;
+}
+
+#wrap-import .wrap-tweet .inner .date{ 
+  text-align: right;
+}
+
+.triangle{ 
+  position: relative;
+  width: 0;
+  height: 0;
+  top: -7px;
+  left: 40px;
+  bottom:0;
+  border-top: 20px solid #b8ae71;
+  border-right: 20px solid  transparent;
+}
+
+#wrap-import .wrap-profile-image{ 
+  width: 10%;
+  float: left;
+  margin: 0 0 0 20px;
+}
+
+#wrap-import .profile-image{ 
+  float: left;
+}
+
+#wrap-import .profile-image .viewport{
+  width: 48px;
+  height: 48px;
+  -webkit-border-radius: 5px;
+  moz-border-radius: 5px;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+#wrap-import .wrap-progress-bar{ 
+  width: 78%;
+  margin: 0 auto;
+  text-align: right;
+//  display: none;
+}
+
+#wrap-import .wrap-progress-bar .total{ 
+  float: left;
+  width: 100%;
+  height: 10px;
+  line-height: 30px;
+}
+
+#wrap-import .progress{
+  float: right;
+  width: 98%;
+  height: 30px;
+  margin: 10px 0 0 0;
+}
+
+#wrap-import .bar{ 
+  line-height: 30px;
+}
+
+/* --------------------------------------------------
+   users.login
+-------------------------------------------------- */
+#wrap-login{ 
+  width: 100%;
+  float: left;
+}
+
+.wrap-explain{ 
+  float: right;
+  width: 300px;
+  margin: 50px 10px 0 0;
+}
+
+.wrap-explain p{ 
+ padding: 0 0 0 5px; 
+}
+
+#wrap-login .brand{ 
+  width: 100%;
+  font-size: 30px;
+  float: left;
+  //text-align: center;
+  font-family: 'Emblema One', cursive;
+}
+
+#wrap-login .wrap-btn-auth{
+  width: 300px;
+  margin: 10px 0 0 0;
+}
+
+.btn-auth:link,
+.btn-auth:visited{
+  background: #39D url(../img/bg-btn-blue.png) repeat-x 0 0;
+  border: 1px solid #39D;
+  color: #FFF;
+  font-weight: 700;
+  margin: 0 5px 0 0;
+  padding: 4px 10px 5px;
+  text-shadow: 0 -1px 0 #39D;
+  text-decoration: none;
+  border-radius: 4px;
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  border:none;
+}
+
+.btn-auth:active{
+  position: relative;
+  top:1px;
+  moz-box-shadow: none;
+  webkit-box-shadow: none;
+  border:none;
+}
+
+/* --------------------------------------------------
+   users.sent_tweets
+-------------------------------------------------- */
+#wrap-main{ 
+  float: left;
+  width: 500px
+}
+
+#wrap-timeline{ 
+  float: left;
+  width: 100%;
+  font-family: 'PT Sans', sans-serif;
+}
+
+#wrap-timeline .cover{ 
+  width: 100%;
+  position: relative;
+  top: 0;
+  background: #F2EEE6;
+  opacity: 0;
+  z-index: 100;
+  color: white;
+}
+
+#wrap-timeline .cover span{ 
+  width: 100%;
+  text-align: center;
+  position: absolute;
+  top: 50px;
+  left: 0;
+  font-size: 200%;
+  font-family: impact;
+  color: #08C;
+  font-family: 'Questrial', sans-serif;
+}
+
+#wrap-timeline a{ 
+  color:#CD8500;
+}
+
+#wrap-main .alert{ 
+  float: left;
+  width: 498px;
+  height: 40px;
+  margin: 0;
+  padding: 0;
+}
+
+#wrap-main .alert p{ 
+  margin: 0;
+  padding: 0;
+  text-align: center;
+  line-height: 40px;
+}

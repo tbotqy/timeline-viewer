@@ -4,13 +4,22 @@
     <meta charset="UTF-8">
     
     <?php
-      echo $this->Html->css('common');
-      echo $this->Html->script('libs/jquery-1.7.2.min');
-      echo $this->Html->script('libs/bootstrap');
-      echo $this->Html->script('libs/bootstrap-button');
-      echo $this->Html->script('libs/bootstrap-tab');
-      echo $this->Html->script('functions');
-      echo $this->Html->script('common');
+      echo $this->Html->css('style');
+      echo $this->Html->script
+      (array(
+             'libs/jquery-1.7.2.min',
+             'libs/bootstrap',
+             'libs/bootstrap-button',
+             'libs/bootstrap-tab',
+             'functions',
+             'common',
+             'element.each-status',
+             'element.read-more',
+             'users',
+             'statuses.import'
+             )
+       );
+      
       echo $this->fetch('meta');
       echo $this->fetch('css');
       echo $this->fetch('script');
@@ -20,9 +29,7 @@
   <body>
     
     <?php echo $this->element('global-header');?>
-    
-
-    
+        
     <div id="container-main">
       <div class="inner">
 	<?php

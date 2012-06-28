@@ -56,6 +56,7 @@ class AppController extends Controller {
         
         $this->set('actionType',$this->request->params['action']);
 
+        $this->set('isAjax',$this->request->isAjax());
     }
 
     public function getLastLine($array){

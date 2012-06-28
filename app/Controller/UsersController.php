@@ -205,38 +205,47 @@ class UsersController extends AppController{
 
         // load user's account info
         $user = $this->Auth->user();
-        $twitter_id = $user['Twitter']['id'];
+        
+        // check if requested uri includes query string
+        $term = isset($this->params['pass']['0']) ? $this->params['pass']['0'] : false;
+        
+        if($term){
+          
+            // check the type of given term
+            $date_type = $this->Url->getParamType($term);
 
-        // initialize Twitter component class
-        $this->Twitter->initialize($this);
+            // fetch user's twitter account info
+            $user_data = $this->User->findById($user['id']);
         
-        // get user's following list via api
-        $params = array('user_id'=>$twitter_id,'stringify_ids'=>true);
-        $following_list = json_decode($this->Twitter->get('friends/ids',$params), true);
-        $following_list = $following_list['ids'];
-        
-        // fetch statuses filtering with each twitter ids in $following_list
-        $statuses = $this->Status->getFollowingStatuses($following_list,$limit = 10);
-        
-        if($statuses){
-            // get oldest status's created_at timestamp
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
-   
-            $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
- 
-            $date_list = $this->Status->getDateList($user['id'],'home_timeline');
+            // load user's utc offset
+            $utc_offset = $user_data['User']['utc_offset'];
             
-            $this->set('statuses',$statuses);
-            $this->set('date_list',$date_list);
-            $this->set('hasNext',$hasNext);
-            $this->set('oldest_timestamp',$oldest_timestamp);
+            // convert given term from string to unixtime
+            $term = $this->termToTime($term,$date_type,$utc_offset);
+            
+            // fetch statuses in specified term
+            $statuses = $this->Status->getTimelineInTerm($user['id'],$term['begin'],$term['end']);
+            
         }else{
-            //[ToDo] render certain view
-            echo "nothing to present";
-            exit;
+
+            // fetch statuses filtering with each twitter ids in $following_list
+            $statuses = $this->Status->getLatestTimeline($user['id']);
+
         }
 
+        
+        // get oldest status's created_at timestamp
+        $last_status = $this->getLastLine($statuses);
+        $oldest_timestamp = $last_status['Status']['created_at'];
+   
+        $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+          
+        $date_list = $this->Status->getDateList($user['id'],'home_timeline');
+                  
+        $this->set('statuses',$statuses);
+        $this->set('date_list',$date_list);
+        $this->set('hasNext',$hasNext);
+        $this->set('oldest_timestamp',$oldest_timestamp);
     }
 
 

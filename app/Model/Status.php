@@ -41,17 +41,42 @@ class Status extends AppModel{
                                       'order'=>'Status.created_at '.$order
                                       )
                                 );
-        // check if neighbor record exists
-
-
-
      
         // return result
         return $this->checkNum($statuses);
         
     }
 
-    public function getFollowingStatuses($following_id_list,$limit = 10){
+    public function getTimelineInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
+        
+        /**
+         * acquire user's friends' statuses in specified term
+         * returns array if there is any
+         * returns false if there is no status in specified term
+         */
+        
+        // get user's friend ids
+        $ids = $this->User->Friend->getFriendIds($user_id);
+
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>array(
+                                                          'Status.twitter_id'=>$ids,
+                                                          'Status.created_at >=' => $begin,
+                                                          'Status.created_at <=' => $end
+                                                          ),
+                                      'limit'=>$limit,
+                                      'order'=>'Status.created_at '.$order
+                                      )
+                                );
+
+        // return result
+        return $this->checkNum($statuses);
+        
+    }
+
+    public function getLatestTimeline($user_id,$limit = 10){
         
         /**
          * retrieve statuses tweeted by those whom user is following on twitter
@@ -60,11 +85,13 @@ class Status extends AppModel{
          * @return array just like mentioning above 
          */
 
+        $ids = $this->User->Friend->getFriendIds($user_id);
+
         $ret = $this->find(
                            'all',
                            array(
                                  'conditions'=>array(
-                                                     'Status.twitter_id'=>$following_id_list
+                                                     'Status.twitter_id'=>$ids
                                                      ),
                                  'order'=>'Status.created_at DESC',
                                  'limit'=>$limit
@@ -204,11 +231,13 @@ class Status extends AppModel{
         return $this->checkNum($statuses);
     }
 
-    public function getOlderTimeline($twitter_id_list,$timestamp,$limit = 10){
+    public function getOlderTimeline($user_id,$timestamp,$limit = 10){
+
+        $ids = $this->User->Friend->getFriendIds($user_id);
 
         // retrieve statuses
         $conditions = array(
-                            'Status.twitter_id' => $twitter_id_list,
+                            'Status.twitter_id' => $ids,
                             'Status.created_at <' => $timestamp
                             );
 
@@ -262,16 +291,19 @@ class Status extends AppModel{
         }
     }
 
-    public function hasOlderTimeline($following_list,$timestamp){
+    public function hasOlderTimeline($user_id,$timestamp){
+       
         /**
-         * checks if model has any status posted by $following_list and older than $timestamp
-         * @param array $following_list
+         * checks if model has any status older than $timestamp ,posted by user's friends 
+         * @param int $user_id
          * @param $timestamp int
          * @return boolean
          */
 
+        $ids = $this->User->Friend->getFriendIds($user_id);
+
         $conditions = array(
-                            'Status.twitter_id' => $following_list,
+                            'Status.twitter_id' => $ids,
                             'Status.created_at <' => $timestamp
                             );
 

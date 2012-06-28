@@ -23,7 +23,6 @@ class AjaxController extends AppController{
         }
 
     }
-    
             
     public function acquire_statuses(){
 
@@ -138,32 +137,55 @@ class AjaxController extends AppController{
          * retrieve the statuses if specified term
          * renders html
          */
-        
-        $user_id = $this->Auth->user('id');
+
         $user = $this->Auth->user();
+        $user_id = $user['id'];
         $utc_offset = $user['Twitter']['utc_offset'];
 
         // fetch query string
         $date = $this->request->query['date'];
         $date_type = $this->request->query['date_type'];
-       
+        $data_type = $this->request->query['data_type'];
+        
         // calculate start/end of term to fetch 
         $term = $this->termToTime($date,$date_type,$utc_offset);
         
-        // fetch user's twitter account info
-        $user_data = $this->User->findById($user_id);
-
-        // fetch 10 statsues in specified term
-        $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
+        switch($data_type){
+        case 'sent_tweets':
+            // fetch 10 statsues in specified term
+            $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
         
-        $last_status = $this->getLastLine($statuses);
-        $oldest_timestamp = $last_status['Status']['created_at'];
-        $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);        
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+        
+            // check if any older status exists in user's timeline  
+            $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);                    
+           
+            break;
+
+        case 'home_timeline':
+            // fetch 10 timeline in specified term
+            $statuses = $this->Status->getTimelineInTerm($user_id,$term['begin'],$term['end']);
+            
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderTimeline($user_id,$oldest_timestamp);
+
+            break;
+
+        default:
+            //[ToDo] show the view to notice that there is no data to show
+            break;
+            
+        }
+
+
         
         $this->set('oldest_timestamp',$oldest_timestamp);
         $this->set('hasNext',$hasNext);
         $this->set('statuses',$statuses);       
-        $this->set('user_data',$user_data);
     }
 
     public function read_more(){
@@ -194,23 +216,18 @@ class AjaxController extends AppController{
             break;
 
         case 'home_timeline':
-            // get user's twitter id
-            $twitter_id = $user['Twitter']['id'];
-            
-            // fetch twitter ids user is following
-            $params = array('user_id'=>$twitter_id,'stringify_ids'=>true);
-            $following_list = $this->Friend->getFriendIds($user['id']);
- 
-            // fetch older timeline
-            $statuses = $this->Status->getOlderTimeline($following_list,$oldest_timestamp);
            
+            // fetch older timeline
+            $statuses = $this->Status->getOlderTimeline($user['id'],$oldest_timestamp);
+            
             // set created_at of last status 
             $last_status = $this->getLastLine($statuses);
+            
             $oldest_timestamp = $last_status['Status']['created_at'];
             
             // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($following_list,$oldest_timestamp);
-          
+            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+            
             break;
         }
 

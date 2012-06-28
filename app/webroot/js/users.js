@@ -43,7 +43,7 @@ $(document).ready(function(){
 
   // click action to change the term of statuses to show
   $("#wrap-term-selectors").find("a").click(function(e){
-  
+ 
     // prevent the page from reloading
     e.preventDefault();
     
@@ -54,7 +54,7 @@ $(document).ready(function(){
     var date = $(this).attr('data-date');
     var date_type = $(this).attr('data-date-type');
     
-    // show the loading icon over the statuses area
+   // show the loading icon over the statuses area
     var wrap_timeline = $("#wrap-timeline");
     var height = wrap_timeline.height();
     wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
@@ -66,13 +66,15 @@ $(document).ready(function(){
     cover.animate({
       opacity: 0.8
     },200);
-
+    // check the type of data currently being shown
+    var data_type = $("#wrap-dashbord").data("type");
+    
     // fetch statuses 
     $.ajax({
       type: 'GET',
       dataType: 'html',
       url:'/ajax/switch_term',
-      data:{"date":date,"date_type":date_type},
+      data:{"date":date,"date_type":date_type,"data_type":data_type},
       success: function(responce){
 
 	// insert recieved html
