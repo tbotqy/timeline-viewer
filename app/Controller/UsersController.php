@@ -7,10 +7,19 @@ class UsersController extends AppController{
 
     public $layout = 'common';
     public $uses = array('User','Status','Entity','Friend');
-    public $components = array('Url');
+    public $components = array('Twitter','Url');
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout','hoge');
         parent::beforeFilter();
+    }
+
+    public function test(){
+
+        $sid = '16211239353';
+        $result = $this->Twitter->get('statuses/user_timeline',array('max_id'=>$sid,'include_entities'=>true));
+        pr(json_decode($result),true);
+
+        $this->set('text',$text);
     }
     
     public function index(){

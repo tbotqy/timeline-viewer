@@ -16,15 +16,10 @@ class LinkHelper extends AppHelper{
          * @param array $entities
          * @return string if success, otherwise false
          */ 
-        
-        // return if $entities has no data
-        if(count($entities) == 0){
-            return $text;
-        }
-        
+
         // add link to urls using TextHelper
-        $ret = $this->Text->autoLinkUrls($text,array('target'=>'_blank'));
-  
+        $ret = $this->autoLink($text);
+        
         // add link to entities except urls
         foreach($entities as $entity){
 
@@ -57,7 +52,7 @@ class LinkHelper extends AppHelper{
         return $ret;
     }
 
-    public function addEntityLinks($text,$entity,$entity_type){
+    private function addEntityLinks($text,$entity,$entity_type){
       
         /*
          * inserts anchor elements to given $text
@@ -84,10 +79,17 @@ class LinkHelper extends AppHelper{
         }
 
         // insert <a href=...></a>
-        
         $a_element = "<a href=\"".$href."\" target=\"_blank\">".$entity."</a>";
-        $ret = str_replace($entity,$a_element,$text);
+        $ret = str_ireplace($entity,$a_element,$text);
         
         return $ret;
     }
+
+    private function autoLink($string){
+        $text = htmlspecialchars($string, ENT_QUOTES);
+        $text = preg_replace('/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)/', '<a href="$1" target="_blank">$1</a>', $text);
+        return $text;
+    }
+
+
 }
