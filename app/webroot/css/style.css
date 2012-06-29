@@ -1,5 +1,4 @@
 @charset "utf-8";
-@import "bootstrap.css";
 @import url(http://fonts.googleapis.com/css?family=Emblema+One);
 @import url(http://fonts.googleapis.com/css?family=Questrial);
 @import url(http://fonts.googleapis.com/css?family=PT+Sans);
@@ -31,7 +30,17 @@ ul{
 }
 .cake-sql-log caption{ 
   background: #D9EDF7;
- }
+}
+
+i{ 
+  margin: 0 5px 0 0;
+}
+
+img.loader{ 
+  display:none;
+  margin: -5px 5px 0 5px;
+}
+
 /* --------------------------------------------------
    nav
 -------------------------------------------------- */
@@ -53,8 +62,9 @@ ul{
   margin: 0 10px;
 }
 
-.twitter-profile img{ 
-  margin: 0 10px;
+#container-header .twitter-profile img{ 
+  margin: 0 5px 0 0;
+  border-radius: 2px;
 }
 /* --------------------------------------------------
    main

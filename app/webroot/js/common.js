@@ -7,11 +7,13 @@ $(document).ready(function(){
   $("body").css("background-image","url("+urlToBg+")");
   $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
 
-  // [ToDo]event handler for browser's previous/next button
-  /*
-  window.addEventListener('popstate',function(e){
-  },false);
- */
+  // event handler for browser's previous/next button
+  setTimeout(function(){
+    window.addEventListener('popstate',function(e){
+      var nextPage = location.href;
+      location.href = nextPage;
+    },false);
+  },100);
 
   $(window).scroll(function() {
     var topy = $(document).scrollTop();

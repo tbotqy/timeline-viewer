@@ -31,12 +31,21 @@
 	    <p class="navbar-text">
 	      <?php
                 echo $this->Html->link('ログアウト',array('controller'=>'users','action'=>'logout'),array('class'=>'pull-right'));
-                
-	      ?>
+          ?>
 	    </p>
 
 	    <p class="navbar-text">
-	      <a class="pull-right twitter-profile" href="https://twitter.com/<?php echo $loggingUser['Twitter']['screen_name'];?>" target="_blank"><img width="20" src="<?php echo $loggingUser['Twitter']['profile_image_url_https'];?>" />@<?php echo $loggingUser['Twitter']['screen_name'];?></a>
+	      <a class="pull-right link-config" href="/users/configurations"><i class="icon-cogs icon-large"></i></a>
+	    </p>
+	    
+	    <p class="navbar-text">
+	
+	      <a class="pull-right twitter-profile" href="https://twitter.com/<?php echo $loggingUser['Twitter']['screen_name'];?>" target="_blank">
+
+		  <img width="20" src="<?php echo $loggingUser['Twitter']['profile_image_url_https'];?>" />
+		
+		@<?php echo $loggingUser['Twitter']['screen_name'];?>
+	      </a>
 	    </p>
 
 	    <?php endif;?>

@@ -1,8 +1,3 @@
-<?php
-  echo $this->Html->script('statuses.import',array('inline'=>false));
-  echo $this->Html->css('statuses.import',null,array('inline'=>false));
-?>
-
 <!-- #wrap-import -->
 <div id="wrap-import">
   
@@ -14,7 +9,7 @@
       <a href="https://twitter.com/<?php echo $screen_name;?>" target="_blank">
 	<img width="30" src="/img/twitter-bird-light-bgs.png"/>
 	@<?php echo $screen_name;?></a>のツイートを
-      <button id="start-import" data-loading-text="保存中..." data-complete-text="取得完了" class="btn btn-success">取り込み開始</button>
+      <button id="start-import" data-loading-text="保存中..." data-complete-text="取得完了" class="btn btn-success"><i class="icon-random icon-white"></i>取り込み開始</button><img class="loader" src="/img/ajax-loader.gif" />
     </h4>
   </div>
 
