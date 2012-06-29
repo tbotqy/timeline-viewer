@@ -252,43 +252,39 @@ class Status extends AppModel{
         return $this->checkNum($statuses);
     }
                                         
-
-    public function saveStatuses($user,$statuses){
-
-        foreach($statuses as $status){
-
-            // convert date format 
-            $created_at = strtotime($status['created_at']);
+    public function saveStatus($user,$status){
+        
+        // convert date format 
+        $created_at = strtotime($status['created_at']);
+        
+        // this value doesn't always exist in returned data.
+        $possibly_sensitive = isset($status['possibly_sensitive']) ? $status['possibly_sensitive'] : false;
                 
-            // this value doesn't always exist in returned data.
-            $possibly_sensitive = isset($status['possibly_sensitive']) ? $status['possibly_sensitive'] : false;
-                
-            // create an array to pass to model
-            $status_to_save = array(
-                                    'user_id'=>$user['id'],
-                                    'twitter_id'=>$user['Twitter']['id'],
-                                    'status_id_str'=>$status['id_str'],
-                                    'in_reply_to_status_id_str'=>$status['in_reply_to_status_id_str'],
-                                    'in_reply_to_user_id_str'=>$status['in_reply_to_user_id_str'],
-                                    'in_reply_to_screen_name'=>$status['in_reply_to_screen_name'],
-                                    'place_full_name'=>$status['place']['full_name'],// optional value
-                                    'retweet_count'=>$status['retweet_count'],// int
-                                    'created_at'=>$created_at,
-                                    'source'=>$status['source'],
-                                    'text'=>$status['text'],
-                                    'possibly_sensitive'=>$possibly_sensitive,// boolean
-                                    'created'=>time()
-                                    );
+        // create an array to pass to model
+        $status_to_save = array(
+                                'user_id'=>$user['id'],
+                                'twitter_id'=>$user['Twitter']['id'],
+                                'status_id_str'=>$status['id_str'],
+                                'in_reply_to_status_id_str'=>$status['in_reply_to_status_id_str'],
+                                'in_reply_to_user_id_str'=>$status['in_reply_to_user_id_str'],
+                                'in_reply_to_screen_name'=>$status['in_reply_to_screen_name'],
+                                'place_full_name'=>$status['place']['full_name'],// optional value
+                                'retweet_count'=>$status['retweet_count'],// int
+                                'created_at'=>$created_at,
+                                'source'=>$status['source'],
+                                'text'=>$status['text'],
+                                'possibly_sensitive'=>$possibly_sensitive,// boolean
+                                'created'=>time()
+                                );
 
-            // primary key ++
-            $this->create();
-            // save the status
-            $this->save($status_to_save);
+        // primary key ++
+        $this->create();
+        // save the status
+        $this->save($status_to_save);
                
-            // save entities belong to this status
-            $this->Entity->saveEntities($this->id,$status,$user);
+        // save entities belong to this status
+        $this->Entity->saveEntities($this->id,$status,$user);
             
-        }
     }
 
     public function hasOlderTimeline($user_id,$timestamp){

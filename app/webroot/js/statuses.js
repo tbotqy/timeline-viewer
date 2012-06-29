@@ -9,6 +9,9 @@ $(document).ready(function(){
     // change the button statement
     import_button.button('loading');
     
+    // show the loader icon
+    showLoader();
+    
     /// show the progress bar
     wrap_progress_bar.fadeIn(function(){
 
@@ -85,7 +88,8 @@ function getStatuses(params){
 	   
 	    // stop animation
 	    $(".progress").removeClass("active");
-	 
+	    
+	    hideLoader();
 	  }
 	}
     },

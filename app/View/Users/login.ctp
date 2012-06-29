@@ -1,6 +1,3 @@
-<?php
-  echo $this->Html->css('users.login',null,array('inline'=>false));
-?>
 <!-- #wrap-login -->
 <div id="wrap-login">
   

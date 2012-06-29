@@ -111,5 +111,91 @@ $(document).ready(function(){
     $(this).addClass("selected btn-primary");
     
   });
+
+  // click event to update statuses
+  $("#update-statuses").click(function(){
+    $(this).button('loading');
+    checkUpdate();
+  });
 				       
 });
+
+function checkUpdate(){
+
+  var ret = "";
+  $.ajax({
+
+    url:"/ajax/checkUpdate",
+    type:"POST",
+    dataType:"json",
+    success: function(responce){
+	newTweetHasCome = responce.result;
+    },
+  
+    error: function(){
+      console.log("an error occured");
+    },
+    
+    complete: function(){
+      if(newTweetHasCome){
+	updateStatus();
+      }else{
+	noUpdateHasCome();
+      }
+    }
+  });
+
+};
+
+var total_count = 0;
+var oldest_id_str = "";
+var destination_time = "";
+
+function updateStatus(){
+
+  $.ajax({
+
+    url:"/ajax/update_statuses",
+    type:"post",
+    dataType:"json",
+    data:{"oldest_id_str":oldest_id_str,"destination_time":destination_time},
+    success: function(responce){
+      
+      if(responce.continue){
+	total_count += responce.count_saved;
+	oldest_id_str = responce.oldest_id_str;
+	destination_time = responce.destination_time;
+	updateStatus();
+      }else{
+	total_count += responce.count_saved;
+      }
+    },
+
+    error: function(){
+      alert("ツイートの更新に失敗しました。");
+    },
+
+    complete: function(responce){
+      var progress_area = $(".update-statuses").find(".text");
+      if(responce.continue){
+	// show the total number of statuses that have been imported so far
+	  progress_area.fadeOut().text(total_count+"件追加").fadeIn();
+      }else{
+	$("#update-statuses").text("更新完了");
+	progress_area.fadeOut(function(){
+	  $(this).text(total_count+"件追加しました。");
+	}).fadeIn();
+      }
+    }
+  
+  });
+};
+
+function noUpdateHasCome(){
+
+  $("#update-statuses").text("更新完了");
+  $(".update-statuses").find(".text").fadeOut(function(){
+    $(this).text("追加できるツイートはありません。");
+  }).fadeIn();
+
+}

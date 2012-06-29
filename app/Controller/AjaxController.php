@@ -16,6 +16,9 @@ class AjaxController extends AppController{
         parent::beforeFilter();
         $this->Twitter->initialize($this);
         
+        // make all the actions need authentication
+        $this->Auth->deny();
+
         // reject non-ajax requests
         if(!( $this->request->isAjax())){
             echo "bad request";
@@ -93,8 +96,9 @@ class AjaxController extends AppController{
         // save acquired data if any
         if($statuses){
         
-            $this->Status->saveStatuses($user,$statuses);
-       
+            foreach($statuses as $status){
+                $this->Status->saveStatus($user,$status);
+            }
         }
            
         //                                
@@ -129,6 +133,121 @@ class AjaxController extends AppController{
         
         // return json
         $this->set('responce',json_encode($ret));
+    }
+
+    public function checkUpdate(){
+        
+        /**
+         * checks if there is any updatable tweet on twitter.com
+         */
+        
+        $this->autoRender = false;
+        $user = $this->Auth->user();
+        $params = array(
+                        'user_id'=>$user['Twitter']['id'],
+                        'count'=>1,
+                        'include_rts'=>true,
+                        );
+        
+        $latest_tweet = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+        $latest_status = $this->Status->getLatestStatus($user['id'],1);
+        
+        $latest_tweet_created_at = strtotime($latest_tweet[0]['created_at']);
+        $latest_status_created_at = $latest_status[0]['Status']['created_at'];
+
+        // compare created_at
+        if($latest_tweet_created_at > $latest_status_created_at){
+            // updatable
+            $ret = array('result'=>true);
+        }else{
+            // no tweet updatable
+            $ret = array('result'=>false);
+        }
+        
+        echo json_encode($ret);
+    }
+
+    public function update_statuses(){
+        
+        /**
+         * acquire tweets which exist in twitter.com but hasn't imported to our database yet
+         */
+
+        if(!$this->request->isPost()){
+            echo "bad request";
+            exit;
+        }
+
+        $user = $this->Auth->user();
+        
+        // initialization
+        $count_saved = 0;
+        $continue = false;
+        $destination_time = "";
+        $max_id = $this->request->data('oldest_id_str');
+        
+        if($max_id){
+            
+            // set params for api request            
+            $params = array(
+                            'include_rts'=>true,
+                            'include_entities'=>true,
+                            'count'=>101,
+                            'user_id'=>$user['Twitter']['id'],
+                            'max_id'=>$max_id
+                            );
+                           
+            // fetch tweets via api
+            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+        
+            // delete duplicating status from $tweets if $max_id was set
+            array_shift($tweets);
+        
+        }else{
+            // set the destination value for created_at
+            $latest_status = $this->Status->getLatestStatus($user['id'],1);
+            $destination_time = $latest_status[0]['Status']['created_at'];
+            
+            // set params for api request            
+            $params = array(
+                            'include_rts'=>true,
+                            'include_entities'=>true,
+                            'count'=>100,
+                            'user_id'=>$user['Twitter']['id'],
+                            );
+                           
+            // fetch tweets via api
+            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+        }
+
+        // check id_str of oldest status
+        $oldest_status = $this->getLastLine($tweets);
+        $oldest_id_str = $oldest_status['id_str'];
+
+        // save lacking tweets
+        foreach($tweets as $tweet){
+                
+            if(strtotime($tweet['created_at']) > $destination_time){
+                // save it
+                $this->Status->saveStatus($user,$tweet);
+                $count_saved++;
+
+            }else{
+                // stop saving
+                $continue = false;
+                break;
+            }
+        }
+    
+        $ret = array(
+                     'destination_time'=>$destination_time,
+                     'count_saved'=>$count_saved,
+                     'continue'=>$continue,
+                     'oldest_id_str'=>$oldest_id_str
+                     );
+        
+        $this->set('responce',json_encode($ret));
+
     }
 
     public function switch_term(){

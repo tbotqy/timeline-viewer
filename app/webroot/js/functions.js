@@ -19,3 +19,11 @@ function scrollDownToDestination(e,distance){
 
   return false;
 }
+
+function showLoader(){
+  $(".loader").fadeIn();
+}
+
+function hideLoader(){
+  $(".loader").fadeOut();
+}

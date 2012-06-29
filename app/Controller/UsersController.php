@@ -8,6 +8,7 @@ class UsersController extends AppController{
     public $layout = 'common';
     public $uses = array('User','Status','Entity','Friend');
     public $components = array('Twitter','Url');
+
     public function beforeFilter(){
         $this->Auth->allow('index','login','authorize','callback','logout','hoge');
         parent::beforeFilter();
@@ -15,13 +16,29 @@ class UsersController extends AppController{
 
     public function test(){
 
-        $sid = '16211239353';
-        $result = $this->Twitter->get('statuses/user_timeline',array('max_id'=>$sid,'include_entities'=>true));
-        pr(json_decode($result),true);
 
-        $this->set('text',$text);
+        $user = $this->Auth->user();
+        $params = array(
+                        'user_id'=>$user['Twitter']['id'],
+                        'count'=>2,
+                        'include_rts'=>true,
+                        );
+        
+        $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+        
+        foreach($tweets as $tweet){
+            
+            $this->hoge($tweet);
+
+        }
     }
     
+    public function hoge($tweet){
+
+        echo $tweet['created_at'];
+
+    }
+
     public function index(){
 
         /**
@@ -257,5 +274,13 @@ class UsersController extends AppController{
         $this->set('oldest_timestamp',$oldest_timestamp);
     }
 
+    public function configurations(){
+        /**
+         * offers view for user configurations
+         */
+        $user = $this->Auth->user();
+
+        $this->set('user',$user);
+    }
 
 }

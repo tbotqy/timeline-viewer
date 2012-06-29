@@ -4,19 +4,22 @@
     <meta charset="UTF-8">
     
     <?php
-      echo $this->Html->css('style');
+      echo $this->Html->css
+      (array(
+             'bootstrap',
+             'font-awesome',
+             'style',
+             )
+       );
       echo $this->Html->script
       (array(
              'libs/jquery-1.7.2.min',
              'libs/bootstrap',
-             'libs/bootstrap-button',
-             'libs/bootstrap-tab',
              'functions',
              'common',
-             'element.each-status',
-             'element.read-more',
+             'elements',
              'users',
-             'statuses.import'
+             'statuses'
              )
        );
       
