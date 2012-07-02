@@ -8,19 +8,18 @@ class Status extends AppModel{
                             'Entity' => array(
                                               'className'=>'Entity',
                                               'foreignKey'=>'status_id',
-                                              'order'=>'Entity.id',
                                               'dependent'=>true
                                               )
                             );
-
+    
     public $belongsTo = array(
                               'User'=>array(
                                             'className'=>'User',
                                             'foreignKey'=>'user_id',
-                                            'dependent'=>true
+                                            'dependent'=>false
                                             )
                               );
-
+   
     public function getStatusInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
         
         /**
@@ -109,7 +108,7 @@ class Status extends AppModel{
          * @param int $user_id
          * @return array
          */
-        
+       
         $user_data = $this->User->findById($user_id);
         $status_date_list = $this->getCreatedAtList($user_id,$mode);
         
@@ -140,7 +139,7 @@ class Status extends AppModel{
          * @param int $user_id
          * @order string
          */
-        
+       
         switch($mode){
         case 'sent_tweets':
             $ret = $this->find(
@@ -337,6 +336,25 @@ class Status extends AppModel{
         
         return ($count_older_status > 0) ? true : false;
             
+    }
+
+    private function unbindAllModels(){
+
+        foreach($this->hasMany as $model => $inner){
+            $hasMany[] = $model;
+        }
+
+        foreach($this->belongsTo as $model => $inner){
+            $belongsTo[] = $model;
+        }
+
+        return $this->unbindModel(
+                                  array(
+                                        'hasMany'=>$hasMany,
+                                        'belongsTo'=>$belongsTo
+                                        )
+                                  );
+
     }
 
 }

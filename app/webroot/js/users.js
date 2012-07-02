@@ -117,6 +117,40 @@ $(document).ready(function(){
     $(this).button('loading');
     checkUpdate();
   });
+
+  // click event to delete account
+   $("#delete-account").click(function(e){
+     
+     var deleted = false;
+
+     showLoader();
+     $(this).button("loading");
+
+     $.ajax({
+       type:"post",
+       dataType:"text",
+       url:"/ajax/delete_account",
+       success:function(responce){
+	 deleted = responce;
+       },
+       error:function(){
+	 $("#modal-delete-account").find(".status").text("error");
+       },
+       complete:function(){
+	 if(deleted){
+	   $(this).button("complete").setTimeout(
+	     function(){
+	       location.href="/user/logout";
+	     }
+	     ,1000);
+	 }else{
+	   $(this).button("uncomplete");
+	   $("#modal-delete-account").find(".status").text("処理が完了しませんでした。画面をリロードしてもう一度お試しください。");
+	 }
+       }
+     });
+       
+   });
 				       
 });
 

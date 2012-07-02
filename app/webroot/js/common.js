@@ -1,3 +1,4 @@
+
 $(document).ready(function(){
   
   // set background image to dashbord same with html's background

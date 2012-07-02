@@ -28,6 +28,7 @@ ul{
   bottom:30px;
   background: #DFF0D8;
 }
+
 .cake-sql-log caption{ 
   background: #D9EDF7;
 }
@@ -50,22 +51,30 @@ img.loader{
   height: 40px;
 }
 
-.navbar .container{ 
+#container-header .navbar .container{ 
   width: 1200px;
 }
 
-.navbar .brand{ 
+#container-header .navbar .brand{ 
   font-family: 'Emblema One', cursive;
 }
 
-#container-header .twitter-profile{ 
-  margin: 0 10px;
-}
+#container-header .link-timeline,
+#container-header .link-logout{ 
+  line-height: 20px;
+ }
 
 #container-header .twitter-profile img{ 
-  margin: 0 5px 0 0;
   border-radius: 2px;
+  float:left;
 }
+
+#container-header .twitter-profile a{ 
+  float: left;
+  margin:0;
+  padding-left: 0;
+}
+
 /* --------------------------------------------------
    main
 -------------------------------------------------- */
@@ -495,6 +504,7 @@ img.loader{
 /* --------------------------------------------------
    users.sent_tweets
 -------------------------------------------------- */
+
 #wrap-main{ 
   float: left;
   width: 500px
@@ -545,4 +555,38 @@ img.loader{
   padding: 0;
   text-align: center;
   line-height: 40px;
+}
+
+/* --------------------------------------------------
+   users.configurations
+-------------------------------------------------- */
+#wrap-configurations{ 
+  width:980px;
+  margin: 20px auto;
+}
+
+#wrap-configurations h1{ 
+  text-align: left;
+  width: 100%;
+  float: left;
+  border-bottom: solid 1px gray;
+}
+
+#wrap-configurations section{ 
+  width: 100%;
+  float: left;
+  margin: 10px 0;
+}
+
+#wrap-configurations h1 span{ 
+  font-size: 70%;
+}
+
+#modal-delete-account .modal-body h4{ 
+  margin: 0 0 10px 0;
+}
+
+#modal-delete-account .modal-body p{ 
+  padding: 0 0 2px 5px;
+  font-size: 80%;
 }

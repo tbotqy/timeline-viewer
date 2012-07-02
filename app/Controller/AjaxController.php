@@ -250,6 +250,25 @@ class AjaxController extends AppController{
 
     }
 
+    public function delete_account(){
+        
+        if(!$this->request->isPost()){
+            echo "bad request";
+            exit;
+        }
+
+        $user_id = $this->Auth->user('id');
+
+        // initialize the flag representing if deleting went well 
+        $deleted = false;
+       
+        if($this->User->deleteAccount($user_id)){
+            $deleted = true;
+        }
+        $this->autoRender = false;
+        echo $deleted;
+    }
+
     public function switch_term(){
 
         /**
