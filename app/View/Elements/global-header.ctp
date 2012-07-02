@@ -11,43 +11,42 @@
 	  <div class="container">
 	    <a  class="brand" href="/">TimedLine</a>
 	    <?php if($loggedIn):?>
-	    <?php if($userIsInitialized):?>
-
-	    <!-- .nav -->
-	    <ul class="nav">
-
+	    
+	    <?php if(!$userIsInitialized):?>	      
+	    
+	    <!-- .nav .pull-left -->
+	    <ul class="nav pull-left">
 	      <li class="dropdown">
-		<a class="dropdown-toggle" data-toggle="dropdown" href="#">タイムライン<b class="caret"></b></a>
-
+		<a class="dropdown-toggle link-timeline" data-toggle="dropdown" href="#">タイムライン<b class="caret"></b></a>
+		
 		<ul class="dropdown-menu">
 		  <li><a href="/users/sent_tweets">ツイート</a></li>
 		  <li><a href="/users/home_timeline">ホームタイムライン</a></li>
 		</ul>
-
 	      </li>
 	    </ul>
-	    <!-- /.nav -->
+	    <!-- /.nav .pull-left -->
 	    <?php endif;?>
-	    <p class="navbar-text">
-	      <?php
-                echo $this->Html->link('ログアウト',array('controller'=>'users','action'=>'logout'),array('class'=>'pull-right'));
-          ?>
-	    </p>
-
-	    <p class="navbar-text">
-	      <a class="pull-right link-config" href="/users/configurations"><i class="icon-cogs icon-large"></i></a>
-	    </p>
 	    
-	    <p class="navbar-text">
-	
-	      <a class="pull-right twitter-profile" href="https://twitter.com/<?php echo $loggingUser['Twitter']['screen_name'];?>" target="_blank">
-
+	    <!-- .nav .pull-right -->
+	    <ul class="nav pull-right">
+	      <li class="twitter-profile">
+		<a href="https://twitter.com/<?php echo $loggingUser['Twitter']['screen_name'];?>" target="_blank">
 		  <img width="20" src="<?php echo $loggingUser['Twitter']['profile_image_url_https'];?>" />
-		
-		@<?php echo $loggingUser['Twitter']['screen_name'];?>
-	      </a>
-	    </p>
-
+		</a>
+                <a href="https://twitter.com/<?php echo $loggingUser['Twitter']['screen_name'];?>" target="_blank">
+		  @<?php echo $loggingUser['Twitter']['screen_name'];?>
+		</a>
+	      </li>
+	      <li>
+		<a class="link-config" href="/users/configurations"><i class="icon-cog"></i></a>
+	      </li>
+	      <li class="divider-vertical"></li>
+	      <li>
+		<a class="pull-right link-logout" href="/users/logout">ログアウト</a>
+	      </li>
+	    </ul>
+	    <!-- /.nav .pull-right -->
 	    <?php endif;?>
 	  </div>
 	  <!-- /.container -->

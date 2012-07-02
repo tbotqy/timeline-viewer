@@ -5,15 +5,19 @@ class User extends AppModel{
     public $name = 'User';
 
     public $hasMany = array(
-                            'Friend' => array(
-                                              'className'=>'Friend',
-                                              'foreignKey'=>'user_id',
-                                              'order'=>'Friend.id',
-                                              'dependent'=>true
-                                              )
+                            'Friend'=>array(
+                                            'className'=>'Friend',
+                                            'foreignKey'=>'user_id',
+                                            'dependent'=>true
+                                            ),
+                            
+                            'Status'=>array(
+                                            'className'=>'Status',
+                                            'foreignKey'=>'user_id',
+                                            'dependent'=>true
+                                            )
                             );
-
-
+                            
     public function register($tokens,$verify_credentials){
  
         /**
@@ -65,6 +69,15 @@ class User extends AppModel{
         return $this->User->save($data) ? true : false;
     }
 
+    public function deleteAccount($user_id){
+        /**
+         * delete all the data related to User
+         */
+
+        // delete all related data
+        return $this->delete($user_id,true);
+    }
+
 
     public function getIdByTwitterId($twitter_id){
         /**
@@ -72,6 +85,8 @@ class User extends AppModel{
          * @param string $twitter_id
          * @return int if secceed otherwise false
          */
+
+        $this->unbindAllModels();
         
         $id = $this->find(
                           'first',
@@ -91,6 +106,8 @@ class User extends AppModel{
          * @param int $user_id
          * @return string user's twitter id
          */
+
+        $this->unbindAllModels();
 
         $twitter_id = find(
                            'first',
@@ -112,6 +129,8 @@ class User extends AppModel{
          * @return array of token pare if there is any token for $user_id
          * @return false if acquired none
          */
+        
+        $this->unbindAllModels();
 
         $tokens = $this->findById(
                                   $user_id,
@@ -127,6 +146,8 @@ class User extends AppModel{
          * @param int $user_id
          * @return boolean
          */
+
+        $this->unbindAllModels();
 
         $result = $this->findById(
                                   $user_id,
@@ -145,6 +166,19 @@ class User extends AppModel{
         
         return $this->getIdByTwitterId($twitter_id) ? true : false;
 
+    }
+
+    private function unbindAllModels(){
+        
+        foreach($this->hasMany as $model=>$inner){
+            $hasMany[] = $model;
+        }
+        
+        return $this->unbindModel(
+                                  array(
+                                        'hasMany'=>$hasMany
+                                        )
+                                  );
     }
 
 }

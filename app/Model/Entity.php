@@ -4,13 +4,12 @@ class Entity extends AppModel{
     
     public $name = 'Entity';
     
-    /*
     public $belongsTo = array(
                               'className'=>'Status',
-                              'foreignKey'=>'status_id'
+                              'foreignKey'=>'status_id',
+                              'dependency'=>false
                               );
     
-    */
     public function saveEntities($status_id,$status,$user){
       
         /**
@@ -78,18 +77,6 @@ class Entity extends AppModel{
             // new feature 
         }
        
-        /*
-        if($entity_type === 'hashtags'){
-            $ret['hashtag'] = $entity['text'];
-        }elseif($entity_type === 'urls'){
-            $ret['url'] = $entity['url'];
-        }elseif($entity_type === 'media'){
-            $ret['url'] = $entity['url'];
-        }elseif($entity_type === 'user_mentions'){
-            $ret['mention_to_screen_name'] = $entity['screen_name'];
-            $ret['mention_to_user_id_str'] = $entity['id_str'];
-        }
-        */
         return $ret;
     }
 

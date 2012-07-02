@@ -16,22 +16,13 @@ class UsersController extends AppController{
 
     public function test(){
 
-
-        $user = $this->Auth->user();
-        $params = array(
-                        'user_id'=>$user['Twitter']['id'],
-                        'count'=>2,
-                        'include_rts'=>true,
-                        );
+        $this->autoRender=false;
         
-        $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
-        
-        foreach($tweets as $tweet){
-            
-            $this->hoge($tweet);
-
+        $s = microtime(true);
+        $this->Status->getCreatedAtList(1,'sent_tweets');
+        $e = microtime(true);
+        echo $e-$s;
         }
-    }
     
     public function hoge($tweet){
 
@@ -258,7 +249,6 @@ class UsersController extends AppController{
             $statuses = $this->Status->getLatestTimeline($user['id']);
 
         }
-
         
         // get oldest status's created_at timestamp
         $last_status = $this->getLastLine($statuses);
