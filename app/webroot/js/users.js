@@ -114,49 +114,82 @@ $(document).ready(function(){
 
   // click event to update statuses
   $("#update-statuses").click(function(){
+    
     $(this).button('loading');
     checkUpdate();
+  
   });
-
+  
+  var deleted = "";
   // click event to delete account
-   $("#delete-account").click(function(e){
-     
-     var deleted = false;
+  $("#delete-account").click(function(){
 
-     showLoader();
-     $(this).button("loading");
+    $(this).button('loading');
+    $("#modal-delete-account")
+      .find(".status")
+      .fadeOut(function(){
+	$(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />"); 
+      }).fadeIn();
+    
+    $.ajax({
+      
+      url: '/ajax/delete_account',
+      type: 'post',
+      dataType: 'text',
+      success: function(res){
+	deleted = res;
+	showCompleteMessage(res);
+      },
 
-     $.ajax({
-       type:"post",
-       dataType:"text",
-       url:"/ajax/delete_account",
-       success:function(responce){
-	 deleted = responce;
-       },
-       error:function(){
-	 $("#modal-delete-account").find(".status").text("error");
-       },
-       complete:function(){
-	 if(deleted){
-	   $(this).button("complete").setTimeout(
-	     function(){
-	       location.href="/user/logout";
-	     }
-	     ,1000);
-	 }else{
-	   $(this).button("uncomplete");
-	   $("#modal-delete-account").find(".status").text("処理が完了しませんでした。画面をリロードしてもう一度お試しください。");
-	 }
-       }
-     });
-       
-   });
-				       
+      error: function(){
+	showErrorMessage();
+      },
+      
+      complete: function(){
+	if(deleted){
+	  setTimeout(
+	    function(){
+	      redirect();
+	    },
+	    3000
+	  );
+	}
+      }
+
+    });
+    
+  });
+  
 });
 
+
+function showErrorMessage(){
+  return showCompleteMessage(false);
+}
+
+function showCompleteMessage(flag){
+  
+  var message = "";
+  var area_status = $("#modal-delete-account").find(".status");		  
+  
+  if(flag){
+    message = "アカウント削除が完了しました。自動的にログアウトします。";
+  }else{
+    message = "すみません！処理が完了しませんでした。画面をリロードしてもう一度お試しください。";  
+  }
+
+  area_status.fadeOut(function(){
+    $(this).text(message);
+  }).fadeIn();
+
+}
+
+function redirect(){
+  location.href="/users/logout";
+}
+  
 function checkUpdate(){
 
-  var ret = "";
   $.ajax({
 
     url:"/ajax/checkUpdate",
@@ -167,7 +200,8 @@ function checkUpdate(){
     },
   
     error: function(){
-      console.log("an error occured");
+      // [ToDo] manage error
+      
     },
     
     complete: function(){
@@ -177,6 +211,7 @@ function checkUpdate(){
 	noUpdateHasCome();
       }
     }
+ 
   });
 
 };
@@ -193,32 +228,46 @@ function updateStatus(){
     type:"post",
     dataType:"json",
     data:{"oldest_id_str":oldest_id_str,"destination_time":destination_time},
+  
     success: function(responce){
       
       if(responce.continue){
+
 	total_count += responce.count_saved;
 	oldest_id_str = responce.oldest_id_str;
 	destination_time = responce.destination_time;
 	updateStatus();
+      
       }else{
+
 	total_count += responce.count_saved;
+
       }
+
     },
 
     error: function(){
+      // [ToDo] manage error
       alert("ツイートの更新に失敗しました。");
+   
     },
 
     complete: function(responce){
+    
       var progress_area = $(".update-statuses").find(".text");
+      
       if(responce.continue){
+
 	// show the total number of statuses that have been imported so far
 	  progress_area.fadeOut().text(total_count+"件追加").fadeIn();
+     
       }else{
+
 	$("#update-statuses").text("更新完了");
 	progress_area.fadeOut(function(){
 	  $(this).text(total_count+"件追加しました。");
 	}).fadeIn();
+
       }
     }
   

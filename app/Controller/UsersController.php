@@ -16,20 +16,13 @@ class UsersController extends AppController{
 
     public function test(){
 
-        $this->autoRender=false;
+        $this->autoRender = false;
         
-        $s = microtime(true);
-        $this->Status->getCreatedAtList(1,'sent_tweets');
-        $e = microtime(true);
-        echo $e-$s;
-        }
-    
-    public function hoge($tweet){
-
-        echo $tweet['created_at'];
-
+        $this->User->deleteAccount(2);
+        
+            
     }
-
+ 
     public function index(){
 
         /**

@@ -19,7 +19,9 @@
 
   <!-- .modal-footer -->
   <div class="modal-footer">
-    <p class="status"></p>
+    <div class="wrap-status">
+      <p class="status">キャンセルはできません。実行してよろしいですか？</p>
+    </div>
     <button class="btn" data-dismiss="modal">キャンセル</button>
     <button id="delete-account" class="btn btn-danger" data-loading-text="saying goodbye..." data-complete-text="削除完了" data-complete-text="エラー"><i class="icon-trash icon-white"></i>実行</button>
   </div>

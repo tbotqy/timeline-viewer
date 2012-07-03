@@ -590,3 +590,21 @@ img.loader{
   padding: 0 0 2px 5px;
   font-size: 80%;
 }
+
+#modal-delete-account .wrap-status{ 
+  height: 20px;
+  margin: 0 0 10px 0;
+  font-size: 80%;
+}
+
+#modal-delete-account .status{ 
+  height: 14px;
+}
+
+#modal-delete-account .status .loader{ 
+  float: right;
+  width: 24px;
+  height: 24px;
+  margin: -5px 0 0 10px;
+  display: block;
+}

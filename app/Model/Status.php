@@ -278,12 +278,13 @@ class Status extends AppModel{
 
         // primary key ++
         $this->create();
+        
         // save the status
         $this->save($status_to_save);
-               
-        // save entities belong to this status
-        $this->Entity->saveEntities($this->id,$status,$user);
-            
+        
+        // save entities belonging to this status
+        $this->Entity->saveEntities($this->id,$status);
+        
     }
 
     public function hasOlderTimeline($user_id,$timestamp){

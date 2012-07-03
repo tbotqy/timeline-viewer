@@ -4,13 +4,7 @@ class Entity extends AppModel{
     
     public $name = 'Entity';
     
-    public $belongsTo = array(
-                              'className'=>'Status',
-                              'foreignKey'=>'status_id',
-                              'dependency'=>false
-                              );
-    
-    public function saveEntities($status_id,$status,$user){
+    public function saveEntities($status_id,$status){
       
         /**
          * save given enitities with its status_id linked
@@ -27,20 +21,15 @@ class Entity extends AppModel{
                         
                 // if the type has, save nodes belonging to the type
                 foreach($contents as $content){
- 
+                    
                     $entity_to_save = $this->createArrayToSave($status_id,$status,$content,$type);
-                 
+     
                     $this->create();
-                    if(!$this->save($entity_to_save)){
-                        return false;
-                    }
-               
+                    $this->save($entity_to_save);
                 }
-
+                
             }
         }
-        
-        return true;
     }
 
     public function createArrayToSave($status_id,$status,$entity,$entity_type){
@@ -76,7 +65,6 @@ class Entity extends AppModel{
         default:
             // new feature 
         }
-       
         return $ret;
     }
 
