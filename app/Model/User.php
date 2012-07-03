@@ -78,7 +78,6 @@ class User extends AppModel{
         return $this->delete($user_id,true);
     }
 
-
     public function getIdByTwitterId($twitter_id){
         /**
          * acquires id with given $twitter_id

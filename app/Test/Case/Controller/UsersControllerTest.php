@@ -2,20 +2,19 @@
 
 App::uses('UsersController','Controller');
 
-class UsersControllerTest extends CakeTestCase{
-
+class UsersControllerTest extends ControllerTestCase{
+   
+    public $fixtures = array('app.user','app.friend','app.status','app.entity');
 
     public function setUp(){
         parent::setUp();
-        $this->ctr = new UsersController();
+        //$this->ctr = new UsersController();
     }
 
-    public function testIsTen(){
+    public function testTest(){
 
-        $num = 10;
-        $this->assertTrue($this->ctr->isTen($num));
-        $num = 11;
-        $this->assertFalse($this->ctr->isTen($num));
+        $ret = $this->testAction('/users/test');
+        debug($ret);
         
     }
 }

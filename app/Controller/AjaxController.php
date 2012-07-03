@@ -53,7 +53,7 @@ class AjaxController extends AppController{
                             'screen_name'=>$user['Twitter']['screen_name']
                             );
         
-        // this is the oldest tweet's id among those which have imported so far
+        // this is the oldest tweet's id of the statuses which have imported so far
         $max_id = $this->request->data('id_str_oldest');
                 
         // configure parameters 
@@ -68,6 +68,7 @@ class AjaxController extends AppController{
               array('User.id'=>$user['id'])
               );
             */
+            
             // set 100 as the number of statuses to acquire
             $api_params['count'] = 100;
             
@@ -95,7 +96,6 @@ class AjaxController extends AppController{
         
         // save acquired data if any
         if($statuses){
-        
             foreach($statuses as $status){
                 $this->Status->saveStatus($user,$status);
             }
@@ -110,27 +110,28 @@ class AjaxController extends AppController{
     
         // number of statuses added to database
         $saved_count = count($statuses);
-        
-        // the status to show as one which is currently fetching
-        $last_status = end($statuses);
-        $text = $last_status['text'];       
-        $id_str_oldest = $last_status['id_str'];
 
-        $utc_offset = $last_status['user']['utc_offset'];
-        $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-        $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
-        $created_at = date("Y年m月d日 - H:i",$created_at);
-      
-        $ret = array(
-                     'continue' => $continue,
-                     'saved_count' => $saved_count,
-                     'id_str_oldest' => $id_str_oldest,
-                     'status' => array(
-                                       'date'=>$created_at,
-                                       'text'=>$text
-                                       )
-                     );
+        $ret['continue'] = $continue;
+        $ret['saved_count'] = $saved_count;
         
+        if($continue){
+            // the status to show as one which is currently fetching
+            $last_status = end($statuses);
+            $text = $last_status['text'];       
+            $id_str_oldest = $last_status['id_str'];
+
+            $utc_offset = $last_status['user']['utc_offset'];
+            $created_at = strtotime($last_status['created_at']);// convert its format to unix time
+            $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
+            $created_at = date("Y年m月d日 - H:i",$created_at);
+
+            $ret['id_str_oldest'] = $id_str_oldest;
+            $ret['status'] = array(
+                                   'date'=>$created_at,
+                                   'text'=>$text
+                                   );
+        }
+
         // return json
         $this->set('responce',json_encode($ret));
     }
@@ -251,22 +252,27 @@ class AjaxController extends AppController{
     }
 
     public function delete_account(){
-        
+       
         if(!$this->request->isPost()){
             echo "bad request";
             exit;
         }
 
         $user_id = $this->Auth->user('id');
-
+        
         // initialize the flag representing if deleting went well 
         $deleted = false;
        
         if($this->User->deleteAccount($user_id)){
             $deleted = true;
         }
+
         $this->autoRender = false;
+        // [ToDo]
+        $deleted = true;
+        
         echo $deleted;
+        
     }
 
     public function switch_term(){
