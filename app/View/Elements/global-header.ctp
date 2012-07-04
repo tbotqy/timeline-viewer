@@ -12,7 +12,7 @@
 	    <a  class="brand" href="/">TimedLine</a>
 	    <?php if($loggedIn):?>
 	    
-	    <?php if(!$userIsInitialized):?>	      
+	    <?php if($userIsInitialized):?>	      
 	    
 	    <!-- .nav .pull-left -->
 	    <ul class="nav pull-left">
@@ -27,9 +27,10 @@
 	    </ul>
 	    <!-- /.nav .pull-left -->
 	    <?php endif;?>
-	    
+
 	    <!-- .nav .pull-right -->
 	    <ul class="nav pull-right">
+	      
 	      <li class="twitter-profile">
 		<a href="https://twitter.com/<?php echo $loggingUser['Twitter']['screen_name'];?>" target="_blank">
 		  <img width="20" src="<?php echo $loggingUser['Twitter']['profile_image_url_https'];?>" />
@@ -38,15 +39,27 @@
 		  @<?php echo $loggingUser['Twitter']['screen_name'];?>
 		</a>
 	      </li>
-	      <li>
-		<a class="link-config" href="/users/configurations"><i class="icon-cog"></i></a>
+	      
+	      <li class="dropbown">
+		<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="icon-caret-down"></i></a>
+	       
+		<!-- .dropdown-menu -->
+		<ul class="dropdown-menu">
+		  <li>
+		    <a class="link-config" href="/users/configurations"><i class="icon-cog"></i>設定</a>
+		  </li>
+		  <li class="divider"></li>
+		  <li>
+		    <a class="link-logout" href="/users/logout">ログアウト</a>
+		  </li>
+		</ul>
+		<!-- /.dropdown-menu -->
+	      
 	      </li>
-	      <li class="divider-vertical"></li>
-	      <li>
-		<a class="pull-right link-logout" href="/users/logout">ログアウト</a>
-	      </li>
+	    
 	    </ul>
 	    <!-- /.nav .pull-right -->
+
 	    <?php endif;?>
 	  </div>
 	  <!-- /.container -->

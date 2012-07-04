@@ -61,13 +61,8 @@ class AjaxController extends AppController{
             // this is the case for first ajax request
 
             // turn initialized flag true in user model
-            /*
-              [ToDo] uncomment this when release
-              $this->User->updateAll(
-              array('initialized_flag'=>true),
-              array('User.id'=>$user['id'])
-              );
-            */
+            $this->User->id = $user['id'];
+            $this->User->saveField('initialized_flag',true);
             
             // set 100 as the number of statuses to acquire
             $api_params['count'] = 100;
