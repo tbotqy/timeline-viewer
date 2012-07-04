@@ -273,6 +273,7 @@ class Status extends AppModel{
                                 'source'=>$status['source'],
                                 'text'=>$status['text'],
                                 'possibly_sensitive'=>$possibly_sensitive,// boolean
+                                'pre_saved'=>true,
                                 'created'=>time()
                                 );
 
@@ -284,6 +285,50 @@ class Status extends AppModel{
         
         // save entities belonging to this status
         $this->Entity->saveEntities($this->id,$status);
+        
+    }
+
+    public function savePreSavedStatus($user_id){
+
+        /**
+         * make all the statuses specified user has non-pre-saved
+         */
+
+        return $this->updateAll(
+                                array(
+                                      'Status.pre_saved'=>false
+                                      ),
+                                array(
+                                      'Status.user_id'=>$user_id,
+                                      'Status.pre_saved'=>true
+                                      )
+                                );
+
+    }
+
+    public function deletePreSavedStatus($user_id){
+        /**
+         * delete the statuses which are set as pre-saved if any
+         */
+        
+        $count_pre_saved = $this->find(
+                                       'count',
+                                       array(
+                                             'Status.user_id'=>$user_id,
+                                             'Status.pre_saved'=>true
+                                             )
+                                       );
+        
+        if($count_pre_saved > 0){
+            return $this->deleteAll(
+                                    array(
+                                          'Status.user_id'=>$user_id,
+                                          'Status.pre_saved'=>true
+                                          )
+                                    );
+        }else{
+            return false;
+        }
         
     }
 

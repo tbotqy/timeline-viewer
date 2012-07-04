@@ -59,6 +59,9 @@ class AjaxController extends AppController{
         // configure parameters 
         if(!$max_id){
             // this is the case for first ajax request
+            
+            // delete all the statuses whose pre_saved flag is true
+            $this->Status->deletePreSavedStatus($user['id']);
 
             // turn initialized flag true in user model
             $this->User->id = $user['id'];
@@ -125,6 +128,9 @@ class AjaxController extends AppController{
                                    'date'=>$created_at,
                                    'text'=>$text
                                    );
+        }else{
+            // make statuses non-pre-saved
+            $this->Status->savePreSavedStatus($user['id']);
         }
 
         // return json
@@ -139,6 +145,7 @@ class AjaxController extends AppController{
         
         $this->autoRender = false;
         $user = $this->Auth->user();
+
         $params = array(
                         'user_id'=>$user['Twitter']['id'],
                         'count'=>1,
@@ -183,6 +190,9 @@ class AjaxController extends AppController{
         $max_id = $this->request->data('oldest_id_str');
         
         if($max_id){
+
+            // delete pre-saved statuses
+            $this->Status->deletePreSavedStatus($user['id']);
             
             // set params for api request            
             $params = array(
@@ -235,6 +245,11 @@ class AjaxController extends AppController{
             }
         }
     
+        if(!$continue){
+            // make all the pre_saved statuses non-pre-saved
+            $this->Status->savePreSavedStatus($user['id']);
+        }
+
         $ret = array(
                      'destination_time'=>$destination_time,
                      'count_saved'=>$count_saved,
