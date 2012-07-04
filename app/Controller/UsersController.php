@@ -258,11 +258,25 @@ class UsersController extends AppController{
     }
 
     public function configurations(){
+        
         /**
          * offers view for user configurations
          */
+       
         $user = $this->Auth->user();
+        $user_id = $user['id'];
+        $utc_offset = $user['Twitter']['utc_offset'];
 
+        $count_statuses = $this->Status->getStatusNum($user_id);
+        $count_friends = $this->Friend->getFriendNum($user_id);
+
+        $status_updated_time = date("Y-m-d　H:i:s",$this->Status->getLastUpdatedTime($user_id)+$utc_offset);
+        $friend_updated_time = date("Y-m-d　H:i:s",$this->Friend->getLastUpdatedTime($user_id)+$utc_offset);
+ 
+        $this->set('count_statuses',$count_statuses);
+        $this->set('count_friends',$count_friends);
+        $this->set('status_updated_time',$status_updated_time);
+        $this->set('friend_updated_time',$friend_updated_time);
         $this->set('user',$user);
     }
 

@@ -117,7 +117,7 @@ $(document).ready(function(){
     
     $(this).button('loading');
     checkUpdate();
-  
+    
   });
   
   var deleted = "";

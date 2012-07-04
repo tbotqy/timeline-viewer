@@ -13,6 +13,7 @@ body{
   font-size: 100%;
   font-family:'Questrial', Helvetica,"メイリオ", sans-serif;
   color: #7a6e7e;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); 
 }
 
 /* --------------------------------------------------
@@ -364,6 +365,8 @@ img.loader{
   float: left;
   width: 500px;
   margin: 0 auto;
+  color: #49360D;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);  
 }
 
 #wrap-import .wrap-tweet .inner{ 
@@ -579,6 +582,17 @@ img.loader{
 #wrap-configurations .table{ 
   margin: 20px 0;
   float: left;
+
+  border-top: solid 1px #fefefe;
+  border-bottom: solid 1px #d7d7d7;  
+  background: #f2eee6;
+  color: #49360D;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);  
+}
+
+#wrap-configurations .table tbody tr{ 
+  border-top: solid 1px #fefefe;
+  border-bottom: solid 1px #d7d7d7;  
 }
 
 #wrap-configurations .table button{ 

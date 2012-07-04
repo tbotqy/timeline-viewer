@@ -25,8 +25,14 @@ class StatusesController extends AppController{
         /*
          * show the screen for operating import method
          */
-        
+
         $user =  $this->Auth->user();
+
+        // redirect user if already has been initialized
+        if($this->User->isInitialized($user['id'])){
+            return $this->redirect('/users/sent_tweets');
+        }
+        
         $param = array('user_id'=>$user['Twitter']['id'],
                        'include_entities'=>true
                        );
