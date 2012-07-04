@@ -1,4 +1,4 @@
-s<?php
+<?php
 /*
  * Controller/UsersController.php
  */
@@ -15,12 +15,12 @@ class UsersController extends AppController{
     }
 
     public function test(){
-
         $this->autoRender = false;
         
-        $this->User->deleteAccount(2);
+        $params = array('count'=>'2','since_id'=>'203398637697511424');
+        $tweets = $this->Twitter->get('statuses/user_timeline',$params);
+        pr(json_decode($tweets,true));
         
-            
     }
  
     public function index(){

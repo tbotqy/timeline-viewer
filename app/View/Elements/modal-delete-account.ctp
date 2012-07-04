@@ -20,9 +20,9 @@
   <!-- .modal-footer -->
   <div class="modal-footer">
     <div class="wrap-status">
-      <p class="status">一度走り出したら止められません。実行してよろしいですか？</p>
+      <p class="status">一度走り出したら止められません。</p>
     </div>
-    <button class="btn" data-dismiss="modal">思いとどまる</button>
+    <button class="btn" data-dismiss="modal">キャンセル</button>
     <button id="delete-account" class="btn btn-danger" data-loading-text="saying goodbye..." data-complete-text="削除完了" data-complete-text="エラー"><i class="icon-trash icon-white"></i>実行</button>
   </div>
   <!-- /.modal-footer -->

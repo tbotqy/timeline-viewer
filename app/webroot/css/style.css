@@ -572,14 +572,29 @@ img.loader{
   border-bottom: solid 1px gray;
 }
 
-#wrap-configurations section{ 
-  width: 100%;
-  float: left;
-  margin: 10px 0;
-}
-
 #wrap-configurations h1 span{ 
   font-size: 70%;
+}
+
+#wrap-configurations .table{ 
+  margin: 20px 0;
+  float: left;
+}
+
+#wrap-configurations .table button{ 
+  position: relative;
+  left: 10px;
+}
+
+#wrap-configurations .wrap-delete-button{ 
+  border-top: solid 1px #c0c0c0;
+  float: left;
+  width: 100%;
+}
+
+#wrap-configurations .wrap-delete-button button{ 
+  float: right;
+  margin: 8px 0 0 0;
 }
 
 #modal-delete-account .modal-body h4{ 
