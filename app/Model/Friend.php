@@ -12,20 +12,45 @@ class Friend extends AppModel{
                                             )
                               );
     
-    public function hoge($flag){
-        
-        $data = $this->find('all');
-        return $flag;
+    public function getLastUpdatedTime($user_id){
 
+        /**
+         * returns the record value in User.friends_updated
+         */
         
+        $this->User->unbindAllModels();
+
+        $user = $this->User->findById($user_id);
+        
+        return $user['User']['friends_updated'];
+
+    }
+
+    public function getFriendNum($user_id){
+    
+        /**
+         * returns the total number of friends belonging to specified user
+         */
+
+        return $this->find(
+                           'count',
+                           array(
+                                 'conditions'=>array(
+                                                     'Friend.user_id'=>$user_id
+                                                     )
+                                 )
+                           );
+
     }
 
     public function getFriendIds($user_id){
+        
         /**
          * retrieves twitter id that user is following 
          * @param int $user_id
          * @return nothing
          */
+        
         $conditions = array('Friend.user_id'=>$user_id);
         $fields = array('Friend.following_twitter_id');
         

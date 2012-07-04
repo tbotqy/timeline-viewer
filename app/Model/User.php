@@ -27,7 +27,6 @@ class User extends AppModel{
          * @return true if success otherwise false
          */
         
-
         // user's data to save
         $data_to_save = array(
                               'twitter_id'=>$verify_credentials['id_str'],
@@ -167,7 +166,7 @@ class User extends AppModel{
 
     }
 
-    private function unbindAllModels(){
+    public function unbindAllModels(){
         
         foreach($this->hasMany as $model=>$inner){
             $hasMany[] = $model;

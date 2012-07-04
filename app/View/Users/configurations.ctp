@@ -19,23 +19,25 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
     </thead>
 
     <tbody>
+
       <tr class="tweets">
 	<td>ツイート</td>
-	<td class="count">1203件</td>
-	<td class="last-update">2012-5-10 10:23</td>
+	<td class="count"><?php echo $count_statuses;?>件</td>
+	<td class="last-update"><?php echo $status_updated_time;?></td>
 	<td>
 	  <button id="update-statuses" class="btn btn-success" data-loading-text="読み込み中"><i class="icon-refresh icon-white"></i>更新</button>
 	</td>
       </tr>
       
       <tr class="friends">
-	<td>フォローリスト</td>
-	<td class="count">1203件</td>
-	<td class="last-update">2012-5-10 10:23</td>
+	<td>フォローしている人のリスト</td>
+	<td class="count"><?php echo $count_friends;?>件</td>
+	<td class="last-update"><?php echo $friend_updated_time;?></td>
 	<td><button id="update-friends" class="btn btn-success" data-loading-text="読み込み中">
 	    <i class="icon-refresh icon-white"></i>更新</button>
 	</td>
       </tr>
+
     </tbody>      
 
   </table>

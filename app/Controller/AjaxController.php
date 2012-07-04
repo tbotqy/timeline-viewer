@@ -62,10 +62,6 @@ class AjaxController extends AppController{
             
             // delete all the statuses whose pre_saved flag is true
             $this->Status->deletePreSavedStatus($user['id']);
-
-            // turn initialized flag true in user model
-            $this->User->id = $user['id'];
-            $this->User->saveField('initialized_flag',true);
             
             // set 100 as the number of statuses to acquire
             $api_params['count'] = 100;
@@ -129,6 +125,10 @@ class AjaxController extends AppController{
                                    'text'=>$text
                                    );
         }else{
+            // turn initialized flag true in user model
+            $this->User->id = $user['id'];
+            $this->User->saveField('initialized_flag',true);
+            
             // make statuses non-pre-saved
             $this->Status->savePreSavedStatus($user['id']);
         }

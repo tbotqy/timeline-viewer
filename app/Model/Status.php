@@ -19,7 +19,37 @@ class Status extends AppModel{
                                             'dependent'=>false
                                             )
                               );
-   
+    public function getStatusNum($user_id){
+
+        /**
+         * returns the number of specified user's statuses saved
+         */
+
+        return $this->find(
+                           'count',
+                           array(
+                                 'conditions'=>array(
+                                                     'Status.user_id'=>$user_id,
+                                                     'Status.pre_saved'=>false
+                                                     )
+                                 )
+                           );
+
+    }
+
+    public function getLastUpdatedTime($user_id){
+
+        /**
+         * returns the record value in User.statsues_updated
+         */
+
+        $this->User->unbindAllModels();
+        
+        $user = $this->User->findById($user_id);
+        
+        return $user['User']['statuses_updated'];
+    }
+
     public function getStatusInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
         
         /**
@@ -294,16 +324,18 @@ class Status extends AppModel{
          * make all the statuses specified user has non-pre-saved
          */
 
-        return $this->updateAll(
-                                array(
-                                      'Status.pre_saved'=>false
-                                      ),
-                                array(
-                                      'Status.user_id'=>$user_id,
-                                      'Status.pre_saved'=>true
-                                      )
-                                );
-
+        $this->updateAll(
+                         array(
+                               'Status.pre_saved'=>false
+                               ),
+                         array(
+                               'Status.user_id'=>$user_id,
+                               'Status.pre_saved'=>true
+                               )
+                         );
+        
+        $this->updateSavedTime($user_id);
+        
     }
 
     public function deletePreSavedStatus($user_id){
@@ -330,6 +362,22 @@ class Status extends AppModel{
             return false;
         }
         
+    }
+    
+    public function updateSavedTime($user_id){
+        /**
+         * update User.statuses_updated to current unixtime
+         */
+
+        return $this->User->updateAll(
+                                      array(
+                                            'User.statuses_updated'=>time()
+                                            ),
+                                      array(
+                                            'User.id'=>$user_id
+                                            )
+                                      );
+
     }
 
     public function hasOlderTimeline($user_id,$timestamp){
