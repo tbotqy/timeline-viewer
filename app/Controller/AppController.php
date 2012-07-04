@@ -65,7 +65,7 @@ class AppController extends Controller {
          * @param array $array
          * @return array
          */
-
+        
         $itr_last = count($array) - 1;
         return $array[$itr_last];
     }
