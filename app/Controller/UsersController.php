@@ -15,11 +15,19 @@ class UsersController extends AppController{
     }
 
     public function test(){
+
+
         $this->autoRender = false;
-        
-        $params = array('count'=>'2','since_id'=>'203398637697511424');
-        $tweets = $this->Twitter->get('statuses/user_timeline',$params);
-        pr(json_decode($tweets,true));
+        $user_id = $this->Auth->user('id');
+        $this->Friend->updateTime($user_id);
+        echo time();
+
+        /*
+        $current_friends = $this->Friend->getFriendIds($user_id);
+        $followings = json_decode($this->Twitter->get('friends/ids'),true);
+        $followings = $followings['ids'];
+
+        $this->Friend->updateFriends($user_id,$followings);*/
         
     }
  
