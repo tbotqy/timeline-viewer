@@ -1,3 +1,7 @@
+<?php
+echo $this->Html->script('popstate.js',array('inline'=>false));
+?>
+
 <?php echo $this->element('dashbord');?>
 
 <!-- #wrap-main -->

@@ -1,5 +1,9 @@
 $(document).ready(function(){
   
+  ////////////////////////////////
+  // code for elements/dashbord //
+  ////////////////////////////////
+
   // mouseover action for year list in dashbord
   $(".list-years").find("li").mouseover(function(){
     
@@ -66,6 +70,7 @@ $(document).ready(function(){
     cover.animate({
       opacity: 0.8
     },200);
+
     // check the type of data currently being shown
     var data_type = $("#wrap-dashbord").data("type");
     
@@ -112,15 +117,33 @@ $(document).ready(function(){
     
   });
 
-  // click event to update statuses
+  ////////////////////////////////////
+  // code for /users/configurations //
+  ////////////////////////////////////
+
+  /*
+   * the process to update tweets
+   */
+
   $("#update-statuses").click(function(){
-    
+
+    // change the button's statement
     $(this).button('loading');
-    checkUpdate();
-    
+
+    // show the loading icon 
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".tweets").find(".loader").fadeIn();
+
+    checkStatusUpdate();
+
   });
   
+  /*
+   * the process for account deletion
+   */
+
   var deleted = "";
+ 
   // click event to delete account
   $("#delete-account").click(function(){
 
@@ -138,147 +161,26 @@ $(document).ready(function(){
       dataType: 'text',
       success: function(res){
 	deleted = res;
-	showCompleteMessage(res);
+	showDeleteCompleteMessage(res);
       },
 
       error: function(){
-	showErrorMessage();
+	showDeleteErrorMessage();
       },
       
       complete: function(){
 	if(deleted){
+
 	  setTimeout(
 	    function(){
 	      redirect();
-	    },
-	    3000
+	    }, 3000
 	  );
+	  
 	}
       }
 
     });
-    
   });
-  
 });
 
-
-function showErrorMessage(){
-  return showCompleteMessage(false);
-}
-
-function showCompleteMessage(flag){
-  
-  var message = "";
-  var area_status = $("#modal-delete-account").find(".status");		  
-  
-  if(flag){
-    message = "アカウント削除が完了しました。自動的にログアウトします。";
-  }else{
-    message = "すみません！処理が完了しませんでした。画面をリロードしてもう一度お試しください。";  
-  }
-
-  area_status.fadeOut(function(){
-    $(this).text(message);
-  }).fadeIn();
-
-}
-
-function redirect(){
-  location.href="/users/logout";
-}
-  
-function checkUpdate(){
-
-  $.ajax({
-
-    url:"/ajax/checkUpdate",
-    type:"POST",
-    dataType:"json",
-    success: function(responce){
-	newTweetHasCome = responce.result;
-    },
-  
-    error: function(){
-      // [ToDo] manage error
-      
-    },
-    
-    complete: function(){
-      if(newTweetHasCome){
-	updateStatus();
-      }else{
-	noUpdateHasCome();
-      }
-    }
- 
-  });
-
-};
-
-var total_count = 0;
-var oldest_id_str = "";
-var destination_time = "";
-
-function updateStatus(){
-
-  $.ajax({
-
-    url:"/ajax/update_statuses",
-    type:"post",
-    dataType:"json",
-    data:{"oldest_id_str":oldest_id_str,"destination_time":destination_time},
-  
-    success: function(responce){
-      
-      if(responce.continue){
-
-	total_count += responce.count_saved;
-	oldest_id_str = responce.oldest_id_str;
-	destination_time = responce.destination_time;
-	updateStatus();
-      
-      }else{
-
-	total_count += responce.count_saved;
-
-      }
-
-    },
-
-    error: function(){
-      // [ToDo] manage error
-      alert("ツイートの更新に失敗しました。");
-   
-    },
-
-    complete: function(responce){
-    
-      var progress_area = $(".update-statuses").find(".text");
-      
-      if(responce.continue){
-
-	// show the total number of statuses that have been imported so far
-	  progress_area.fadeOut().text(total_count+"件追加").fadeIn();
-     
-      }else{
-
-	$("#update-statuses").text("更新完了");
-	progress_area.fadeOut(function(){
-	  $(this).text(total_count+"件追加しました。");
-	}).fadeIn();
-
-      }
-    }
-  
-  });
-};
-
-function noUpdateHasCome(){
-
-  $("#update-statuses").text("更新完了");
-  $(".update-statuses").find(".text").fadeOut(function(){
-    $(this).text("追加できるツイートはありません。");
-  }).fadeIn();
-
-}

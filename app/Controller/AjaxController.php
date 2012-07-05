@@ -137,7 +137,7 @@ class AjaxController extends AppController{
         $this->set('responce',json_encode($ret));
     }
 
-    public function checkUpdate(){
+    public function check_update(){
         
         /**
          * checks if there is any updatable tweet on twitter.com
@@ -145,6 +145,7 @@ class AjaxController extends AppController{
         
         $this->autoRender = false;
         $user = $this->Auth->user();
+        $user_id = $user['id'];
 
         $params = array(
                         'user_id'=>$user['Twitter']['id'],
@@ -153,7 +154,7 @@ class AjaxController extends AppController{
                         );
         
         $latest_tweet = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
-        $latest_status = $this->Status->getLatestStatus($user['id'],1);
+        $latest_status = $this->Status->getLatestStatus($user_id,1);
         
         $latest_tweet_created_at = strtotime($latest_tweet[0]['created_at']);
         $latest_status_created_at = $latest_status[0]['Status']['created_at'];
@@ -167,7 +168,15 @@ class AjaxController extends AppController{
             $ret = array('result'=>false);
         }
         
+        // record the time updeted
+        $this->Status->updateSavedTime($user_id);
+        $updated_time = $this->Status->getLastUpdatedTime($user_id);
+        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+
+        $ret['updated_date'] = $updated_date;
+        
         echo json_encode($ret);
+
     }
 
     public function update_statuses(){
@@ -185,14 +194,9 @@ class AjaxController extends AppController{
         
         // initialization
         $count_saved = 0;
-        $continue = false;
-        $destination_time = "";
         $max_id = $this->request->data('oldest_id_str');
-        
-        if($max_id){
 
-            // delete pre-saved statuses
-            $this->Status->deletePreSavedStatus($user['id']);
+        if($max_id){
             
             // set params for api request            
             $params = array(
@@ -210,10 +214,10 @@ class AjaxController extends AppController{
             array_shift($tweets);
         
         }else{
-            // set the destination value for created_at
-            $latest_status = $this->Status->getLatestStatus($user['id'],1);
-            $destination_time = $latest_status[0]['Status']['created_at'];
             
+            // delete pre-saved statuses
+            $this->Status->deletePreSavedStatus($user['id']);
+
             // set params for api request            
             $params = array(
                             'include_rts'=>true,
@@ -231,8 +235,14 @@ class AjaxController extends AppController{
         $oldest_id_str = $oldest_status['id_str'];
 
         // save lacking tweets
+        $continue = true;//initialize flag
+        
+        // set the destination value for created_at
+        $latest_status = $this->Status->getLatestStatus($user['id'],1);
+        $destination_time = $latest_status[0]['Status']['created_at'];
+
         foreach($tweets as $tweet){
-                
+
             if(strtotime($tweet['created_at']) > $destination_time){
                 // save it
                 $this->Status->saveStatus($user,$tweet);
@@ -250,11 +260,14 @@ class AjaxController extends AppController{
             $this->Status->savePreSavedStatus($user['id']);
         }
 
+        $updated_time = $this->Status->getLastUpdatedTime($user['id']);
+        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+
         $ret = array(
-                     'destination_time'=>$destination_time,
                      'count_saved'=>$count_saved,
                      'continue'=>$continue,
-                     'oldest_id_str'=>$oldest_id_str
+                     'oldest_id_str'=>$oldest_id_str,
+                     'updated_date'=>$updated_date
                      );
         
         $this->set('responce',json_encode($ret));
