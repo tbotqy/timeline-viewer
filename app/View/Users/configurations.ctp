@@ -6,7 +6,7 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
 <div id="wrap-configurations">
   
   <h1><i class="icon-cogs"></i><span>データ管理</span></h1>
-  
+   
   <table class="table">
   
     <thead>
@@ -22,18 +22,24 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
 
       <tr class="tweets">
 	<td>ツイート</td>
-	<td class="count"><?php echo $count_statuses;?>件</td>
-	<td class="last-update"><?php echo $status_updated_time;?></td>
-	<td>
+	<td class="count">
+	  <span class="total-num"><?php echo $count_statuses;?></span>件
+	  <span class="additional-num"></span>
+	</td>
+	<td class="last-update"><span class="date"><?php echo $status_updated_time;?></span></td>
+	<td class="button">
 	  <button id="update-statuses" class="btn btn-success" data-loading-text="読み込み中"><i class="icon-refresh icon-white"></i>更新</button>
 	</td>
       </tr>
       
       <tr class="friends">
 	<td>フォローしている人のリスト</td>
-	<td class="count"><?php echo $count_friends;?>件</td>
-	<td class="last-update"><?php echo $friend_updated_time;?></td>
-	<td><button id="update-friends" class="btn btn-success" data-loading-text="読み込み中">
+	<td class="count">
+	  <span class="total-num"><?php echo $count_friends;?></span>件
+	  <span class="additional-num"></span>
+	</td>
+	<td class="last-update"><span class="date"><?php echo $friend_updated_time;?></span></td>
+	<td class="button"><button id="update-friends" class="btn btn-success" data-loading-text="読み込み中">
 	    <i class="icon-refresh icon-white"></i>更新</button>
 	</td>
       </tr>

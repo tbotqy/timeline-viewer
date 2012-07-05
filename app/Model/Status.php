@@ -64,7 +64,8 @@ class Status extends AppModel{
                                       'conditions'=>array(
                                                           'Status.user_id'=>$user_id,
                                                           'Status.created_at >=' => $begin,
-                                                          'Status.created_at <=' => $end
+                                                          'Status.created_at <=' => $end,
+                                                          'Status.pre_saved' => false
                                                           ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created_at '.$order
@@ -93,7 +94,8 @@ class Status extends AppModel{
                                       'conditions'=>array(
                                                           'Status.twitter_id'=>$ids,
                                                           'Status.created_at >=' => $begin,
-                                                          'Status.created_at <=' => $end
+                                                          'Status.created_at <=' => $end,
+                                                          'Status.pre_saved' => false
                                                           ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created_at '.$order
@@ -120,7 +122,8 @@ class Status extends AppModel{
                            'all',
                            array(
                                  'conditions'=>array(
-                                                     'Status.twitter_id'=>$ids
+                                                     'Status.twitter_id'=>$ids,
+                                                     'Status.pre_saved' => false
                                                      ),
                                  'order'=>'Status.created_at DESC',
                                  'limit'=>$limit
@@ -176,7 +179,8 @@ class Status extends AppModel{
                                'list',
                                array(
                                      'conditions'=>array(
-                                                         'Status.user_id'=>$user_id
+                                                         'Status.user_id'=>$user_id,
+                                                         'Status.pre_saved' => false
                                                          ),
                                      'fields'=>array(
                                                      'Status.created_at'
@@ -225,7 +229,10 @@ class Status extends AppModel{
         $statuses = $this->find(
                                 'all',
                                 array(
-                                      'conditions'=>array('Status.user_id'=>$user_id),
+                                      'conditions'=>array(
+                                                          'Status.user_id'=>$user_id,
+                                                          'Status.pre_saved' => false
+                                                          ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created_at DESC'
                                       )
@@ -250,7 +257,8 @@ class Status extends AppModel{
                                 array(
                                       'conditions'=>array(
                                                           'Status.user_id'=>$user_id,
-                                                          'Status.created_at <'=>$threshold_timestamp
+                                                          'Status.created_at <'=>$threshold_timestamp,
+                                                          'Status.pre_saved' => false
                                                           ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created_at DESC'
@@ -267,7 +275,8 @@ class Status extends AppModel{
         // retrieve statuses
         $conditions = array(
                             'Status.twitter_id' => $ids,
-                            'Status.created_at <' => $timestamp
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false
                             );
 
         $statuses = $this->find(
@@ -418,7 +427,8 @@ class Status extends AppModel{
 
         $conditions = array(
                             'Status.user_id'=>$user_id,
-                            'Status.created_at <' => $timestamp
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false
                             );
 
         $count_older_status = $this->find(
