@@ -20,11 +20,12 @@ class AjaxController extends AppController{
         $this->Auth->deny();
 
         // reject non-ajax requests
-        if(!( $this->request->isAjax())){
+        
+        if(!$this->request->isAjax()){
             echo "bad request";
             exit;
         }
-
+        
     }
             
     public function acquire_statuses(){
@@ -137,7 +138,7 @@ class AjaxController extends AppController{
         $this->set('responce',json_encode($ret));
     }
 
-    public function check_update(){
+    public function check_status_update(){
         
         /**
          * checks if there is any updatable tweet on twitter.com
@@ -146,7 +147,7 @@ class AjaxController extends AppController{
         $this->autoRender = false;
         $user = $this->Auth->user();
         $user_id = $user['id'];
-
+                
         $params = array(
                         'user_id'=>$user['Twitter']['id'],
                         'count'=>1,
@@ -175,6 +176,59 @@ class AjaxController extends AppController{
 
         $ret['updated_date'] = $updated_date;
         
+        echo json_encode($ret);
+
+    }
+
+    public function check_friend_update(){
+        
+        /**
+         * checks if there is any friend on twitter
+         */
+        
+        if(!$this->request->isPost()){
+            echo "bad request";
+            exit;
+        }
+        
+        $user_id = $this->Auth->user('id');
+        
+        $current_friends = $this->Friend->getFriendIds($user_id);
+        $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
+        $following_ids = $following_friends['ids'];
+        
+        $hasChanged = false;
+        
+        // compare the order of list
+        foreach($following_ids as $key => $val){
+            if($current_friends[$key] != $val){
+                $hasChanged = true;
+                break;
+            }
+        }
+ 
+        if($hasChanged){
+            // update friends list
+            $this->Friend->updateFriends($use_id,$followings);
+        }else{
+            // just update friends_updeted time
+            $this->Friend->updateTime($user_id);
+        }
+
+        // get the total number of friends
+        $count_friends = $this->Friend->getFriendNum($user_id);
+        
+        // get the updated time
+        $updated_time = $this->Friend->getLastUpdatedTime($user_id);
+        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+
+        // prepare the array to return
+        $ret = array(
+                     'updated'=>$hasChanged,
+                     'count_friends'=>$count_friends,
+                     'updated_date'=>$updated_date
+                     );
+
         echo json_encode($ret);
 
     }

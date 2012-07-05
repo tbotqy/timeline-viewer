@@ -98,7 +98,7 @@ class Friend extends AppModel{
          */
 
         // delete existing records related to this user
-        $delete_conditions = array('Friends.user_id'=>$user_id);
+        $delete_conditions = array('Friend.user_id'=>$user_id);
         $this->deleteAll($delete_conditions);
 
         // insert new data
