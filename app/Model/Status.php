@@ -442,7 +442,7 @@ class Status extends AppModel{
             
     }
 
-    private function unbindAllModels(){
+    public function unbindAllModels(){
 
         foreach($this->hasMany as $model => $inner){
             $hasMany[] = $model;

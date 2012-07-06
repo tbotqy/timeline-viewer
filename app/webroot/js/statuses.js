@@ -41,79 +41,85 @@ function getStatuses(params){
   var wrap_progress_bar = $(".wrap-progress-bar");
   var wrap_tweet = $(".wrap-tweet");
   var import_button = $("#start-import");  
-  
+  var noStatusAtAll = "";
   var data_to_post = params;
 
   $.ajax({
-      
-      url: "/ajax/acquire_statuses",
-      type: "POST",
-      dataType:"json",
-      data: data_to_post,
+    
+    url: "/ajax/acquire_statuses",
+    type: "POST",
+    dataType:"json",
+    data: data_to_post,
     
     success: function(ret){
   
-	total_count += ret.saved_count;
-	
-	if(ret.continue){
+      total_count += ret.saved_count;
+      noStatusAtAll = ret.noStatusAtAll;
 
-	  $(".wrap-importing-status").fadeOut(function(){
-	    //show the result
-	    wrap_progress_bar.find(".total").html(total_count+"件");
-	    wrap_tweet.find(".body").html(ret.status.text);
-	    wrap_tweet.find(".date").html(ret.status.date);
-	    
-	  });
+      if(ret.continue){
+
+	$(".wrap-importing-status").fadeOut(function(){
+	  //show the result
+	  wrap_progress_bar.find(".total").html(total_count+"件");
+	  wrap_tweet.find(".body").html(ret.status.text);
+	  wrap_tweet.find(".date").html(ret.status.date);
 	  
-	  //throw new request
-	  data_to_post.id_str_oldest = ret.id_str_oldest;
-	  progress = getPersentage(total_count);
-	  getStatuses(data_to_post);
+	});
+	  
+	//throw new request
+	data_to_post.id_str_oldest = ret.id_str_oldest;
+	progress = getPersentage(total_count);
+	getStatuses(data_to_post);
+	
+      }else{
+	  
+	if(total_count == 0){
+	  import_button.text("...?");
+	  wrap_progress_bar.find(".progress").fadeOut(function(){
+	    wrap_progress_bar.append("<div class=\"alert alert-info\"><p>取得できるツイートが無いようです</p></div>");
+	    
+	    wrap_progress_bar.find(".alert").fadeIn();
+	  });
 	  
 	}else{
 	  
-	  if(total_count == 0){
-	   
-	    wrap_progress_bar.find(".bar").html("There is no status to retrieve.");
+	  wrap_progress_bar.find(".bar").html("complete!");
 	  
-	  }else{
-	    
-	    wrap_progress_bar.find(".bar").html("complete!");
-	    
-	    progress = 100;
-	    
-	    //show the result
-	    import_button.addClass('disabled');
-	    import_button.text(total_count + "件取得しました");
-	   
-	    // stop animation
-	    $(".progress").removeClass("active");
-	    
-	    hideLoader();
-	  }
+	  progress = 100;
+	  
+	  //show the result
+	  import_button.addClass('disabled');
+	  import_button.text(total_count + "件取得しました");
+	  
+	  // stop animation
+	  $(".progress").removeClass("active");
+	  
+	  hideLoader();
 	}
+      }
     },
     
     error: function(){
-    
+      
       //show the error message in some element
       /* [debug] */
       $(".progress").removeClass("active");
       alert('Ajax error');
-    
+      
     },
     
-    complete: function(ret){
-
-      // animate progress bar
-      setProgress(progress);
-
-      $(".wrap-importing-status").fadeIn()
-      
+    complete: function(){
+      if(noStatusAtAll){
+	hideLoader();
+      }else{
+	// animate progress bar
+	setProgress(progress);
+	
+	$(".wrap-importing-status").fadeIn()
+      }
     }
   });
 }
-
 
 function getPersentage(fetched_status_count){
   fetched_status_count = parseInt(fetched_status_count);

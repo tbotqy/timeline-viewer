@@ -10,25 +10,8 @@ class UsersController extends AppController{
     public $components = array('Twitter','Url');
 
     public function beforeFilter(){
-        $this->Auth->allow('index','login','authorize','callback','logout','hoge');
+        $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
-    }
-
-    public function test(){
-
-
-        $this->autoRender = false;
-        $user_id = $this->Auth->user('id');
-        $this->Friend->updateTime($user_id);
-        echo time();
-
-        /*
-        $current_friends = $this->Friend->getFriendIds($user_id);
-        $followings = json_decode($this->Twitter->get('friends/ids'),true);
-        $followings = $followings['ids'];
-
-        $this->Friend->updateFriends($user_id,$followings);*/
-        
     }
  
     public function index(){
@@ -169,6 +152,15 @@ class UsersController extends AppController{
          * shows the teewts sent by logged-in user
          */
 
+        $this->rejectUnInitialized();
+
+        // initialization
+        $user_data = array(); 
+        $statuses = array();
+        $oldest_timestamp = "";      
+        $date_list = array();
+        $hasNext = false;
+        
         // load user info 
         $user = $this->Auth->user();
 
@@ -220,7 +212,15 @@ class UsersController extends AppController{
          * shows the home timeline 
          * acquire user's hometimeline via API 
          */
+        
+        $this->rejectUnInitialized();
 
+        // initialization
+        $statuses = array();
+        $date_list = array();
+        $hasNext = false;
+        $oldest_timestamp = "";
+   
         // load user's account info
         $user = $this->Auth->user();
         
@@ -250,15 +250,17 @@ class UsersController extends AppController{
             $statuses = $this->Status->getLatestTimeline($user['id']);
 
         }
-        
-        // get oldest status's created_at timestamp
-        $last_status = $this->getLastLine($statuses);
-        $oldest_timestamp = $last_status['Status']['created_at'];
+
+        if($statuses){
+            // get oldest status's created_at timestamp
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
    
-        $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
           
-        $date_list = $this->Status->getDateList($user['id'],'home_timeline');
-                  
+            $date_list = $this->Status->getDateList($user['id'],'home_timeline');
+        }
+
         $this->set('statuses',$statuses);
         $this->set('date_list',$date_list);
         $this->set('hasNext',$hasNext);
@@ -271,6 +273,8 @@ class UsersController extends AppController{
          * offers view for user configurations
          */
        
+        $this->rejectUnInitialized();
+
         $user = $this->Auth->user();
         $user_id = $user['id'];
         $utc_offset = $user['Twitter']['utc_offset'];
@@ -286,6 +290,17 @@ class UsersController extends AppController{
         $this->set('status_updated_time',$status_updated_time);
         $this->set('friend_updated_time',$friend_updated_time);
         $this->set('user',$user);
+    }
+
+    private function rejectUnInitialized(){
+        /**
+         * rediect the user whose statuses are not initialized to import screen
+         */
+        
+        if(!$this->userIsInitialized){
+            return $this->redirect('/statuses/import');
+        }
+
     }
 
 }
