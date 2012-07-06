@@ -40,6 +40,13 @@ class AjaxController extends AppController{
             exit;
         }
         
+        // initialization
+        $noStatusAtAll = false;
+        $continue = false;
+        $statuses = array();
+        $following_list = array();
+        $ret = array();
+        
         $user = $this->Auth->user();
         $token = $this->User->getTokens($user['id']);
             
@@ -75,6 +82,11 @@ class AjaxController extends AppController{
             $following_list = json_decode($this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true)),true);
             $this->Friend->saveFriends($user['id'],$following_list['ids']);
             
+            if(count($statuses) == 0){
+                // set the flag that there was no status to acquire at all
+                $noStatusAtAll = true;
+            }
+            
         }else{
             
             // acquire 101 statuses which are older than the status with max_id
@@ -86,13 +98,16 @@ class AjaxController extends AppController{
             $statuses = json_decode($statuses['body'],true);
          
             // remove the newest status from result because it has been already saved in previous loop
-            array_shift($statuses);
+            if(count($statuses)>0){
+                array_shift($statuses);
+            }
         }
         
         // save acquired data if any
-        if($statuses){
+        if(count($statuses)>0){
             foreach($statuses as $status){
                 $this->Status->saveStatus($user,$status);
+
             }
         }
            
@@ -108,7 +123,8 @@ class AjaxController extends AppController{
 
         $ret['continue'] = $continue;
         $ret['saved_count'] = $saved_count;
-        
+        $ret['noStatusAtAll'] = $noStatusAtAll;
+
         if($continue){
             // the status to show as one which is currently fetching
             $last_status = end($statuses);
@@ -126,12 +142,15 @@ class AjaxController extends AppController{
                                    'text'=>$text
                                    );
         }else{
-            // turn initialized flag true in user model
-            $this->User->id = $user['id'];
-            $this->User->saveField('initialized_flag',true);
             
-            // make statuses non-pre-saved
-            $this->Status->savePreSavedStatus($user['id']);
+            if(!$noStatusAtAll){
+                // turn initialized flag true in user model
+                $this->User->id = $user['id'];
+                $this->User->saveField('initialized_flag',true);
+           
+                // make statuses non-pre-saved
+                $this->Status->savePreSavedStatus($user['id']);
+            }
         }
 
         // return json
@@ -177,7 +196,7 @@ class AjaxController extends AppController{
         $ret['updated_date'] = $updated_date;
         
         echo json_encode($ret);
-
+        
     }
 
     public function check_friend_update(){
@@ -191,28 +210,64 @@ class AjaxController extends AppController{
             exit;
         }
         
-        $user_id = $this->Auth->user('id');
-        
-        $current_friends = $this->Friend->getFriendIds($user_id);
-        $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
-        $following_ids = $following_friends['ids'];
-        
-        $hasChanged = false;
-        
-        // compare the order of list
-        foreach($following_ids as $key => $val){
-            if($current_friends[$key] != $val){
-                $hasChanged = true;
-                break;
+        $this->autoRender = false;
+        $user = $this->Auth->user();
+        $user_id = $user['id'];
+
+        // initialization
+        $doUpdate = false;
+
+        // fetch the list of user's friends
+        $friends['db'] = $this->Friend->getFriendIds($user_id);
+
+        // check if user has any friends imported
+        if(!$friends['db']){
+            // if not,do update
+            $doUpdate = true;
+
+        }else{
+            
+            // fetch same list from twitter
+            $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
+            $friends['twitter'] = $following_friends['ids'];
+
+            // compare the number of ids contained in each array
+            $count_db = count($friends['db']);
+            $count_twitter = count($friends['twitter']);
+            if($count_db != $count_twitter){
+                // if not equals
+                $doUpdate = true;
+            }else{
+                
+                // check if $friends['twitter'] contains any id that is not contained in $friends['db']
+                foreach($friends['twitter'] as $my_tw_friend){
+                    $idExists = in_array($my_tw_friend,$friends['db']);
+                    if(!$idExists){
+                        $doUpdate = true;
+                        // if detected,break the loop
+                        break;
+                    }
+                }  
+                    
             }
         }
- 
-        if($hasChanged){
+        
+        // decide update or not
+        if($doUpdate){
+
+            if(!isset($friends['twitter'])){
+                $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
+                $friends['twitter'] = $following_friends['ids'];
+            }
+
             // update friends list
-            $this->Friend->updateFriends($use_id,$followings);
+            $this->Friend->updateFriends($user_id,$friends['twitter']);
+        
         }else{
+       
             // just update friends_updeted time
             $this->Friend->updateTime($user_id);
+        
         }
 
         // get the total number of friends
@@ -224,7 +279,7 @@ class AjaxController extends AppController{
 
         // prepare the array to return
         $ret = array(
-                     'updated'=>$hasChanged,
+                     'updated'=>$doUpdate,
                      'count_friends'=>$count_friends,
                      'updated_date'=>$updated_date
                      );
@@ -248,8 +303,13 @@ class AjaxController extends AppController{
         
         // initialization
         $count_saved = 0;
-        $max_id = $this->request->data('oldest_id_str');
+        $continue = true;
+        $oldest_id_str = "";
+        $updated_date = "";
 
+        // recieve the status_id of the status which is oldest of all the statuses saved in last loop
+        $max_id = $this->request->data('oldest_id_str');
+        
         if($max_id){
             
             // set params for api request            
@@ -284,31 +344,36 @@ class AjaxController extends AppController{
             $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
         }
 
-        // check id_str of oldest status
-        $oldest_status = $this->getLastLine($tweets);
-        $oldest_id_str = $oldest_status['id_str'];
+        if($tweets){
 
-        // save lacking tweets
-        $continue = true;//initialize flag
+            // check id_str of oldest status
+            $oldest_status = $this->getLastLine($tweets);
+            $oldest_id_str = $oldest_status['id_str'];
         
-        // set the destination value for created_at
-        $latest_status = $this->Status->getLatestStatus($user['id'],1);
-        $destination_time = $latest_status[0]['Status']['created_at'];
+            // set the destination value for created_at
+            $latest_status = $this->Status->getLatestStatus($user['id'],1);
+            $destination_time = $latest_status[0]['Status']['created_at'];
+        
+        
+            // save lacking tweets if any
+            foreach($tweets as $tweet){
 
-        foreach($tweets as $tweet){
+                if(strtotime($tweet['created_at']) > $destination_time){
+                    // save it
+                    $this->Status->saveStatus($user,$tweet);
+                    $count_saved++;
 
-            if(strtotime($tweet['created_at']) > $destination_time){
-                // save it
-                $this->Status->saveStatus($user,$tweet);
-                $count_saved++;
-
-            }else{
-                // stop saving
-                $continue = false;
-                break;
+                }else{
+                    // stop saving
+                    $continue = false;
+                    break;
+                }
             }
-        }
     
+        }else{
+            $continue = false;
+        }
+
         if(!$continue){
             // make all the pre_saved statuses non-pre-saved
             $this->Status->savePreSavedStatus($user['id']);

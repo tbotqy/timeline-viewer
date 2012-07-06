@@ -45,10 +45,12 @@
 	       
 		<!-- .dropdown-menu -->
 		<ul class="dropdown-menu">
+		  <?php if($userIsInitialized):?>
 		  <li>
 		    <a class="link-config" href="/users/configurations"><i class="icon-cog"></i>設定</a>
 		  </li>
 		  <li class="divider"></li>
+		  <?php endif;?>
 		  <li>
 		    <a class="link-logout" href="/users/logout">ログアウト</a>
 		  </li>

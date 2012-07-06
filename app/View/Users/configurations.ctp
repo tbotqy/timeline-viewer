@@ -13,7 +13,7 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
       <tr>
 	<th></th>
 	<th>保存してある件数</th>
-	<th>最後に更新した日時</th>
+	<th>最後に同期した日時</th>
 	<th></th>
       </tr>
     </thead>
@@ -28,7 +28,7 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
 	</td>
 	<td class="last-update"><span class="date"><?php echo $status_updated_time;?></span></td>
 	<td class="button">
-	  <button id="update-statuses" class="btn btn-success" data-loading-text="読み込み中"><i class="icon-refresh icon-white"></i>更新</button>
+	  <button id="update-statuses" class="btn btn-success" data-loading-text="読み込み中"><i class="icon-refresh icon-white"></i>同期</button>
 	</td>
       </tr>
       
@@ -40,7 +40,7 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
 	</td>
 	<td class="last-update"><span class="date"><?php echo $friend_updated_time;?></span></td>
 	<td class="button"><button id="update-friends" class="btn btn-success" data-loading-text="読み込み中">
-	    <i class="icon-refresh icon-white"></i>更新</button>
+	    <i class="icon-refresh icon-white"></i>同期</button>
 	</td>
       </tr>
 

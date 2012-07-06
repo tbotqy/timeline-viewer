@@ -37,12 +37,18 @@ class AppController extends Controller {
     public $components = array('Auth','Session','Twitter');
     public $helpers = array('Html','Form','Session','Text','Link');
     public $uses = array('User');
+    
+    public $userIsInitialized = false;
 
     public function beforeFilter(){
+    
         parent::beforeFilter();
+        
+        $this->checkInitialized();
         
         // check if user is logged in
         $loggedIn = $this->Auth->loggedIn();
+        
         // pass it to view
         $this->set('loggedIn',$loggedIn);
         
@@ -59,7 +65,14 @@ class AppController extends Controller {
         $this->set('isAjax',$this->request->isAjax());
     }
 
+    public function checkInitialized(){
+     
+        $this->userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
+    
+    }
+
     public function getLastLine($array){
+    
         /**
          * returns the last element of given $array
          * @param array $array
@@ -72,10 +85,13 @@ class AppController extends Controller {
 
 
     public function createClient(){
+        
         return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
+    
     }
 
     public function termToTime($date,$date_type,$utc_offset){
+    
         $ret = "";
 
         switch($date_type){
@@ -154,6 +170,5 @@ class AppController extends Controller {
         $ret = array('begin'=>$timeBegin,'end'=>$timeEnd);
         return $ret;
     }
-
 
 }
