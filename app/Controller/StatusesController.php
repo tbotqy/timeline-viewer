@@ -22,7 +22,7 @@ class StatusesController extends AppController{
     
     public function import(){
 
-        /*
+        /**
          * show the screen for operating import method
          */
 
@@ -33,9 +33,11 @@ class StatusesController extends AppController{
             return $this->redirect('/users/sent_tweets');
         }
         
-        $param = array('user_id'=>$user['Twitter']['id'],
+        $param = array(
+                       'user_id'=>$user['Twitter']['id'],
                        'include_entities'=>true
                        );
+        
         $twitter_user_info = json_decode($this->Twitter->get('users/show',$param),true);
         $statuses_count = $twitter_user_info['statuses_count'];
         

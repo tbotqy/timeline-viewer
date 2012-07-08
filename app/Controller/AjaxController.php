@@ -39,7 +39,7 @@ class AjaxController extends AppController{
             echo "bad request";
             exit;
         }
-        
+
         // initialization
         $noStatusAtAll = false;
         $continue = false;

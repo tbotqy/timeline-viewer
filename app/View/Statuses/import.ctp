@@ -16,10 +16,13 @@
   <!-- .wrap-progress-bar -->
   <div class="wrap-progress-bar" style="display:none;">
     <input type="hidden" id="statuses-count" value="<?php echo $statuses_count;?>" />
-    <p class="total"></p>
+
     <div class="progress progress-striped progress-primary active">
       <div class="bar" style="width: 0%;height: 30px;"></div>
     </div>
+    
+    <p class="total"></p>
+
   </div>
   <!-- /.wrap-progress-bar -->
     
