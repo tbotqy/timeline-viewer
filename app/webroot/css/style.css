@@ -249,8 +249,8 @@ i{
 .wrap-each-status .profile-image .viewport{
   width: 48px;
   height: 48px;
-  webkit-border-radius: 5px;
-  moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -381,8 +381,8 @@ i{
   color: #111;
   text-shadow: 0 -1px 1px rgba(0, 0, 0, 0.4), 0 1px 1px );
   border-radius:10px;
-  webkit-border-radius:10px;
-  moz-border-radius:10px;
+  -webkit-border-radius:10px;
+  -moz-border-radius:10px;
   background: -webkit-gradient(linear, left top, left bottom, color-stop(1.00, #b7ad70), color-stop(0.00, #d5cea6));
   background: -webkit-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
   background: -moz-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
@@ -420,8 +420,8 @@ i{
 #wrap-import .profile-image .viewport{
   width: 48px;
   height: 48px;
-  webkit-border-radius: 5px;
-  moz-border-radius: 5px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
   border-radius: 5px;
   overflow: hidden;
 }
@@ -434,10 +434,10 @@ i{
 }
 
 #wrap-import .wrap-progress-bar .total{ 
-  float: left;
-  width: 100%;
+  width: 90%;
   height: 10px;
   line-height: 30px;
+  margin: 0 auto;
 }
 
 #wrap-import .wrap-progress-bar .alert{ 
@@ -452,7 +452,7 @@ i{
 }
 
 #wrap-import .progress{
-  width: 90%;
+  width: 70%;
   height: 30px;
   margin: 0 auto;
 }
@@ -460,6 +460,14 @@ i{
 #wrap-import .bar{ 
   line-height: 30px;
 }
+#wrap-import .wrap-lower .alert{ 
+  font-size: 80%;
+  text-align: center;
+  padding: 10px 0 0 0;
+  width: 90%;
+  margin: 0 auto;
+
+ }
 
 /* --------------------------------------------------
    users.login
@@ -503,18 +511,18 @@ i{
   text-shadow: 0 -1px 0 #39D;
   text-decoration: none;
   border-radius: 4px;
-  moz-border-radius: 4px;
-  webkit-border-radius: 4px;
-  moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
-  webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  -moz-border-radius: 4px;
+  -webkit-border-radius: 4px;
+  -moz-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  -webkit-box-shadow: 0 1px 3px rgba(0,0,0,0.6);
   border:none;
 }
 
 .btn-auth:active{
   position: relative;
   top:1px;
-  moz-box-shadow: none;
-  webkit-box-shadow: none;
+  -moz-box-shadow: none;
+  -webkit-box-shadow: none;
   border:none;
 }
 

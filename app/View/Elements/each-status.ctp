@@ -25,13 +25,13 @@
     <!-- .top -->      
     <span class="top">
       <span class="name">
-          <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>"><?php echo $status['User']['name'];?></a>
+          <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>" target="_blank"><?php echo $status['User']['name'];?></a>
       </span>
       <span class="screen_name">
-        <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>">@<?php echo $status['User']['screen_name'];?></a>
+        <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>" target="_blank">@<?php echo $status['User']['screen_name'];?></a>
       </span>
       <span class="date">
-        <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>/status/<?php echo $status['Status']['status_id_str'];?>">
+        <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>/status/<?php echo $status['Status']['status_id_str'];?>" target="_blank">
 	  <?php 
             echo date('Y',time()) > date('Y',$status['Status']['created_at']+$status['User']['utc_offset']) ?
             date('Y年n月j日',$status['Status']['created_at']+$status['User']['utc_offset']) : 
@@ -44,8 +44,8 @@
     
     <span class="text">
       <?php 
-          //echo $this->Text->autoLinkUrls($status['Status']['text']);
-          echo $this->Link->addLinks($status['Status']['text'],$status['Entity']);
+          //      echo $this->Link->addLinks($status['Status']['text'],$status['Entity']);
+          echo $this->Link->addLinks($status['Status']['text']);
       ?>
     </span>
     
@@ -58,7 +58,7 @@
 	<?php echo $status['Status']['source'];?>から
       </span>
       <span class="link-official">
-          <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>/status/<?php echo $status['Status']['status_id_str'];?>">詳細</a>
+          <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>/status/<?php echo $status['Status']['status_id_str'];?>" target="_blank">詳細</a>
       </span> 
     </span>
     <!-- /.bottom -->

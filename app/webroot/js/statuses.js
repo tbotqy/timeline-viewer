@@ -16,7 +16,8 @@ $(document).ready(function(){
     wrap_progress_bar.fadeIn(function(){
 
       // show the area displaying the status body currently saving
-      $("#status").css({"display":"block"});
+      //$("#status").css({"display":"block"});
+      $("#status").fadeIn();
     
     });
       
@@ -43,6 +44,7 @@ function getStatuses(params){
   var import_button = $("#start-import");  
   var noStatusAtAll = "";
   var data_to_post = params;
+  var progress;
 
   $.ajax({
     
@@ -59,6 +61,7 @@ function getStatuses(params){
       if(ret.continue){
 
 	$(".wrap-importing-status").fadeOut(function(){
+
 	  //show the result
 	  wrap_progress_bar.find(".total").html(total_count+"件");
 	  wrap_tweet.find(".body").html(ret.status.text);
@@ -74,10 +77,11 @@ function getStatuses(params){
       }else{
 	  
 	if(total_count == 0){
+	  
 	  import_button.text("...?");
+	  
 	  wrap_progress_bar.find(".progress").fadeOut(function(){
 	    wrap_progress_bar.append("<div class=\"alert alert-info\"><p>取得できるツイートが無いようです</p></div>");
-	    
 	    wrap_progress_bar.find(".alert").fadeIn();
 	  });
 	  
@@ -101,10 +105,15 @@ function getStatuses(params){
     
     error: function(){
       
-      //show the error message in some element
-      /* [debug] */
+      //show the error message
       $(".progress").removeClass("active");
-      alert('Ajax error');
+      hideLoader();
+
+      $(".wrap-progress-bar").fadeOut(function(){
+	$(".wrap-lower").html("<div class=\"alert alert-warning\"><p>サーバーが混み合っているようです。<br/>すみませんが、しばらくしてからもう一度お試しください。</p></div>");
+      $("#start-import").text("...oops");
+	
+      });
       
     },
     
