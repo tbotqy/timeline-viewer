@@ -584,6 +584,28 @@ i{
 }
 
 /* --------------------------------------------------
+   users.home_timeline
+-------------------------------------------------- */
+#wrap-main.home-timeline{ 
+  width: 100%;
+  margin: 0 auto;
+}
+
+#wrap-main .friend-not-found{ 
+  width: 100%;
+  margin: 100px auto;
+  float: left;
+  text-align: center;
+  font-size: 200%;
+}
+
+#wrap-main .invite-friends{ 
+  width: 500px;
+  margin: 0 auto;
+  float: left;
+}
+
+/* --------------------------------------------------
    users.configurations
 -------------------------------------------------- */
 

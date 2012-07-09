@@ -3,7 +3,7 @@
 class Status extends AppModel{
     
     public $name = 'Status';
-    
+        
     public $hasMany = array(
                             'Entity' => array(
                                               'className'=>'Entity',
@@ -19,6 +19,7 @@ class Status extends AppModel{
                                             'dependent'=>false
                                             )
                               );
+
     public function getStatusNum($user_id){
 
         /**

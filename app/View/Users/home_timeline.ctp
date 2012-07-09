@@ -10,10 +10,14 @@ echo $this->Html->script('popstate.js',array('inline'=>false));
 ?>
 
 <!-- #wrap-main -->
-<div id="wrap-main">
+<div id="wrap-main" class="home-timeline">
 
   <?php
-      echo $this->element('timeline');
+      if($statuses){
+          echo $this->element('timeline');
+      }else{
+          echo $this->element('invite-friends');
+      }
   ?>
   
 </div>
