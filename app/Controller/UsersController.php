@@ -14,33 +14,6 @@ class UsersController extends AppController{
         parent::beforeFilter();
     }
 
-    public function test(){
-        $res = $this->Twitter->get('statuses/user_timeline',array('include_entities'=>true,'count'=>'1','include_rts'=>true,'max_id'=>'16979686969'));
-        echo "<meta charset=\"utf-8\" />";
-        pr(json_decode($res,true));
-    }
-
-    public function al(){
-        $this->autoRender = false;
-
-        $text = "RT @tbotaq : このサイトすごい!遠くのコンピュータにある情報が探せる！！@hogehoge @foo http://google.com #okko #astonished";
-        
-        // linkify urls
-        $text= preg_replace("#(^|[\s\"\[<(（　])([\w]+?://[\w]+[^\s\"\]>)）　]*)#", "\\1<a href=\"\\2\" target=\"_blank\">\\2</a>", $text);
-        $text= preg_replace("#(^|[\s\"\[<(（　])((www|ftp)\.[^\s\"\]>)）　]*)#", "\\1<a href=\"http://\\2\" target=\"_blank\">\\2</a>", $text);
-        
-        // linkify user mentions
-        $text= preg_replace("/@(\w+)/", "<a href=\"https://www.twitter.com/\\1\" target=\"_blank\">@\\1</a>", $text);
-        
-        // linkify hashtags
-        $text= preg_replace("/#(\w+)/", "<a href=\"http://search.twitter.com/search?q=%23\\1\" target=\"_blank\">#\\1</a>", $text);
-       
-        echo $text;        
-
-
-    }
-
-    
     public function index(){
 
         /**
@@ -172,7 +145,6 @@ class UsersController extends AppController{
         }
     }
 
-    
     public function sent_tweets(){
         
         /**

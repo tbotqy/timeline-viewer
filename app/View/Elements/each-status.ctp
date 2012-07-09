@@ -15,7 +15,7 @@
   <!-- .profile-image -->
   <div class="profile-image">
     <div class="viewport">
-      <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>"><img src="<?php echo $status['User']['profile_image_url_https'];?>" alt="<?php echo $status['User']['screen_name']; ?>" /></a>
+      <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>"><img src="<?php echo $status['User']['profile_image_url_https'];?>" alt="<?php echo $status['User']['screen_name']; ?>" width="48" height="48"/></a>
     </div>
   </div>
   <!-- /.profile-image -->
