@@ -9,18 +9,15 @@ class AjaxController extends AppController{
     // chose the layout to render
     public $layout = 'ajax';
     
-    // set the models to be used
-    public $uses = array('User','Status','Entity','Friend');
     
     public function beforeFilter(){
+
         parent::beforeFilter();
-        $this->Twitter->initialize($this);
         
         // make all the actions need authentication
         $this->Auth->deny();
 
         // reject non-ajax requests
-        
         if(!$this->request->isAjax()){
             echo "bad request";
             exit;
@@ -50,10 +47,10 @@ class AjaxController extends AppController{
         $user = $this->Auth->user();
         $token = $this->User->getTokens($user['id']);
             
-        //                           
-        // acquire and save statuses 
-        //                           
-
+        ///////////////////////////////                           
+        // acquire and save statuses // 
+        ///////////////////////////////                           
+        
         // set params for api call
         $api_params = array(
                             'include_rts'=>true,
@@ -66,7 +63,10 @@ class AjaxController extends AppController{
                 
         // configure parameters 
         if(!$max_id){
-            // this is the case for first ajax request
+
+            /*
+             * this is the case for first ajax request
+             */
             
             // delete all the statuses whose pre_saved flag is true
             $this->Status->deletePreSavedStatus($user['id']);
@@ -111,9 +111,9 @@ class AjaxController extends AppController{
             }
         }
            
-        //                                
-        // define the json data to return 
-        //                                
+        ////////////////////////////////////                              
+        // define the json data to return // 
+        ////////////////////////////////////
         
         // determine whether continue the loop in ajax or not
         $continue = count($statuses) > 0 ? true : false;
@@ -144,6 +144,7 @@ class AjaxController extends AppController{
         }else{
             
             if(!$noStatusAtAll){
+                
                 // turn initialized flag true in user model
                 $this->User->id = $user['id'];
                 $this->User->saveField('initialized_flag',true);
@@ -408,11 +409,9 @@ class AjaxController extends AppController{
         if($this->User->deleteAccount($user_id)){
             $deleted = true;
         }
-
-        $this->autoRender = false;
-        // [ToDo]
-        $deleted = true;
         
+        $this->autoRender = false;
+        sleep(2);
         echo $deleted;
         
     }
@@ -458,6 +457,18 @@ class AjaxController extends AppController{
             
             // check if any older status exists in user's timeline
             $hasNext = $this->Status->hasOlderTimeline($user_id,$oldest_timestamp);
+
+            break;
+        case 'public_timeline':
+
+            // fetch 10 timeline in specified term
+            $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
+            
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
 
             break;
 
@@ -513,6 +524,21 @@ class AjaxController extends AppController{
             
             // check if any older status exists in user's timeline
             $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+            
+            break;
+
+        case 'public_timeline':
+           
+            // fetch older timeline
+            $statuses = $this->Status->getOlderPublicTimeline($oldest_timestamp);
+            
+            // set created_at of last status 
+            $last_status = $this->getLastLine($statuses);
+            
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
             
             break;
         }

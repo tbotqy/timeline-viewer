@@ -2,17 +2,17 @@
 echo $this->Html->script('popstate.js',array('inline'=>false));
 ?>
 
-<?php
+<?php 
   if($date_list){
       echo $this->element('dashbord');
   }
 ?>
 
 <!-- #wrap-main -->
-<div id="wrap-main">
-
+    <div id="wrap-main">
+      
   <?php
-      echo $this->element('timeline');
+        echo $this->element('timeline');
   ?>
   
 </div>

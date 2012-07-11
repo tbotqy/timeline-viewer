@@ -41,6 +41,7 @@ class User extends AppModel{
                               'token_secret'=>$tokens['token_secret'],
                               'token_updated'=>0,
                               'initialized_flag'=>0,
+                              'deleted_flag'=>false,
                               'created'=>time()
                               );
         
@@ -49,14 +50,14 @@ class User extends AppModel{
     }
     
     public function updateTokens($user_id,$tokens){
-
+        
         /**
          * update user's tokens for OAuth
          * @param int $user_id
          * @param array $tokens which contains both token/token_secret
          * @return true if seccess otherwise false
          */
-
+        
         $data = array(
                       'id' =>  $user_id,
                       'token' => $tokens['token'],
@@ -66,18 +67,71 @@ class User extends AppModel{
                       );
         
         return $this->User->save($data) ? true : false;
+        
     }
 
     public function deleteAccount($user_id){
+        
         /**
          * delete all the data related to User
          */
 
         // delete all related data
-        return $this->delete($user_id,true);
+        //return $this->delete($user_id,true);
+        
+        // just switch the delete flag
+        $this->id = $user_id;
+        return $this->saveField('deleted_flag',true);
+    }
+
+    public function userExists($user_id){
+
+        /**
+         * checks if the user with given $user_id exists
+         */
+
+        $result = $this->find(
+                              'first',
+                              array(
+                                    'conditions'=>array(
+                                                        'User.id'=>$user_id,
+                                                        'User.deleted_flag'=>false
+                                                        )
+                                    )
+                              );
+
+        return $result;
+
+    }
+
+    public function getIds(){
+      
+        /**
+         * gets all the valid user ids
+         * @return array
+         */
+
+        $this->unbindAllModels();
+
+        $ret = $this->find(
+                           'list',
+                           array(
+                                 'conditions'=>array(
+                                                     'User.deleted_flag'=>false
+                                                     ),
+                                 'fields'=>array(
+                                                 'User.id'
+                                                 ),
+                                 'order'=>'User.id ASC'
+                                 )
+                           );
+
+        return $ret;
+
     }
 
     public function getIdByTwitterId($twitter_id){
+        
         /**
          * acquires id with given $twitter_id
          * @param string $twitter_id
@@ -89,7 +143,8 @@ class User extends AppModel{
         $id = $this->find(
                           'first',
                           array('conditions'=>array(
-                                                    'User.twitter_id'=>$twitter_id
+                                                    'User.twitter_id'=>$twitter_id,
+                                                    'User.deleted_flag'=>false
                                                     ),
                                 'fields'=>array('User.id')
                                 )
@@ -99,6 +154,7 @@ class User extends AppModel{
     }
 
     public function getTwitterId($user_id){
+
         /**
          * acquires twitter id with given $user_id
          * @param int $user_id
@@ -110,7 +166,8 @@ class User extends AppModel{
         $twitter_id = find(
                            'first',
                            array('conditions'=>array(
-                                                     'User.id'=>$user_id
+                                                     'User.id'=>$user_id,
+                                                     'User.deleted_flag'=>false
                                                      ),
                                  'fields'=>array('User.twitter_id')
                                  )
@@ -130,10 +187,19 @@ class User extends AppModel{
         
         $this->unbindAllModels();
 
-        $tokens = $this->findById(
-                                  $user_id,
-                                  array('User.token','User.token_secret')
-                                  );
+        $tokens = $this->find(
+                              'first',
+                              array(
+                                    'conditions'=>array(
+                                                        'User.id'=>$user_id,
+                                                        'User.deleted_flag'=>false
+                                                        ),
+                                    'fields'=>array(
+                                                    'User.token','User.token_secret'
+                                                    )
+                                    )                                                        
+                              );
+        
         return $tokens ? $tokens : false;
     }
     
@@ -147,10 +213,18 @@ class User extends AppModel{
 
         $this->unbindAllModels();
 
-        $result = $this->findById(
-                                  $user_id,
-                                  array('User.initialized_flag')
-                                  );
+        $result = $this->find(
+                              'first',
+                              array(
+                                    'conditions'=>array(
+                                                        'User.id'=>$user_id,
+                                                        'User.deleted_flag'=>false
+                                                        ),
+                                    'fields'=>array(
+                                                    'User.initialized_flag'
+                                                    )
+                                    )
+                              );
 
         return $result['User']['initialized_flag'];
     }

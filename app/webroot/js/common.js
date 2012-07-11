@@ -89,7 +89,7 @@ $(document).ready(function(){
 
     var cover = wrap_timeline.find('.cover');
  
-    cover.css("height",160);
+    cover.css("height",200);
     
     cover.animate({
       opacity: 0.8

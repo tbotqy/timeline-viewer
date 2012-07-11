@@ -9,7 +9,7 @@
 	  
 	  <!-- .container -->
 	  <div class="container">
-	    <a  class="brand" href="/">TimedLine</a>
+	    <a  class="brand" href="/">TimedLineβ</a>
 	    <?php if($loggedIn):?>
 	    
 	    <?php if($userIsInitialized):?>	      
@@ -17,11 +17,13 @@
 	    <!-- .nav .pull-left -->
 	    <ul class="nav pull-left">
 	      <li class="dropdown">
-		<a class="dropdown-toggle link-timeline" data-toggle="dropdown" href="#">タイムライン<b class="caret"></b></a>
+		<a class="dropdown-toggle link-timeline" data-toggle="dropdown" href="#">  <i class="icon-comments-alt"></i>  <b class="caret"></b></a>
 		
 		<ul class="dropdown-menu">
 		  <li><a href="/users/sent_tweets">ツイート</a></li>
 		  <li><a href="/users/home_timeline">ホームタイムライン</a></li>
+		  <li class="divider"></li>
+		  <li><a href="/users/public_timeline">パブリックタイムライン</a></li>
 		</ul>
 	      </li>
 	    </ul>

@@ -6,12 +6,20 @@
 class UsersController extends AppController{
 
     public $layout = 'common';
-    public $uses = array('User','Status','Entity','Friend');
-    public $components = array('Twitter','Url');
+    
+    public $components = array('Url');
 
     public function beforeFilter(){
+        
         $this->Auth->allow('index','login','authorize','callback','logout');
         parent::beforeFilter();
+    
+    }
+    
+    public function test(){
+        $ret = $this->User->getIds();
+        pr($ret);
+        exit;
     }
 
     public function index(){
@@ -54,18 +62,32 @@ class UsersController extends AppController{
 
         /**
          * redirect user to api.twitter.com to make Twitter OAuth process.
+         * Aquire request token -> redirect user to authentication screen on twitter
          */
-
+        
+        // get request token 
         $client = $this->Twitter->createClient();
-        $requestToken = $client->getRequestToken('https://api.twitter.com/oauth/request_token', 'http://' . $_SERVER['HTTP_HOST'] . '/users/callback');
-
+        $requestToken = $client->getRequestToken
+            (
+             'https://api.twitter.com/oauth/request_token',
+             'http://' . $_SERVER['HTTP_HOST'] . '/users/callback'
+             );
+        
+        // check if request token was successfully acquired
         if($requestToken){
             
             // redirect to api.twitter.com
-            $this->Session->write('twitter_request_token', $requestToken);
+            $this->Session->write
+                (
+                 'twitter_request_token',
+                 $requestToken
+                 );
+            
             /* test mode */ $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
             //$this->redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' . $requestToken->key);
+        
         }else{
+            // if failed in acquiring request token, tell the user that something is wrong with twitter.com
             $this->Session->setFlash('failed in connecting to twitter. Please try again later.');
         }
     }
@@ -76,6 +98,9 @@ class UsersController extends AppController{
          * callback action for Twitter OAuth.
          */
         
+        // this action presents nothing
+        $this->autoRender = false;
+        
         // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
         $client = $this->createClient();
@@ -83,22 +108,24 @@ class UsersController extends AppController{
         // fetch access token for this user
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
         
+        // check if access token was successfully acquired
         if(!$accessToken){
 
             // if failed in fetching access token,show the error message
             $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
             return ;
         }
-
+        
+        // fetch user's twitter account information
         $tokens['token'] = $accessToken->key;
         $tokens['token_secret'] = $accessToken->secret;
 
         $verify_credentials = $this->Twitter->get('account/verify_credentials',array(),$tokens);
         $verify_credentials = json_decode($verify_credentials,true);
         
-        //
-        // check if user with authorized twitter id exists 
-        //
+        /////////////////////////////////////////////////////////////////
+        // check if user with authorized twitter id exists in database //
+        /////////////////////////////////////////////////////////////////
 
         if($this->User->existByTwitterId($verify_credentials['id_str'])){
 
@@ -114,13 +141,13 @@ class UsersController extends AppController{
 
         }else{
             
-            // register if user doesn't have account
+            // register if user hasn't registered yet
             $this->User->register($tokens,$verify_credentials);
         }
 
-        // 
-        // execute login and redirect user
-        // 
+        ///////////////////////////////////// 
+        // execute login and redirect user //
+        /////////////////////////////////////
 
         // prepare user data to get logged in
         $user['id'] = $this->User->getIdByTwitterId($verify_credentials['id_str']);
@@ -142,6 +169,8 @@ class UsersController extends AppController{
             }else{
                 $this->redirect('/users/sent_tweets');
             }
+        }else{
+            echo "could not loggin";
         }
     }
 
@@ -264,6 +293,76 @@ class UsersController extends AppController{
         $this->set('date_list',$date_list);
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldest_timestamp);
+    }
+
+    public function public_timeline(){
+        
+        /**
+         * shows the public timeline, the line of tweets presented by all the users registered 
+         */
+        
+        $this->rejectUninitialized();
+
+        // initialization
+        $statuses = array();
+        $date_list = array();
+        $oldest_timestamp = "";
+        $hasNext = false;
+        $noStatusAtAll = false;
+
+        $user_id = $this->Auth->user('id');
+
+        // check if requested uri includes query string
+        $term = isset($this->params['pass']['0']) ? $this->params['pass']['0'] : false;
+        
+        if($term){
+            // fetch statuses whose created_at is between $term
+                    
+            // check the type of given term
+            $date_type = $this->Url->getParamType($term);
+            
+            // fetch user's twitter account info
+            $user_data = $this->User->findById($user_id);
+        
+            // load user's utc offset
+            $utc_offset = $user_data['User']['utc_offset'];
+            
+            // convert given term from string to unixtime
+            $term = $this->termToTime($term,$date_type,$utc_offset);
+            
+            // fetch statuses in specified term
+            $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
+
+        }else{
+
+            // fetch tweets
+            $statuses = $this->Status->getLatestPublicTimeline();
+
+        }
+
+        if($statuses){
+
+            // get oldest status's created_at timestamp
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if there are more public statuses
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
+            
+        }else{
+            
+            $noStatusAtAll = true;
+       
+        }
+
+        // get date list
+        $date_list = $this->Status->getDateList($user_id,'public_timeline');
+        
+        $this->set('statuses',$statuses);
+        $this->set('date_list',$date_list);
+        $this->set('hasNext',$hasNext);
+        $this->set('oldest_timestamp',$oldest_timestamp);
+        
     }
 
     public function configurations(){
