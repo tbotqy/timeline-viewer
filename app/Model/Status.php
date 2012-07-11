@@ -1,62 +1,119 @@
 <?php
 
+/**
+ * Model/Status.php
+ */
+
 class Status extends AppModel{
     
     public $name = 'Status';
         
     public $hasMany = array(
                             'Entity' => array(
-                                              'className'=>'Entity',
-                                              'foreignKey'=>'status_id',
                                               'dependent'=>true
                                               )
                             );
     
     public $belongsTo = array(
                               'User'=>array(
-                                            'className'=>'User',
-                                            //'foreignKey'=>'user_id',
                                             'dependent'=>false
                                             )
                               );
 
-    public function getStatusNum($user_id){
+    ///////////////////////////////////////////
+    // functions to retrieve latest statuses //
+    ///////////////////////////////////////////
+    
+    public function getLatestStatus($user_id,$limit = 10){
 
         /**
-         * returns the number of specified user's statuses saved
+         * acquire user's latest statsues
+         * returns array if there is any
+         * returns false if there is nothing to return
          */
 
-        return $this->find(
-                           'count',
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>array(
+                                                          'Status.user_id'=>$user_id,
+                                                          'Status.pre_saved' => false
+                                                          ),
+                                      'limit'=>$limit,
+                                      'order'=>'Status.created_at DESC'
+                                      )
+                                );
+        // return result
+        return $this->checkNum($statuses);
+        
+    }
+
+    public function getLatestTimeline($user_id,$limit = 10){
+        
+        /**
+         * retrieve statuses tweeted by those whom user is following on twitter
+         * returns $limit statuses ordering in created_at DESC 
+         * @param array list of twitter id user is following
+         * @return array just like mentioning above 
+         */
+
+        // get user's friend ids
+        $twitter_ids = $this->User->Friend->getFriendIds($user_id);
+        // find user_ids IN $twitter_ids
+        $user_ids = $this->User->getIdByTwitterId($twitter_ids);
+
+        $ret = $this->find(
+                           'all',
                            array(
                                  'conditions'=>array(
-                                                     'Status.user_id'=>$user_id,
-                                                     'Status.pre_saved'=>false
-                                                     )
+                                                     'Status.user_id'=>$user_ids,
+                                                     'Status.pre_saved' => false,
+                                                     ),
+                                 'order'=>'Status.created_at DESC',
+                                 'limit'=>$limit
                                  )
                            );
 
+        return $this->checkNum($ret);
+
     }
 
-    public function getLastUpdatedTime($user_id){
 
+    public function getLatestPublicTimeline($limit = 10){
+      
         /**
-         * returns the record value in User.statsues_updated
+         * retrieve everybody's statuses in database
+         * @return array if exist, else false
          */
 
-        $this->User->unbindAllModels();
-        
-        $user = $this->User->findById($user_id);
-        
-        return $user['User']['statuses_updated'];
+        $ids = $this->User->getIds();
+
+        $ret = $this->find(
+                           'all',
+                           array(
+                                 'conditions'=>array(
+                                                     'Status.user_id'=>$ids,
+                                                     'Status.pre_saved' => false
+                                                     ),
+                                 'order'=>'Status.created_at DESC',
+                                 'limit'=>$limit
+                                 )
+                           );
+
+        return $this->checkNum($ret);
+
     }
 
-    public function getStatusInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
+    ////////////////////////////////////////////
+    // functions to retrieve statuses in term //
+    ////////////////////////////////////////////
+    
+    public function getStatusInTerm($user_id,$begin,$end,$order = 'DESC',$limit = 10){
         
         /**
-         * acquire user's statuses in specified term
-         * returns array if there is any
-         * returns false if there is no status in specified term
+         * acquire specified user's statuses in specified term(from $bein to $end)
+         * @param int $user_id, $begin, $end
+         * @return array if there is any,false if there is no status in specified term
          */
 
         $statuses = $this->find(
@@ -73,12 +130,43 @@ class Status extends AppModel{
                                       )
                                 );
      
+        return $this->checkNum($statuses);
+        
+    }
+
+    public function getTimelineInTerm($user_id,$begin,$end,$order = 'DESC',$limit = 10){
+        
+        /**
+         * acquire user's friends' statuses in specified term
+         * returns array if there is any
+         * returns false if there is no status in specified term
+         */
+        
+        // get user's friend ids
+        $twitter_ids = $this->User->Friend->getFriendIds($user_id);
+        // find user_ids IN $twitter_ids
+        $user_ids = $this->User->getIdByTwitterId($twitter_ids);
+
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>array(
+                                                          'Status.user_id'=>$user_ids,
+                                                          'Status.created_at >=' => $begin,
+                                                          'Status.created_at <=' => $end,
+                                                          'Status.pre_saved' => false,
+                                                          ),
+                                      'limit'=>$limit,
+                                      'order'=>'Status.created_at '.$order
+                                      )
+                                );
+
         // return result
         return $this->checkNum($statuses);
         
     }
 
-    public function getPublicTimelineInTerm($begin,$end,$order = 'DESC',$limit = '10'){
+    public function getPublicTimelineInTerm($begin,$end,$order = 'DESC',$limit = 10){
         
         /**
          * acquire all the user's statuses in specified term
@@ -108,91 +196,6 @@ class Status extends AppModel{
         
     }
 
-    public function getTimelineInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
-        
-        /**
-         * acquire user's friends' statuses in specified term
-         * returns array if there is any
-         * returns false if there is no status in specified term
-         */
-        
-        // get user's friend ids
-        $ids = $this->User->Friend->getFriendIds($user_id);
-
-        $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.twitter_id'=>$ids,
-                                                          'Status.created_at >=' => $begin,
-                                                          'Status.created_at <=' => $end,
-                                                          'Status.pre_saved' => false,
-                                                          'User.deleted_flag'=>false
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at '.$order
-                                      )
-                                );
-
-        // return result
-        return $this->checkNum($statuses);
-        
-    }
-
-    public function getLatestPublicTimeline($limit = 10){
-      
-        /**
-         * retrieve everybody's statuses in database
-         * @return array if exist, else false
-         */
-
-        $ids = $this->User->getIds();
-
-        $ret = $this->find(
-                           'all',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.user_id'=>$ids,
-                                                     'Status.pre_saved' => false
-                                                     ),
-                                 'order'=>'Status.created_at DESC',
-                                 'limit'=>$limit
-                                 )
-                           );
-
-        return $this->checkNum($ret);
-
-    }
-
-    public function getLatestTimeline($user_id,$limit = 10){
-        
-        /**
-         * retrieve statuses tweeted by those whom user is following on twitter
-         * returns $limit statuses ordering in created_at DESC 
-         * @param array list of twitter id user is following
-         * @return array just like mentioning above 
-         */
-
-        $ids = $this->User->Friend->getFriendIds($user_id);
-
-        $ret = $this->find(
-                           'all',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.twitter_id'=>$ids,
-                                                     'Status.pre_saved' => false,
-                                                     'User.deleted_flag'=>false
-                                                     ),
-                                 'order'=>'Status.created_at DESC',
-                                 'limit'=>$limit
-                                 )
-                           );
-
-        return $this->checkNum($ret);
-
-    }
-
-
     public function getDateList($user_id,$mode="sent_tweets"){
 
         /**
@@ -219,7 +222,7 @@ class Status extends AppModel{
             //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
             //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
             $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
-
+            
         }
         
         return $this->checkNum($sum_by_day);
@@ -251,16 +254,20 @@ class Status extends AppModel{
                                );
             break;
         case 'home_timeline':
-            $ids = $this->User->Friend->getFriendIds($user_id);
-            
+
+            // get user's friend ids
+            $twitter_ids = $this->User->Friend->getFriendIds($user_id);
+            // find user_ids IN $twitter_ids
+            $user_ids = $this->User->getIdByTwitterId($twitter_ids);
+        
             $ret = $this->find
                 (
                  'list',
                  array
                  (
                   'conditions'=>array(
-                                      'Status.twitter_id'=>$ids,
-                                      'User.deleted_flag'=>false
+                                      'Status.user_id'=>$user_ids,
+                                      'Status.pre_saved'=>false
                                       ),
                   'fields'=>array(
                                   'Status.created_at'
@@ -281,7 +288,8 @@ class Status extends AppModel{
                  array
                  (
                   'conditions'=>array(
-                                      'Status.user_id'=>$ids
+                                      'Status.user_id'=>$ids,
+                                      'Status.pre_saved' => false
                                       ),
                   'fields'=>array(
                                   'Status.created_at'
@@ -301,31 +309,11 @@ class Status extends AppModel{
 
     }
 
-    public function getLatestStatus($user_id,$limit = '10'){
+    //////////////////////////////////////////
+    // functions to retrieve older statuses //
+    //////////////////////////////////////////
 
-        /**
-         * acquire user's latest statsues
-         * returns array if there is any
-         * returns false if there is nothing to return
-         */
-
-        $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.user_id'=>$user_id,
-                                                          'Status.pre_saved' => false
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at DESC'
-                                      )
-                                );
-        // return result
-        return $this->checkNum($statuses);
-        
-    }
-
-    public function getOlderStatus($user_id,$threshold_timestamp,$limit = '10'){
+    public function getOlderStatus($user_id,$threshold_timestamp,$limit = 10){
         
         /**
          * retrieve statuses whose created_at value is smaller than specified $threshold_timestamp
@@ -351,6 +339,32 @@ class Status extends AppModel{
         return $this->checkNum($statuses);
     }
 
+    public function getOlderTimeline($user_id,$timestamp,$limit = 10){
+
+        // get user's friend ids
+        $twitter_ids = $this->User->Friend->getFriendIds($user_id);
+        // find user_ids IN $twitter_ids
+        $user_ids = $this->User->getIdByTwitterId($twitter_ids);
+
+        // retrieve statuses
+        $conditions = array(
+                            'Status.user_id' => $user_ids,
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false,
+                            );
+
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>$conditions,
+                                      'order'=>'Status.created_at DESC',
+                                      'limit'=>$limit
+                                      )
+                                );
+
+        return $this->checkNum($statuses);
+    }
+
     public function getOlderPublicTimeline($timestamp,$limit = 10){
 
         $ids = $this->User->getIds();
@@ -373,29 +387,10 @@ class Status extends AppModel{
         return $this->checkNum($statuses);
     }
 
-    public function getOlderTimeline($user_id,$timestamp,$limit = 10){
-
-        $ids = $this->User->Friend->getFriendIds($user_id);
-
-        // retrieve statuses
-        $conditions = array(
-                            'Status.twitter_id' => $ids,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false,
-                            'User.deleted_flag'=>false
-                            );
-
-        $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>$conditions,
-                                      'order'=>'Status.created_at DESC',
-                                      'limit'=>$limit
-                                      )
-                                );
-        return $this->checkNum($statuses);
-    }
-                                        
+    /////////////////////////////////
+    // functions to save something //
+    /////////////////////////////////
+    
     public function saveStatus($user,$status){
         
         // convert date format 
@@ -479,20 +474,67 @@ class Status extends AppModel{
         
     }
     
-    public function updateSavedTime($user_id){
+
+    
+    ///////////////////////
+    // boolean functions //
+    ///////////////////////
+
+    public function hasOlderStatus($user_id,$timestamp){
+
         /**
-         * update User.statuses_updated to current unixtime
+         * checks if user has status whose created_at is smaller than specified $timestamp
+         * @param int $user_id
+         * @param int $timestamp
+         * @param string $mode, which indicates for what kind of statuses this method check
+         * @return boolean
          */
 
-        return $this->User->updateAll(
-                                      array(
-                                            'User.statuses_updated'=>time()
-                                            ),
-                                      array(
-                                            'User.id'=>$user_id
-                                            )
-                                      );
+        $conditions = array(
+                            'Status.user_id'=>$user_id,
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false
+                            );
 
+        $count_older_status = $this->find(
+                                          'count',
+                                          array(
+                                                'conditions'=>$conditions
+                                                )
+                                          );
+        
+        return ($count_older_status > 0) ? true : false;
+            
+    }
+
+    public function hasOlderTimeline($user_id,$timestamp){
+       
+        /**
+         * checks if model has any status older than $timestamp ,posted by user's friends 
+         * @param int $user_id
+         * @param $timestamp int
+         * @return boolean
+         */
+
+        // get user's friend ids
+        $twitter_ids = $this->User->Friend->getFriendIds($user_id);
+        // find user_ids IN $twitter_ids
+        $user_ids = $this->User->getIdByTwitterId($twitter_ids);
+
+        $conditions = array(
+                            'Status.user_id' => $user_ids,
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false,
+                            );
+
+        $count = $this->find(
+                             'count',
+                             array(
+                                   'conditions'=>$conditions
+                                   )
+                             );
+        
+        return $count > 0 ? true : false;
     }
 
     public function hasOlderPublicTimeline($timestamp){
@@ -521,59 +563,59 @@ class Status extends AppModel{
         return $count > 0 ? true : false;
     }
 
-    public function hasOlderTimeline($user_id,$timestamp){
-       
+    ///////////
+    // utils //
+    ///////////
+
+    public function getStatusNum($user_id){
+
         /**
-         * checks if model has any status older than $timestamp ,posted by user's friends 
+         * count the  number of specified user's statuses saved
          * @param int $user_id
-         * @param $timestamp int
-         * @return boolean
+         * @return int if found, otherwise false
          */
 
-        $ids = $this->User->Friend->getFriendIds($user_id);
+        return $this->find(
+                           'count',
+                           array(
+                                 'conditions'=>array(
+                                                     'Status.user_id'=>$user_id,
+                                                     'Status.pre_saved'=>false
+                                                     )
+                                 )
+                           );
 
-        $conditions = array(
-                            'Status.twitter_id' => $ids,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false,
-                            'User.deleted_flag'=>false
-                            );
-
-        $count = $this->find(
-                             'count',
-                             array(
-                                   'conditions'=>$conditions
-                                   )
-                             );
-        
-        return $count > 0 ? true : false;
     }
 
-    public function hasOlderStatus($user_id,$timestamp){
+    public function getLastUpdatedTime($user_id){
 
         /**
-         * checks if user has status whose created_at is smaller than specified $timestamp
+         * check when specified user's status was updated
          * @param int $user_id
-         * @param int $timestamp
-         * @param string $mode, which indicates for what kind of statuses this method check
-         * @return boolean
+         * @return int (unixtime)
          */
 
-        $conditions = array(
-                            'Status.user_id'=>$user_id,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false
-                            );
-
-        $count_older_status = $this->find(
-                                          'count',
-                                          array(
-                                                'conditions'=>$conditions
-                                                )
-                                          );
+        $this->User->unbindAllModels();
         
-        return ($count_older_status > 0) ? true : false;
-            
+        $user = $this->User->findById($user_id);
+        
+        return $user['User']['statuses_updated'];
+    }
+
+    public function updateSavedTime($user_id){
+        /**
+         * update User.statuses_updated to current unixtime
+         */
+
+        return $this->User->updateAll(
+                                      array(
+                                            'User.statuses_updated'=>time()
+                                            ),
+                                      array(
+                                            'User.id'=>$user_id
+                                            )
+                                      );
+
     }
 
     public function unbindAllModels(){

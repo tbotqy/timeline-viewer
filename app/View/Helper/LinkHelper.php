@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * View/Helper/LinkHelper.php
+ */
+
 App::uses('AppHelper','View/Helper');
 
 class LinkHelper extends AppHelper{
@@ -9,7 +13,6 @@ class LinkHelper extends AppHelper{
     public function addLinks($text){
 
         // linkify urls
-        //$text = htmlspecialchars($text, ENT_QUOTES);
         $text = preg_replace('/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)/', '<a href="$1" target="_blank">$1</a>', $text);
         
         // linkify user mentions
@@ -70,37 +73,37 @@ class LinkHelper extends AppHelper{
     }
     */
 
-    private function addEntityLinks($text,$entity,$entity_type){
+    //private function addEntityLinks($text,$entity,$entity_type){
       
-        /*
-         * inserts anchor elements to given $text
-         * @param string $text,$entity,$entity_type
-         * @return string if seccess, otherwise false
-         */
-
-        // determine href 
-        switch($entity_type){
-        case 'urls':
-        case 'media':
-            // return with nothing done
-            return $text;
-        case 'hashtags':
-            $entity = "#".$entity;
-            $href = "https://twitter.com/search?q=".urlencode($entity);
-            break;
-        case 'user_mentions':
-            $href = "https://twitter.com/".$entity;
-            $entity = "@".$entity;
-            break;
-        default:
-            return false;
-        }
-
-        // insert <a href=...></a>
-        $a_element = "<a href=\"".$href."\" target=\"_blank\">".$entity."</a>";
-        $ret = str_ireplace($entity,$a_element,$text);
-        
-        return $ret;
+    /*
+     * inserts anchor elements to given $text
+     * @param string $text,$entity,$entity_type
+     * @return string if seccess, otherwise false
+     */
+    /*
+    // determine href 
+    switch($entity_type){
+    case 'urls':
+    case 'media':
+    // return with nothing done
+    return $text;
+    case 'hashtags':
+    $entity = "#".$entity;
+    $href = "https://twitter.com/search?q=".urlencode($entity);
+    break;
+    case 'user_mentions':
+    $href = "https://twitter.com/".$entity;
+    $entity = "@".$entity;
+    break;
+    default:
+    return false;
     }
 
+    // insert <a href=...></a>
+    $a_element = "<a href=\"".$href."\" target=\"_blank\">".$entity."</a>";
+    $ret = str_ireplace($entity,$a_element,$text);
+        
+    return $ret;
+    }
+    */
 }

@@ -1,28 +1,56 @@
 <?php
-echo $this->Html->script('popstate.js',array('inline'=>false));
+  echo $this->Html->script('popstate.js',array('inline'=>false));
 ?>
 
+<?php
 
-<?php 
-  if($date_list){
-      echo $this->element('dashbord');
+// check error type
+switch($error_type){
+
+case 'noFriendList':
+
+    echo "<!-- #wrap-main.home_timeline.error -->";
+    echo "<div id=\"wrap-main\" class=\"home_timeline error\">";
+    echo $this->element('no-friend-list');
+    echo "</div>";
+    echo "<!-- /#wrap-main.home_timeline.error -->";
+    break;
+
+case 'noRegisteredFriend':
+      
+    echo "<!-- #wrap-main.home_timeline.error -->";
+    echo "<div id=\"wrap-main\" class=\"home_timeline error\">";
+    echo $this->element('no-registered-friend');
+    echo "</div>";
+    echo "<!-- /#wrap-main.home_timeline.error -->";
+    break;
+
+default:
+
+    if($date_list){
+        echo $this->element('dashbord');
+    }
+    
+
+    if($statuses){
+        echo "<!-- #wrap-main-->";
+        echo "<div id=\"wrap-main\">";
+
+        echo $this->element('timeline');
+
+        echo "</div>";
+        echo "<!-- /#wrap-main -->";
+
+    }else{
+
+        echo "<!-- #wrap-main.home_timeline.error -->";
+        echo "<div id=\"wrap-main\" class=\"home_timeline error\">";
+
+        echo $this->element('no-status-found');
+
+        echo "</div>";
+        echo "<!-- /#wrap-main.home_timeline.error -->";
+        
+    }
+    break;
   }
-?>
-
-<!-- #wrap-main -->
-  <?php if($statuses):?>
-    <div id="wrap-main">
-  <?php else:?>
-    <div id="wrap-main" class="friend-not-found">
-  <?php endif;?>
-
-  <?php
-      if($statuses){
-          echo $this->element('timeline');
-      }else{
-          echo $this->element('friend-not-found');
-      }
-  ?>
-  
-</div>
-<!-- /#wrap-main -->

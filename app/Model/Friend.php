@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model/Friend.php
+ */
+
 class Friend extends AppModel{
     
     public $name = 'Friend';
@@ -11,20 +15,10 @@ class Friend extends AppModel{
                                             'dependent'=>false
                                             )
                               );
-    
-    public function getLastUpdatedTime($user_id){
 
-        /**
-         * returns the record value in User.friends_updated
-         */
-        
-        $this->User->unbindAllModels();
-
-        $user = $this->User->findById($user_id);
-        
-        return $user['User']['friends_updated'];
-
-    }
+    ////////////////////////////////////////
+    // functions to retrieve single value //
+    ////////////////////////////////////////
 
     public function getFriendNum($user_id){
     
@@ -40,6 +34,20 @@ class Friend extends AppModel{
                                                      )
                                  )
                            );
+
+    }
+
+    public function getLastUpdatedTime($user_id){
+
+        /**
+         * returns the record value in User.friends_updated
+         */
+        
+        $this->User->unbindAllModels();
+
+        $user = $this->User->findById($user_id);
+        
+        return $user['User']['friends_updated'];
 
     }
 
@@ -65,6 +73,10 @@ class Friend extends AppModel{
         return $this->checkNum($ret);
 
     }
+
+    ///////////////////////////////////////////
+    // functions to save/update some records //
+    ///////////////////////////////////////////
 
     public function saveFriends($user_id,$id_list){
 

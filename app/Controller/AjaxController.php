@@ -9,7 +9,8 @@ class AjaxController extends AppController{
     // chose the layout to render
     public $layout = 'ajax';
     
-    
+    public $components = array('Parameter');
+
     public function beforeFilter(){
 
         parent::beforeFilter();
@@ -22,7 +23,9 @@ class AjaxController extends AppController{
             echo "bad request";
             exit;
         }
-        
+
+        $this->autoRender = false;
+    
     }
             
     public function acquire_statuses(){
@@ -33,8 +36,10 @@ class AjaxController extends AppController{
          */
                
         if(!$this->request->isPost()){
+
             echo "bad request";
             exit;
+        
         }
 
         // initialization
@@ -99,16 +104,21 @@ class AjaxController extends AppController{
          
             // remove the newest status from result because it has been already saved in previous loop
             if(count($statuses)>0){
+                
                 array_shift($statuses);
+           
             }
         }
         
         // save acquired data if any
         if(count($statuses)>0){
+            
             foreach($statuses as $status){
+            
                 $this->Status->saveStatus($user,$status);
 
             }
+       
         }
            
         ////////////////////////////////////                              
@@ -126,6 +136,7 @@ class AjaxController extends AppController{
         $ret['noStatusAtAll'] = $noStatusAtAll;
 
         if($continue){
+        
             // the status to show as one which is currently fetching
             $last_status = end($statuses);
             $text = $last_status['text'];       
@@ -141,6 +152,7 @@ class AjaxController extends AppController{
                                    'date'=>$created_at,
                                    'text'=>$text
                                    );
+        
         }else{
             
             if(!$noStatusAtAll){
@@ -152,10 +164,10 @@ class AjaxController extends AppController{
                 // make statuses non-pre-saved
                 $this->Status->savePreSavedStatus($user['id']);
             }
+        
         }
-
-        // return json
-        $this->set('responce',json_encode($ret));
+        
+        echo json_encode($ret);
     }
 
     public function check_status_update(){
@@ -164,7 +176,6 @@ class AjaxController extends AppController{
          * checks if there is any updatable tweet on twitter.com
          */
         
-        $this->autoRender = false;
         $user = $this->Auth->user();
         $user_id = $user['id'];
                 
@@ -182,11 +193,15 @@ class AjaxController extends AppController{
 
         // compare created_at
         if($latest_tweet_created_at > $latest_status_created_at){
+        
             // updatable
             $ret = array('result'=>true);
+        
         }else{
+
             // no tweet updatable
             $ret = array('result'=>false);
+
         }
         
         // record the time updeted
@@ -207,11 +222,12 @@ class AjaxController extends AppController{
          */
         
         if(!$this->request->isPost()){
+
             echo "bad request";
             exit;
+
         }
         
-        $this->autoRender = false;
         $user = $this->Auth->user();
         $user_id = $user['id'];
 
@@ -223,6 +239,7 @@ class AjaxController extends AppController{
 
         // check if user has any friends imported
         if(!$friends['db']){
+
             // if not,do update
             $doUpdate = true;
 
@@ -235,21 +252,29 @@ class AjaxController extends AppController{
             // compare the number of ids contained in each array
             $count_db = count($friends['db']);
             $count_twitter = count($friends['twitter']);
+
             if($count_db != $count_twitter){
+
                 // if not equals
                 $doUpdate = true;
+
             }else{
                 
                 // check if $friends['twitter'] contains any id that is not contained in $friends['db']
                 foreach($friends['twitter'] as $my_tw_friend){
+
                     $idExists = in_array($my_tw_friend,$friends['db']);
+
                     if(!$idExists){
+
                         $doUpdate = true;
                         // if detected,break the loop
                         break;
+
                     }
+
                 }  
-                    
+                
             }
         }
         
@@ -257,8 +282,10 @@ class AjaxController extends AppController{
         if($doUpdate){
 
             if(!isset($friends['twitter'])){
+             
                 $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
                 $friends['twitter'] = $following_friends['ids'];
+
             }
 
             // update friends list
@@ -296,8 +323,10 @@ class AjaxController extends AppController{
          */
 
         if(!$this->request->isPost()){
+
             echo "bad request";
             exit;
+
         }
 
         $user = $this->Auth->user();
@@ -343,6 +372,7 @@ class AjaxController extends AppController{
                            
             // fetch tweets via api
             $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+
         }
 
         if($tweets){
@@ -360,24 +390,31 @@ class AjaxController extends AppController{
             foreach($tweets as $tweet){
 
                 if(strtotime($tweet['created_at']) > $destination_time){
+               
                     // save it
                     $this->Status->saveStatus($user,$tweet);
                     $count_saved++;
 
                 }else{
+
                     // stop saving
                     $continue = false;
                     break;
+
                 }
             }
     
         }else{
+
             $continue = false;
+
         }
 
         if(!$continue){
+
             // make all the pre_saved statuses non-pre-saved
             $this->Status->savePreSavedStatus($user['id']);
+
         }
 
         $updated_time = $this->Status->getLastUpdatedTime($user['id']);
@@ -390,15 +427,17 @@ class AjaxController extends AppController{
                      'updated_date'=>$updated_date
                      );
         
-        $this->set('responce',json_encode($ret));
+        echo json_encode($ret);
 
     }
 
     public function delete_account(){
        
         if(!$this->request->isPost()){
+
             echo "bad request";
             exit;
+
         }
 
         $user_id = $this->Auth->user('id');
@@ -407,10 +446,11 @@ class AjaxController extends AppController{
         $deleted = false;
        
         if($this->User->deleteAccount($user_id)){
+
             $deleted = true;
+
         }
         
-        $this->autoRender = false;
         sleep(2);
         echo $deleted;
         
@@ -433,9 +473,10 @@ class AjaxController extends AppController{
         $data_type = $this->request->query['data_type'];
         
         // calculate start/end of term to fetch 
-        $term = $this->termToTime($date,$date_type,$utc_offset);
+        $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
         
         switch($data_type){
+
         case 'sent_tweets':
             // fetch 10 statsues in specified term
             $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
@@ -459,6 +500,7 @@ class AjaxController extends AppController{
             $hasNext = $this->Status->hasOlderTimeline($user_id,$oldest_timestamp);
 
             break;
+
         case 'public_timeline':
 
             // fetch 10 timeline in specified term
@@ -473,16 +515,16 @@ class AjaxController extends AppController{
             break;
 
         default:
-            //[ToDo] show the view to notice that there is no data to show
+
             break;
             
         }
-
-
         
+        $this->autoRender = true;
         $this->set('oldest_timestamp',$oldest_timestamp);
         $this->set('hasNext',$hasNext);
         $this->set('statuses',$statuses);       
+
     }
 
     public function read_more(){
@@ -542,10 +584,12 @@ class AjaxController extends AppController{
             
             break;
         }
-
+        
+        $this->autoRender = true;
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldest_timestamp);        
         $this->set('statuses',$statuses);
+    
     }
 
 }
