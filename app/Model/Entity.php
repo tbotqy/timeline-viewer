@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model/Entity
+ */
+
 class Entity extends AppModel{
     
     public $name = 'Entity';

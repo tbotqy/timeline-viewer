@@ -1,5 +1,5 @@
-<!-- #friend-not-found -->
-<div class="friend-not-found">
+<!-- .error-inner -->
+<div class="error-inner">
 
   <!-- .area-alert -->
   <div class="wrap area-alert">
@@ -9,15 +9,14 @@
     </div>
 
     <h4>
-      Timedlineをやっている友達がいないようです
+      フォローリストが空です
       <a class="description" href="#"><i class="icon-question-sign"></i></a>
     </h4>
 
     <!-- .invite-friends -->
     <div class="alert alert-info invite-friends">
       <button class="close">×</button>
-      <p>友達とは、あなたがTwitterでフォローしている人たちの事です。</p>
-      <p>彼らがTimedlineを始めると、このページに彼らのツイートが現れます。そうすると、あなたは時間を指定してタイムラインを遡ることができるようになります。</p>
+      <p>もしあなたがTwitterで誰かをフォローしているにも関わらずこの画面が出た場合、<a href="/users/configurations">設定画面</a>からフォローリストを更新してみてください。</p>
     </div>
     <!-- /.invite-friends -->
 
@@ -38,4 +37,4 @@
   <!-- /.area-intent -->
 
 </div>
-<!-- /.friend-not-found -->
+<!-- /.error-inner -->

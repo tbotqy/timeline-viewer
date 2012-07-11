@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * Model/User.php
+ */
+
 class User extends AppModel{
 
     public $name = 'User';
@@ -17,93 +21,11 @@ class User extends AppModel{
                                             'dependent'=>true
                                             )
                             );
-                            
-    public function register($tokens,$verify_credentials){
- 
-        /**
-         * register new user
-         * @param array $tokens
-         * @param array $verify_credentials
-         * @return true if success otherwise false
-         */
-        
-        // user's data to save
-        $data_to_save = array(
-                              'twitter_id'=>$verify_credentials['id_str'],
-                              'name'=>$verify_credentials['name'],
-                              'screen_name'=>$verify_credentials['screen_name'],
-                              'profile_image_url_https'=>$verify_credentials['profile_image_url_https'],
-                              'time_zone'=>$verify_credentials['time_zone'],
-                              'utc_offset'=>$verify_credentials['utc_offset'],
-                              'created_at'=>strtotime($verify_credentials['created_at']),
-                              'lang'=>$verify_credentials['lang'],
-                              'token'=>$tokens['token'],
-                              'token_secret'=>$tokens['token_secret'],
-                              'token_updated'=>0,
-                              'initialized_flag'=>0,
-                              'deleted_flag'=>false,
-                              'created'=>time()
-                              );
-        
-        return $this->save($data_to_save) ? true : false;
 
-    }
+    ////////////////////////////////////////
+    // functions to retrieve single value //
+    ////////////////////////////////////////
     
-    public function updateTokens($user_id,$tokens){
-        
-        /**
-         * update user's tokens for OAuth
-         * @param int $user_id
-         * @param array $tokens which contains both token/token_secret
-         * @return true if seccess otherwise false
-         */
-        
-        $data = array(
-                      'id' =>  $user_id,
-                      'token' => $tokens['token'],
-                      'token_secret' => $tokens['token_secret'],
-                      'token_updated' => time(),
-                      'updated' => time()
-                      );
-        
-        return $this->User->save($data) ? true : false;
-        
-    }
-
-    public function deleteAccount($user_id){
-        
-        /**
-         * delete all the data related to User
-         */
-
-        // delete all related data
-        //return $this->delete($user_id,true);
-        
-        // just switch the delete flag
-        $this->id = $user_id;
-        return $this->saveField('deleted_flag',true);
-    }
-
-    public function userExists($user_id){
-
-        /**
-         * checks if the user with given $user_id exists
-         */
-
-        $result = $this->find(
-                              'first',
-                              array(
-                                    'conditions'=>array(
-                                                        'User.id'=>$user_id,
-                                                        'User.deleted_flag'=>false
-                                                        )
-                                    )
-                              );
-
-        return $result;
-
-    }
-
     public function getIds(){
       
         /**
@@ -128,29 +50,6 @@ class User extends AppModel{
 
         return $ret;
 
-    }
-
-    public function getIdByTwitterId($twitter_id){
-        
-        /**
-         * acquires id with given $twitter_id
-         * @param string $twitter_id
-         * @return int if secceed otherwise false
-         */
-
-        $this->unbindAllModels();
-        
-        $id = $this->find(
-                          'first',
-                          array('conditions'=>array(
-                                                    'User.twitter_id'=>$twitter_id,
-                                                    'User.deleted_flag'=>false
-                                                    ),
-                                'fields'=>array('User.id')
-                                )
-                          );
-        
-        return $id ? $id['User']['id'] : false;
     }
 
     public function getTwitterId($user_id){
@@ -202,6 +101,177 @@ class User extends AppModel{
         
         return $tokens ? $tokens : false;
     }
+
+    public function getIdByTwitterId($twitter_id){
+        
+        /**
+         * acquires id with given $twitter_id
+         * @param string or array $twitter_id
+         * @return int/array if secceed otherwise false
+         */
+
+        $this->unbindAllModels();
+        
+        if(is_array($twitter_id)){
+            
+            $ids = $this->find(
+                               'all',
+                               array('conditions'=>array(
+                                                         'User.twitter_id'=>$twitter_id,
+                                                         'User.deleted_flag'=>false
+                                                         ),
+                                     'fields'=>array('User.id')
+                                     )
+                               );
+            if($ids){
+                // format an array to return
+                $ret = array();
+                foreach($ids as $id){
+                    $ret[] = $id['User']['id'];
+                }
+                return $ret;
+            }else{
+                return false;
+            }
+            
+        }else{
+
+            $id = $this->find(
+                              'first',
+                              array('conditions'=>array(
+                                                        'User.twitter_id'=>$twitter_id,
+                                                        'User.deleted_flag'=>false
+                                                        ),
+                                    'fields'=>array('User.id')
+                                    )
+                              );
+        
+            return $id ? $id['User']['id'] : false;
+        }
+    }
+
+    ///////////////////////////////////////////////
+    // functions to save/update/delete something //
+    ///////////////////////////////////////////////
+                            
+    public function register($tokens,$verify_credentials){
+ 
+        /**
+         * register new user
+         * @param array $tokens
+         * @param array $verify_credentials
+         * @return true if success otherwise false
+         */
+        
+        // user's data to save
+        $data_to_save = array(
+                              'twitter_id'=>$verify_credentials['id_str'],
+                              'name'=>$verify_credentials['name'],
+                              'screen_name'=>$verify_credentials['screen_name'],
+                              'profile_image_url_https'=>$verify_credentials['profile_image_url_https'],
+                              'time_zone'=>$verify_credentials['time_zone'],
+                              'utc_offset'=>$verify_credentials['utc_offset'],
+                              'created_at'=>strtotime($verify_credentials['created_at']),
+                              'lang'=>$verify_credentials['lang'],
+                              'token'=>$tokens['token'],
+                              'token_secret'=>$tokens['token_secret'],
+                              'token_updated'=>0,
+                              'initialized_flag'=>0,
+                              'deleted_flag'=>false,
+                              'created'=>time()
+                              );
+        
+        return $this->save($data_to_save) ? true : false;
+
+    }
+
+    public function deleteAccount($user_id){
+        
+        /**
+         * delete all the data related to User
+         */
+
+        // delete all related data
+        //return $this->delete($user_id,true);
+        
+        // just switch the delete flag
+        $this->id = $user_id;
+        return $this->saveField('deleted_flag',true);
+    }
+    
+    public function updateTokens($user_id,$tokens){
+        
+        /**
+         * update user's tokens for OAuth
+         * @param int $user_id
+         * @param array $tokens which contains both token/token_secret
+         * @return true if seccess otherwise false
+         */
+        
+        $data = array(
+                      'id' =>  $user_id,
+                      'token' => $tokens['token'],
+                      'token_secret' => $tokens['token_secret'],
+                      'token_updated' => time(),
+                      'updated' => time()
+                      );
+        
+        return $this->User->save($data) ? true : false;
+        
+    }
+   
+    ///////////////////////
+    // boolean functions //
+    ///////////////////////
+
+    public function hasFriendList($user_id){
+
+        /**
+         * checks if user has any following list
+         * @param int $user_id
+         * @return boolean
+         */
+
+        return $this->Friend->getFriendIds($user_id);
+
+    }
+
+    public function hasRegisteredFriend($user_id){
+        
+        /**
+         * check if user with given $user_id has any friend registering this app
+         * @param int $user_id
+         * @return boolean
+         */
+        
+        if($this->hasFriendList($user_id)){
+            $twitter_ids = $this->Friend->getFriendIds($user_id);
+            return $this->getIdByTwitterId($twitter_ids);
+        }else{
+            return false;
+        }
+        
+    }
+    
+    public function userExists($user_id){
+
+        /**
+         * checks if the user with given $user_id exists
+         */
+
+        $result = $this->find(
+                              'first',
+                              array(
+                                    'conditions'=>array(
+                                                        'User.id'=>$user_id,
+                                                        'User.deleted_flag'=>false
+                                                        )
+                                    )
+                              );
+
+        return $result;
+
+    }
     
     public function isInitialized($user_id){
         
@@ -229,7 +299,8 @@ class User extends AppModel{
         return $result['User']['initialized_flag'];
     }
 
-    public function existByTwitterId($twitter_id){
+    public function existByTwitterId($twitter_id){// I think the name not so  good
+
         /**
          * checks if user with given twitter id exists on User model
          * @param string $twitter_id
@@ -239,6 +310,10 @@ class User extends AppModel{
         return $this->getIdByTwitterId($twitter_id) ? true : false;
 
     }
+
+    ////////////
+    // others //
+    ////////////
 
     public function unbindAllModels(){
         

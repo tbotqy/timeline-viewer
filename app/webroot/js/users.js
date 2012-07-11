@@ -3,14 +3,14 @@ $(document).ready(function(){
   ////////////////////////////////////
   // code for /users/home_timeline  //
   ////////////////////////////////////
-  $(".friend-not-found").find(".description").click(function(e){
+  $(".error-inner").find(".description").click(function(e){
     e.preventDefault();
-    $(".friend-not-found").find(".invite-friends").fadeIn();
+    $(".error-inner").find(".invite-friends").fadeIn();
   });
 
-  $(".friend-not-found").find(".invite-friends .close").click(function(e){
+  $(".error-inner").find(".invite-friends .close").click(function(e){
     e.preventDefault();
-    $(".friend-not-found").find(".invite-friends").fadeOut();
+    $(".error-inner").find(".invite-friends").fadeOut();
   });
 
   ////////////////////////////////////
