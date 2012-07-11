@@ -35,33 +35,42 @@ App::uses('Controller', 'Controller');
 class AppController extends Controller {
 
     public $components = array('Auth','Session','Twitter');
-    public $helpers = array('Html','Form','Session','Text','Link');
-    public $uses = array('User');
+    public $helpers = array('Html','Session','Text','Link');
+    public $uses = array('User','Status','Entity','Friend');
     
     public $userIsInitialized = false;
 
     public function beforeFilter(){
-    
-        parent::beforeFilter();
         
-        $this->checkInitialized();
+        parent::beforeFilter();
         
         // check if user is logged in
         $loggedIn = $this->Auth->loggedIn();
-        
-        // pass it to view
-        $this->set('loggedIn',$loggedIn);
-        
+
         if($loggedIn){
             $loggingUser = $this->Auth->user();
-            $this->set('loggingUser',$loggingUser);
             
-            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
-            $this->set('userIsInitialized',$userIsInitialized);
+            // check if user is initialized 
+            $this->checkInitialized();
+            
+            // check if user id in Auth info exists in database
+            $id = $loggingUser['id'];
+            $twitter_id = $loggingUser['Twitter']['id'];
+            
+            if(!$this->User->userExists($id)){
+                $this->Auth->logout();
+                $this->redirect('/');
+                return ;
+            }
+            
+            $this->set('loggingUser',$loggingUser);
         }
-        
+            
+        $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
+        $this->set('userIsInitialized',$userIsInitialized);
+    
+        $this->set('loggedIn',$loggedIn);
         $this->set('actionType',$this->request->params['action']);
-
         $this->set('isAjax',$this->request->isAjax());
     }
 

@@ -42,7 +42,8 @@
     </div>
 
     <div class="to-page-top">
-      <a href="#"><img src="/img/icons/Arrow Up.png" title="ページトップへ" /><span>ページトップ</span></a>
+      <!--<a href="#"><img src="/img/icons/Arrow Up.png" title="ページトップへ" /><span>GO TOP</span></a>-->
+      <a href="#"><span><i class="icon-hand-up"></i>GO TOP</span></a>
     </div>
 
     <?php //echo $this->element('footer');?>

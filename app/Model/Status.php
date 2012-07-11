@@ -15,7 +15,7 @@ class Status extends AppModel{
     public $belongsTo = array(
                               'User'=>array(
                                             'className'=>'User',
-                                            'foreignKey'=>'user_id',
+                                            //'foreignKey'=>'user_id',
                                             'dependent'=>false
                                             )
                               );
@@ -78,6 +78,36 @@ class Status extends AppModel{
         
     }
 
+    public function getPublicTimelineInTerm($begin,$end,$order = 'DESC',$limit = '10'){
+        
+        /**
+         * acquire all the user's statuses in specified term
+         * returns array if there is any
+         * returns false if there is no status in specified term
+         */
+        
+        // get user's friend ids
+        $ids = $this->User->getIds();
+
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>array(
+                                                          'Status.user_id'=>$ids,
+                                                          'Status.created_at >=' => $begin,
+                                                          'Status.created_at <=' => $end,
+                                                          'Status.pre_saved' => false
+                                                          ),
+                                      'limit'=>$limit,
+                                      'order'=>'Status.created_at '.$order
+                                      )
+                                );
+
+        // return result
+        return $this->checkNum($statuses);
+        
+    }
+
     public function getTimelineInTerm($user_id,$begin,$end,$order = 'DESC',$limit = '10'){
         
         /**
@@ -96,7 +126,8 @@ class Status extends AppModel{
                                                           'Status.twitter_id'=>$ids,
                                                           'Status.created_at >=' => $begin,
                                                           'Status.created_at <=' => $end,
-                                                          'Status.pre_saved' => false
+                                                          'Status.pre_saved' => false,
+                                                          'User.deleted_flag'=>false
                                                           ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created_at '.$order
@@ -106,6 +137,31 @@ class Status extends AppModel{
         // return result
         return $this->checkNum($statuses);
         
+    }
+
+    public function getLatestPublicTimeline($limit = 10){
+      
+        /**
+         * retrieve everybody's statuses in database
+         * @return array if exist, else false
+         */
+
+        $ids = $this->User->getIds();
+
+        $ret = $this->find(
+                           'all',
+                           array(
+                                 'conditions'=>array(
+                                                     'Status.user_id'=>$ids,
+                                                     'Status.pre_saved' => false
+                                                     ),
+                                 'order'=>'Status.created_at DESC',
+                                 'limit'=>$limit
+                                 )
+                           );
+
+        return $this->checkNum($ret);
+
     }
 
     public function getLatestTimeline($user_id,$limit = 10){
@@ -124,7 +180,8 @@ class Status extends AppModel{
                            array(
                                  'conditions'=>array(
                                                      'Status.twitter_id'=>$ids,
-                                                     'Status.pre_saved' => false
+                                                     'Status.pre_saved' => false,
+                                                     'User.deleted_flag'=>false
                                                      ),
                                  'order'=>'Status.created_at DESC',
                                  'limit'=>$limit
@@ -135,6 +192,7 @@ class Status extends AppModel{
 
     }
 
+
     public function getDateList($user_id,$mode="sent_tweets"){
 
         /**
@@ -143,12 +201,14 @@ class Status extends AppModel{
          * @return array
          */
        
-        $user_data = $this->User->findById($user_id);
+        // fetch created_at value of the statuses
         $status_date_list = $this->getCreatedAtList($user_id,$mode);
         
-        // classify them by date
+        // get utc_offset for user
+        $user_data = $this->User->findById($user_id);
         $utc_offset = $user_data['User']['utc_offset'];
-       
+
+        // classify them by date       
         foreach($status_date_list as $key=>$created_at){
             $created_at += $utc_offset;
 
@@ -199,7 +259,29 @@ class Status extends AppModel{
                  array
                  (
                   'conditions'=>array(
-                                      'Status.twitter_id'=>$ids
+                                      'Status.twitter_id'=>$ids,
+                                      'User.deleted_flag'=>false
+                                      ),
+                  'fields'=>array(
+                                  'Status.created_at'
+                                  ),
+                  'order'=>'Status.created_at '.$order
+                  )
+                 );
+                       
+            return $ret;
+
+            break;
+        case 'public_timeline':
+            $ids = $this->User->getIds();
+            
+            $ret = $this->find
+                (
+                 'list',
+                 array
+                 (
+                  'conditions'=>array(
+                                      'Status.user_id'=>$ids
                                       ),
                   'fields'=>array(
                                   'Status.created_at'
@@ -269,6 +351,28 @@ class Status extends AppModel{
         return $this->checkNum($statuses);
     }
 
+    public function getOlderPublicTimeline($timestamp,$limit = 10){
+
+        $ids = $this->User->getIds();
+
+        // retrieve statuses
+        $conditions = array(
+                            'Status.user_id' => $ids,
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false
+                            );
+
+        $statuses = $this->find(
+                                'all',
+                                array(
+                                      'conditions'=>$conditions,
+                                      'order'=>'Status.created_at DESC',
+                                      'limit'=>$limit
+                                      )
+                                );
+        return $this->checkNum($statuses);
+    }
+
     public function getOlderTimeline($user_id,$timestamp,$limit = 10){
 
         $ids = $this->User->Friend->getFriendIds($user_id);
@@ -277,7 +381,8 @@ class Status extends AppModel{
         $conditions = array(
                             'Status.twitter_id' => $ids,
                             'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false
+                            'Status.pre_saved' => false,
+                            'User.deleted_flag'=>false
                             );
 
         $statuses = $this->find(
@@ -390,6 +495,32 @@ class Status extends AppModel{
 
     }
 
+    public function hasOlderPublicTimeline($timestamp){
+       
+        /**
+         * checks if model has any status older than $timestamp 
+         * @param $timestamp int
+         * @return boolean
+         */
+
+        // get the ids of all the users
+        $ids = $this->User->getIds();
+
+        $conditions = array(
+                            'Status.user_id' => $ids,
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false
+                            );
+
+        $count = $this->find(
+                             'count',
+                             array(
+                                   'conditions'=>$conditions
+                                   )
+                             );
+        return $count > 0 ? true : false;
+    }
+
     public function hasOlderTimeline($user_id,$timestamp){
        
         /**
@@ -403,7 +534,9 @@ class Status extends AppModel{
 
         $conditions = array(
                             'Status.twitter_id' => $ids,
-                            'Status.created_at <' => $timestamp
+                            'Status.created_at <' => $timestamp,
+                            'Status.pre_saved' => false,
+                            'User.deleted_flag'=>false
                             );
 
         $count = $this->find(

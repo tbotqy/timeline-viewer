@@ -119,13 +119,24 @@ function getStatuses(params){
     
     complete: function(){
       if(noStatusAtAll){
+	
 	hideLoader();
+      
       }else{
+
 	// animate progress bar
 	setProgress(progress);
 	
 	$(".wrap-importing-status").fadeIn()
       }
+      
+      if(progress == 100){
+	// when done, redirect after 2 seconds 
+	setTimeout(function(){
+	  location.href = "/users/sent_tweets";
+	},2000);
+      }
+
     }
   });
 }

@@ -10,13 +10,17 @@ echo $this->Html->script('popstate.js',array('inline'=>false));
 ?>
 
 <!-- #wrap-main -->
-<div id="wrap-main" class="home-timeline">
+  <?php if($statuses):?>
+    <div id="wrap-main">
+  <?php else:?>
+    <div id="wrap-main" class="friend-not-found">
+  <?php endif;?>
 
   <?php
       if($statuses){
           echo $this->element('timeline');
       }else{
-          echo $this->element('invite-friends');
+          echo $this->element('friend-not-found');
       }
   ?>
   

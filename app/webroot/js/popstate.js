@@ -10,6 +10,6 @@ $(document).ready(function(){
       var nextPage = location.href;
       location.href = nextPage;
     },false);
-  },1000);
+  },100);
 
 });
