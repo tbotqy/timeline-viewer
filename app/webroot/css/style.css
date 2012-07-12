@@ -11,7 +11,7 @@ body{
   width: 100%;
   margin: 0;
   font-size: 100%;
-  font-family:'Questrial', Helvetica,"メイリオ", sans-serif;
+  font-family: 'Questrial', Helvetica,"メイリオ", sans-serif;
   color: #7a6e7e;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); 
 }
@@ -572,7 +572,6 @@ i{
   top: 80px;
   left: 0;
   font-size: 200%;
-  font-family: impact;
   color: #08C;
   font-family: 'Questrial', sans-serif;
 }
@@ -646,8 +645,12 @@ i{
 #wrap-main .error-inner .alert.invite-friends p{ 
   margin: 0;
   padding: 0;
+  text-align: center;
 }
 
+#wrap-main .error-inner .alert.invite-friends a{ 
+  text-decoration: underline;
+}
 #wrap-main .error-inner .alert.invite-friends .close{ 
   position: relative;
   top: -5px;

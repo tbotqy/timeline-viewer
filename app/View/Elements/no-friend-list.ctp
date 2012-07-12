@@ -16,7 +16,7 @@
     <!-- .invite-friends -->
     <div class="alert alert-info invite-friends">
       <button class="close">×</button>
-      <p>もしあなたがTwitterで誰かをフォローしているにも関わらずこの画面が出た場合、<a href="/users/configurations">設定画面</a>からフォローリストを更新してみてください。</p>
+      <p>もしあなたがTwitterで誰かをフォローしているにも関わらずこの画面が出た場合、<br/><a href="/users/configurations">設定画面</a>からフォローリストを更新してみてください。</p>
     </div>
     <!-- /.invite-friends -->
 

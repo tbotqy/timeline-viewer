@@ -31,6 +31,8 @@ class Status extends AppModel{
          * returns array if there is any
          * returns false if there is nothing to return
          */
+        
+        $this->unbindEntity();
 
         $statuses = $this->find(
                                 'all',
@@ -62,6 +64,8 @@ class Status extends AppModel{
         // find user_ids IN $twitter_ids
         $user_ids = $this->User->getIdByTwitterId($twitter_ids);
 
+        $this->unbindEntity();
+
         $ret = $this->find(
                            'all',
                            array(
@@ -85,8 +89,10 @@ class Status extends AppModel{
          * retrieve everybody's statuses in database
          * @return array if exist, else false
          */
-
+        
         $ids = $this->User->getIds();
+
+        $this->unbindEntity();
 
         $ret = $this->find(
                            'all',
@@ -115,6 +121,8 @@ class Status extends AppModel{
          * @param int $user_id, $begin, $end
          * @return array if there is any,false if there is no status in specified term
          */
+
+        $this->unbindEntity();
 
         $statuses = $this->find(
                                 'all',
@@ -147,6 +155,8 @@ class Status extends AppModel{
         // find user_ids IN $twitter_ids
         $user_ids = $this->User->getIdByTwitterId($twitter_ids);
 
+        $this->unbindEntity();
+
         $statuses = $this->find(
                                 'all',
                                 array(
@@ -176,6 +186,8 @@ class Status extends AppModel{
         
         // get user's friend ids
         $ids = $this->User->getIds();
+
+        $this->unbindEntity();
 
         $statuses = $this->find(
                                 'all',
@@ -322,7 +334,9 @@ class Status extends AppModel{
          * @param int $limit
          * @return array if retrieved any status, otherwise false
          */
-                
+         
+        $this->unbindEntity();
+       
         $statuses = $this->find(
                                 'all',
                                 array(
@@ -341,6 +355,7 @@ class Status extends AppModel{
 
     public function getOlderTimeline($user_id,$timestamp,$limit = 10){
 
+
         // get user's friend ids
         $twitter_ids = $this->User->Friend->getFriendIds($user_id);
         // find user_ids IN $twitter_ids
@@ -353,6 +368,8 @@ class Status extends AppModel{
                             'Status.pre_saved' => false,
                             );
 
+        $this->unbindEntity();
+        
         $statuses = $this->find(
                                 'all',
                                 array(
@@ -376,6 +393,8 @@ class Status extends AppModel{
                             'Status.pre_saved' => false
                             );
 
+        $this->unbindEntity();
+        
         $statuses = $this->find(
                                 'all',
                                 array(
@@ -473,8 +492,6 @@ class Status extends AppModel{
         }
         
     }
-    
-
     
     ///////////////////////
     // boolean functions //
@@ -635,6 +652,16 @@ class Status extends AppModel{
                                         )
                                   );
 
+    }
+
+    public function unbindEntity(){
+        
+        return $this->unbindModel(
+                                  array(
+                                        'hasMany'=>array('Entity')
+                                        )
+                                  );
+        
     }
 
 }
