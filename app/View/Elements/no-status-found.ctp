@@ -16,8 +16,8 @@
     <!-- .invite-friends -->
     <div class="alert alert-info invite-friends">
       <button class="close">×</button>
-      <p>あなたがTwitterでフォローしている人たちがTimedlineを始めると、このページに彼らのツイートが現れます。</p>
-      <p>(URLが私達に対応可能なフォーマットである限り)</p>
+      <p>あなたがTwitterでフォローしている人たちがTimedlineを始めると、,<br/>このページに彼らのツイートが現れます。</p>
+      <p>(URLが私達にとって対応可能なフォーマットである限り)</p>
     </div>
     <!-- /.invite-friends -->
 

@@ -16,10 +16,7 @@
              'libs/jquery-1.7.2.min',
              'libs/bootstrap',
              'functions',
-             'common',
-             'elements',
-             'users',
-             'statuses'
+             'common'
              )
        );
       
@@ -41,10 +38,9 @@
       </div>
     </div>
 
-    <div class="to-page-top">
-      <!--<a href="#"><img src="/img/icons/Arrow Up.png" title="ページトップへ" /><span>GO TOP</span></a>-->
-      <a href="#"><span><i class="icon-hand-up"></i>GO TOP</span></a>
-    </div>
+    <?php 
+      echo $this->element('to-page-top');
+    ?>
 
     <?php //echo $this->element('footer');?>
     <?php //echo $this->element('sql_dump');?>    

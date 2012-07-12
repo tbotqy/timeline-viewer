@@ -54,7 +54,7 @@
 		  <li class="divider"></li>
 		  <?php endif;?>
 		  <li>
-		    <a class="link-logout" href="/users/logout">ログアウト</a>
+		    <a class="link-logout" href="/users/logout"><i class="icon-signout"></i>ログアウト</a>
 		  </li>
 		</ul>
 		<!-- /.dropdown-menu -->

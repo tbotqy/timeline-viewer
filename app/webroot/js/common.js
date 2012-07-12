@@ -1,11 +1,189 @@
-$(document).ready(function(){
-  
+$(function(){
+      
   // set background image to dashbord same with html's background
   var urlToBg = "/img/html_bg_linen.png";
   var urlToDashbord = "/img/html_bg_linen.png";
-
+  
   $("body").css("background-image","url("+urlToBg+")");
   $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
+  
+  // click action for each status
+  // hide and show the bottom line in each status
+  $(".status-content").live("click",function(){
+    $(this).find(".bottom").slideToggle('fast');
+  });
+
+  // click action for read more button
+  $("#read-more").live("click",function(e){
+    
+    e.preventDefault();
+    var distance = $(this).offset().top;
+
+    // let button say 'loading'
+    $(this).button('loading');
+    
+    // fetch more statuses to show
+    $.ajax({
+
+      type:"POST",
+      dataType:"html",
+      data:{
+	"oldest_timestamp":$("#oldest-timestamp").attr("value"),
+	"destination_data_type":$("#wrap-dashbord").data("type")
+      },
+      url: '/ajax/read_more',
+      success: function(responce){
+	// remove the element representing last status's timestamp
+	$("#oldest-timestamp").remove();
+	
+	$("#wrap-read-more").remove();
+
+	// insert loaded html code 
+	$(".wrap-each-status:last").after(responce);
+      },
+      error: function(responce){
+	alert("読み込みに失敗しました。");
+      },
+      complete: function(){
+	
+	scrollDownToDestination(e,distance);
+
+      }
+    });
+  });
+
+  var wrap_progress_bar = $(".wrap-progress-bar");
+  var import_button = $("#start-import");  
+
+  //click event activated when start button is clicked
+  import_button.click(function(){
+    
+    // change the button statement
+    import_button.button('loading');
+    
+    // show the loader icon
+    showLoader();
+    
+    /// show the progress bar
+    wrap_progress_bar.fadeIn(function(){
+
+      // show the area displaying the status body currently saving
+      //$("#status").css({"display":"block"});
+      $("#status").fadeIn();
+    
+    });
+      
+    //initialize data to post
+    var data_to_post = {"id_str_oldest":""};
+    
+    // post ajax request 
+    getStatuses(data_to_post);
+    
+  });
+  
+  ////////////////////////////////////
+  // code for /users/home_timeline  //
+  ////////////////////////////////////
+  
+  $(".error-inner").find(".description").click(function(e){
+    e.preventDefault();
+    $(".error-inner").find(".invite-friends").fadeIn();
+  });
+
+  $(".error-inner").find(".invite-friends .close").click(function(e){
+    e.preventDefault();
+    $(".error-inner").find(".invite-friends").fadeOut();
+  });
+
+  ////////////////////////////////////
+  // code for /users/configurations //
+  ////////////////////////////////////
+
+  /**
+   * the process to update tweets
+   */
+
+  $("#update-statuses").click(function(){
+
+    // change the button's statement
+    $(this).button('loading');
+
+    // show the loading icon 
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".tweets").find(".loader").fadeIn();
+
+    checkStatusUpdate();
+
+  });
+
+  /**
+   * the process to update friend list
+   */
+
+  $("#update-friends").click(function(){
+    
+    // change the button's statement
+    $(this).button('loading');
+
+    // show the loading icon
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".friends").find(".loader").fadeIn();
+
+    checkFriendUpdate();
+    
+  });
+  
+  /**
+   * the process for account deletion
+   */
+
+  var deleted = "";
+ 
+  // click event to delete account
+  $("#delete-account").click(function(){
+
+    // disable cancel button
+    $("#modal-delete-account").find(".modal-header .close").fadeOut();
+    $("#modal-delete-account").find(".modal-footer .cancel-delete").addClass("disabled");
+
+    $(this).button('loading');
+    $("#modal-delete-account")
+      .find(".status")
+      .fadeOut(function(){
+	$(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />"); 
+      })
+      .fadeIn();
+    
+    $.ajax({
+      
+      url: '/ajax/delete_account',
+      type: 'post',
+      dataType: 'text',
+      
+      success: function(res){
+	deleted = res;
+	showDeleteCompleteMessage(res);
+      },
+
+      error: function(){
+	showDeleteErrorMessage();
+      },
+      
+      complete: function(){
+	if(deleted){
+
+	  setTimeout(
+	    function(){
+	      redirect();
+	    }, 3000
+	  );
+	  
+	}
+      }
+
+    });
+  });
+
 
   ///////////////////////////////////////////////
   // code for the button to scroll to page top //

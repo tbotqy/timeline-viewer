@@ -16,7 +16,7 @@
     <!-- .invite-friends -->
     <div class="alert alert-info invite-friends">
       <button class="close">×</button>
-      <p>あなたがTwitterでフォローしている人たちがTimedlineを始めると、このページに彼らのツイートが現れます。そうすると、あなたは時間を指定してタイムラインを遡ることができるようになります。</p>
+      <p>あなたがTwitterでフォローしている人たちがTimedlineを始めると、<br/>このページに彼らのツイートが現れます。<br/>そうすると、あなたは時間を指定してタイムラインを遡ることができるようになります。</p>
     </div>
     <!-- /.invite-friends -->
 
