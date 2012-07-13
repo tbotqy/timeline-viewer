@@ -88,9 +88,8 @@ class UsersController extends AppController{
                  $requestToken
                  );
             
-            /* test mode */ $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
-            //$this->redirect('https://api.twitter.com/oauth/authenticate?oauth_token=' . $requestToken->key);
-        
+            $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
+            
         }else{
             // if failed in acquiring request token, tell the user that something is wrong with twitter.com
             $this->Session->setFlash('failed in connecting to twitter. Please try again later.');
@@ -267,7 +266,7 @@ class UsersController extends AppController{
         $this->set('hasNext',$hasNext);
 
     }
-
+    
     public function home_timeline(){
 
         /**

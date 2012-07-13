@@ -6,13 +6,68 @@ $(function(){
   
   $("body").css("background-image","url("+urlToBg+")");
   $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
+
+  //////////////////////////
+  // code for each status //
+  //////////////////////////
   
-  // click action for each status
-  // hide and show the bottom line in each status
-  $(".status-content").live("click",function(){
-    $(this).find(".bottom").slideToggle('fast');
+  // click action to hide and show the bottom line in each status
+  $(".status-content").live("click",function(e){
+    
+    // do process only if clicked element is not <a>
+    if(!$(e.target).is('a i')){
+      
+      $(this).find(".bottom").slideToggle('fast');
+      
+    }
+    
   });
 
+  // click action to fire a delete ajax action
+  $(".status-content").find(".link-delete a").live("click",function(e){
+    
+    e.preventDefault();
+    
+    if(confirm('ツイートを削除します。よろしいですか？')){
+
+      var status_id_to_delete = $(this).parent().data('status-id');
+      
+      $.ajax({
+        
+        url: "/ajax/delete_status",
+        type: "post",
+        data:{"status_id_to_delete":status_id_to_delete},
+        dataType: "json",
+        success: function(responce){
+
+          // checks if the status trying to deleted is owned by logging user
+          if(responce.owns){
+            
+            // checks id delete process was correctly done
+            if(responce.deleted){
+                
+              $("div[data-status-id="+status_id_to_delete+"]").fadeOut();
+            }else{
+              
+              alert("ごめんなさい。削除に失敗しました。画面をリロードしてもう一度お試しください。");
+            
+            }
+          
+          }else{
+            // the status trying to be deleted is not owned by logging user
+            alert("不正な操作です。");
+          }
+
+        },
+        
+        error: function(){
+          // internal error
+          alert("エラーが発生しました。");
+        }
+      });
+    }
+  });          
+  
   // click action for read more button
   $("#read-more").live("click",function(e){
     
@@ -158,11 +213,11 @@ $(function(){
       
       url: '/ajax/delete_account',
       type: 'post',
-      dataType: 'text',
+      dataType: 'json',
       
       success: function(res){
-	deleted = res;
-	showDeleteCompleteMessage(res);
+	deleted = res.deleted;
+	showDeleteCompleteMessage(res.deleted);
       },
 
       error: function(){
@@ -178,7 +233,9 @@ $(function(){
 	    }, 3000
 	  );
 	  
-	}
+	}else{
+          alert("処理がうまくいきませんでした。");
+        }
       }
 
     });

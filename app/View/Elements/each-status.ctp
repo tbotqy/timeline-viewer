@@ -6,11 +6,18 @@
    *  User musts be contained in value $user_data,
    *  Status musts be contained in value $status
    */
+ 
 ?>
 
 <?php foreach($statuses as $status):?>
 <!-- .wrap-each-status -->
-<div class="wrap-each-status">
+<div class="wrap-each-status" 
+     <?php
+          if($status['User']['twitter_id'] === $loggingUser['Twitter']['id']):
+     ?>
+     data-status-id="<?php echo $status['Status']['id'];?>"
+  <?php endif;?>
+  >
   
   <!-- .profile-image -->
   <div class="profile-image">
@@ -59,7 +66,16 @@
       </span>
       <span class="link-official">
           <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>/status/<?php echo $status['Status']['status_id_str'];?>" target="_blank">詳細</a>
-      </span> 
+      </span>
+      <?php
+          if($status['User']['twitter_id'] === $loggingUser['Twitter']['id']):
+      ?>
+      <span class="link-delete" data-status-id="<?php echo $status['Status']['id'];?>">
+	<a href="#"> <i class="icon-trash"></i> </a>
+      </span>
+      <?php
+           endif;
+         ?>
     </span>
     <!-- /.bottom -->
   </div>
