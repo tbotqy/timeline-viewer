@@ -170,6 +170,314 @@ class AjaxController extends AppController{
         echo json_encode($ret);
     }
 
+    public function update_statuses(){
+        
+        /**
+         * acquire tweets which exist in twitter.com but hasn't imported to our database yet
+         */
+
+        if(!$this->request->isPost()){
+
+            echo "bad request";
+            exit;
+
+        }
+
+        $user = $this->Auth->user();
+        
+        // initialization
+        $count_saved = 0;
+        $continue = true;
+        $oldest_id_str = "";
+        $updated_date = "";
+
+        // recieve the status_id of the status which is oldest of all the statuses saved in last loop
+        $max_id = $this->request->data('oldest_id_str');
+        
+        if($max_id){
+            
+            // set params for api request            
+            $params = array(
+                            'include_rts'=>true,
+                            'include_entities'=>true,
+                            'count'=>101,
+                            'user_id'=>$user['Twitter']['id'],
+                            'max_id'=>$max_id
+                            );
+                           
+            // fetch tweets via api
+            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+            
+            // delete duplicating status from $tweets if $max_id was set
+            array_shift($tweets);
+        
+        }else{
+            
+            // delete pre-saved statuses
+            $this->Status->deletePreSavedStatus($user['id']);
+
+            // set params for api request            
+            $params = array(
+                            'include_rts'=>true,
+                            'include_entities'=>true,
+                            'count'=>100,
+                            'user_id'=>$user['Twitter']['id'],
+                            );
+                           
+            // fetch tweets via api
+            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+
+        }
+
+        if($tweets){
+
+            // check id_str of oldest status
+            $oldest_status = $this->getLastLine($tweets);
+            $oldest_id_str = $oldest_status['id_str'];
+        
+            // set the destination value for created_at
+            $latest_status = $this->Status->getLatestStatus($user['id'],1);
+            $destination_time = $latest_status[0]['Status']['created_at'];
+        
+        
+            // save lacking tweets if any
+            foreach($tweets as $tweet){
+
+                if(strtotime($tweet['created_at']) > $destination_time){
+               
+                    // save it
+                    $this->Status->saveStatus($user,$tweet);
+                    $count_saved++;
+
+                }else{
+
+                    // stop saving
+                    $continue = false;
+                    break;
+
+                }
+            }
+    
+        }else{
+
+            $continue = false;
+
+        }
+
+        if(!$continue){
+
+            // make all the pre_saved statuses non-pre-saved
+            $this->Status->savePreSavedStatus($user['id']);
+
+        }
+
+        $updated_time = $this->Status->getLastUpdatedTime($user['id']);
+        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+
+        $ret = array(
+                     'count_saved'=>$count_saved,
+                     'continue'=>$continue,
+                     'oldest_id_str'=>$oldest_id_str,
+                     'updated_date'=>$updated_date
+                     );
+        
+        echo json_encode($ret);
+
+    }
+
+    public function delete_status(){
+        
+        if(!$this->request->isPost()){
+            echo "bad request";
+            exit;
+        }
+        
+        $status_id = $this->request->data('status_id_to_delete');
+        $user_id = $this->Auth->user('id');
+        $deleted = false;
+        $owns = false;
+        
+        // check if user owns the status with $status_id
+        if($this->User->ownsStatus($user_id,$status_id)){
+            $owns = true;
+            $this->Status->id = $status_id;
+            
+            // delete the status and switch the flag
+            if($this->Status->delete()){
+                $deleted = true;
+            }
+        
+        }
+        
+        $ret = array(
+                     'deleted'=>$deleted,
+                     'owns'=>$owns
+                     );
+        
+        echo json_encode($ret);
+        
+    }
+
+    public function delete_account(){
+       
+        if(!$this->request->isPost()){
+
+            echo "bad request";
+            exit;
+
+        }
+
+        $user_id = $this->Auth->user('id');
+        
+        // initialize the flag representing if deleting went well 
+        $deleted = false;
+
+        if($this->User->deleteAccount($user_id)){
+            $deleted = true;
+        }
+  
+        sleep(2);
+        $ret = array('deleted'=>$deleted);
+        echo json_encode($ret);
+        
+    }
+
+    public function switch_term(){
+
+        /**
+         * retrieve the statuses if specified term
+         * renders html
+         */
+
+        $user = $this->Auth->user();
+        $user_id = $user['id'];
+        $utc_offset = $user['Twitter']['utc_offset'];
+
+        // fetch query string
+        $date = $this->request->query['date'];
+        $date_type = $this->request->query['date_type'];
+        $data_type = $this->request->query['data_type'];
+        
+        // calculate start/end of term to fetch 
+        $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
+        
+        switch($data_type){
+
+        case 'sent_tweets':
+            // fetch 10 statsues in specified term
+            $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
+        
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+        
+            // check if any older status exists in user's timeline  
+            $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);                    
+           
+            break;
+
+        case 'home_timeline':
+            // fetch 10 timeline in specified term
+            $statuses = $this->Status->getTimelineInTerm($user_id,$term['begin'],$term['end']);
+            
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderTimeline($user_id,$oldest_timestamp);
+
+            break;
+
+        case 'public_timeline':
+
+            // fetch 10 timeline in specified term
+            $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
+            
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
+
+            break;
+
+        default:
+
+            break;
+            
+        }
+        
+        $this->autoRender = true;
+        $this->set('oldest_timestamp',$oldest_timestamp);
+        $this->set('hasNext',$hasNext);
+        $this->set('statuses',$statuses);       
+
+    }
+
+    public function read_more(){
+        
+        /**
+         * called when read more button is clicked
+         * receives Status.id to start retrieving
+         * renders html
+         */
+
+        $oldest_timestamp = $this->request->data('oldest_timestamp');
+        $destination_data_type = $this->request->data('destination_data_type');
+        $user = $this->Auth->user();
+ 
+        switch($destination_data_type){
+
+        case 'sent_tweets':
+            // fetch older statuses
+            $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
+
+            // set created_at of last status 
+            $last_status = $this->getLastLine($statuses);
+            $oldest_timestamp = $last_status['Status']['created_at'];
+
+            // check if any older status exists
+            $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
+           
+            break;
+
+        case 'home_timeline':
+           
+            // fetch older timeline
+            $statuses = $this->Status->getOlderTimeline($user['id'],$oldest_timestamp);
+            
+            // set created_at of last status 
+            $last_status = $this->getLastLine($statuses);
+            
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+            
+            break;
+
+        case 'public_timeline':
+           
+            // fetch older timeline
+            $statuses = $this->Status->getOlderPublicTimeline($oldest_timestamp);
+            
+            // set created_at of last status 
+            $last_status = $this->getLastLine($statuses);
+            
+            $oldest_timestamp = $last_status['Status']['created_at'];
+            
+            // check if any older status exists in user's timeline
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
+            
+            break;
+        }
+        
+        $this->autoRender = true;
+        $this->set('hasNext',$hasNext);
+        $this->set('oldest_timestamp',$oldest_timestamp);        
+        $this->set('statuses',$statuses);
+    
+    }
+
     public function check_status_update(){
         
         /**
@@ -314,282 +622,6 @@ class AjaxController extends AppController{
 
         echo json_encode($ret);
 
-    }
-
-    public function update_statuses(){
-        
-        /**
-         * acquire tweets which exist in twitter.com but hasn't imported to our database yet
-         */
-
-        if(!$this->request->isPost()){
-
-            echo "bad request";
-            exit;
-
-        }
-
-        $user = $this->Auth->user();
-        
-        // initialization
-        $count_saved = 0;
-        $continue = true;
-        $oldest_id_str = "";
-        $updated_date = "";
-
-        // recieve the status_id of the status which is oldest of all the statuses saved in last loop
-        $max_id = $this->request->data('oldest_id_str');
-        
-        if($max_id){
-            
-            // set params for api request            
-            $params = array(
-                            'include_rts'=>true,
-                            'include_entities'=>true,
-                            'count'=>101,
-                            'user_id'=>$user['Twitter']['id'],
-                            'max_id'=>$max_id
-                            );
-                           
-            // fetch tweets via api
-            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
-        
-            // delete duplicating status from $tweets if $max_id was set
-            array_shift($tweets);
-        
-        }else{
-            
-            // delete pre-saved statuses
-            $this->Status->deletePreSavedStatus($user['id']);
-
-            // set params for api request            
-            $params = array(
-                            'include_rts'=>true,
-                            'include_entities'=>true,
-                            'count'=>100,
-                            'user_id'=>$user['Twitter']['id'],
-                            );
-                           
-            // fetch tweets via api
-            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
-
-        }
-
-        if($tweets){
-
-            // check id_str of oldest status
-            $oldest_status = $this->getLastLine($tweets);
-            $oldest_id_str = $oldest_status['id_str'];
-        
-            // set the destination value for created_at
-            $latest_status = $this->Status->getLatestStatus($user['id'],1);
-            $destination_time = $latest_status[0]['Status']['created_at'];
-        
-        
-            // save lacking tweets if any
-            foreach($tweets as $tweet){
-
-                if(strtotime($tweet['created_at']) > $destination_time){
-               
-                    // save it
-                    $this->Status->saveStatus($user,$tweet);
-                    $count_saved++;
-
-                }else{
-
-                    // stop saving
-                    $continue = false;
-                    break;
-
-                }
-            }
-    
-        }else{
-
-            $continue = false;
-
-        }
-
-        if(!$continue){
-
-            // make all the pre_saved statuses non-pre-saved
-            $this->Status->savePreSavedStatus($user['id']);
-
-        }
-
-        $updated_time = $this->Status->getLastUpdatedTime($user['id']);
-        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
-
-        $ret = array(
-                     'count_saved'=>$count_saved,
-                     'continue'=>$continue,
-                     'oldest_id_str'=>$oldest_id_str,
-                     'updated_date'=>$updated_date
-                     );
-        
-        echo json_encode($ret);
-
-    }
-
-    public function delete_account(){
-       
-        if(!$this->request->isPost()){
-
-            echo "bad request";
-            exit;
-
-        }
-
-        $user_id = $this->Auth->user('id');
-        
-        // initialize the flag representing if deleting went well 
-        $deleted = false;
-       
-        if($this->User->deleteAccount($user_id)){
-
-            $deleted = true;
-
-        }
-        
-        sleep(2);
-        echo $deleted;
-        
-    }
-
-    public function switch_term(){
-
-        /**
-         * retrieve the statuses if specified term
-         * renders html
-         */
-
-        $user = $this->Auth->user();
-        $user_id = $user['id'];
-        $utc_offset = $user['Twitter']['utc_offset'];
-
-        // fetch query string
-        $date = $this->request->query['date'];
-        $date_type = $this->request->query['date_type'];
-        $data_type = $this->request->query['data_type'];
-        
-        // calculate start/end of term to fetch 
-        $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
-        
-        switch($data_type){
-
-        case 'sent_tweets':
-            // fetch 10 statsues in specified term
-            $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
-        
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
-        
-            // check if any older status exists in user's timeline  
-            $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);                    
-           
-            break;
-
-        case 'home_timeline':
-            // fetch 10 timeline in specified term
-            $statuses = $this->Status->getTimelineInTerm($user_id,$term['begin'],$term['end']);
-            
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
-            
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($user_id,$oldest_timestamp);
-
-            break;
-
-        case 'public_timeline':
-
-            // fetch 10 timeline in specified term
-            $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
-            
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
-            
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
-
-            break;
-
-        default:
-
-            break;
-            
-        }
-        
-        $this->autoRender = true;
-        $this->set('oldest_timestamp',$oldest_timestamp);
-        $this->set('hasNext',$hasNext);
-        $this->set('statuses',$statuses);       
-
-    }
-
-    public function read_more(){
-        
-        /**
-         * called when read more button is clicked
-         * receives Status.id to start retrieving
-         * renders html
-         */
-
-        $oldest_timestamp = $this->request->data('oldest_timestamp');
-        $destination_data_type = $this->request->data('destination_data_type');
-        $user = $this->Auth->user();
- 
-        switch($destination_data_type){
-
-        case 'sent_tweets':
-            // fetch older statuses
-            $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
-
-            // set created_at of last status 
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
-
-            // check if any older status exists
-            $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
-           
-            break;
-
-        case 'home_timeline':
-           
-            // fetch older timeline
-            $statuses = $this->Status->getOlderTimeline($user['id'],$oldest_timestamp);
-            
-            // set created_at of last status 
-            $last_status = $this->getLastLine($statuses);
-            
-            $oldest_timestamp = $last_status['Status']['created_at'];
-            
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
-            
-            break;
-
-        case 'public_timeline':
-           
-            // fetch older timeline
-            $statuses = $this->Status->getOlderPublicTimeline($oldest_timestamp);
-            
-            // set created_at of last status 
-            $last_status = $this->getLastLine($statuses);
-            
-            $oldest_timestamp = $last_status['Status']['created_at'];
-            
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
-            
-            break;
-        }
-        
-        $this->autoRender = true;
-        $this->set('hasNext',$hasNext);
-        $this->set('oldest_timestamp',$oldest_timestamp);        
-        $this->set('statuses',$statuses);
-    
     }
 
 }

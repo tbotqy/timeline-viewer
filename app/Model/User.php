@@ -224,6 +224,28 @@ class User extends AppModel{
     // boolean functions //
     ///////////////////////
 
+    public function ownsStatus($user_id,$status_id){
+
+        /**
+         * checks if user owns the status with its id equals $status_id
+         * @param int $user_id / $status_id
+         * @return boolean
+         */
+
+        $result = $this->Status->find(
+                                      'count',
+                                      array(
+                                            'conditions'=>array(
+                                                                'Status.user_id'=>$user_id,
+                                                                'Status.id'=>$status_id,
+                                                                'Status.pre_saved'=>false
+                                                                )
+                                            )
+                                      );
+
+        return $result > 0 ? true : false;
+    }
+
     public function hasFriendList($user_id){
 
         /**

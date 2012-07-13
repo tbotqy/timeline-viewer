@@ -282,7 +282,9 @@ i{
   color: gray;
   display: none;
 }
-
+.wrap-each-status .status-content .bottom .link-delete{
+  float: right;
+}
 /* --------------------------------------------------
    read-more
 -------------------------------------------------- */
