@@ -84,7 +84,7 @@ $(function(){
       dataType:"html",
       data:{
 	"oldest_timestamp":$("#oldest-timestamp").attr("value"),
-	"destination_data_type":$("#wrap-dashbord").data("type")
+	"destination_action_type":getActionType()
       },
       url: '/ajax/read_more',
       success: function(responce){
@@ -306,7 +306,7 @@ $(function(){
 
   // click action to change the term of statuses to show
   $("#wrap-term-selectors").find("a").click(function(e){
- 
+    
     // prevent the page from reloading
     e.preventDefault();
     
@@ -331,14 +331,18 @@ $(function(){
     },200);
 
     // check the type of data currently being shown
-    var data_type = $("#wrap-dashbord").data("type");
+    var action_type = $("#wrap-dashbord").data("type");
     
     // fetch statuses 
     $.ajax({
       type: 'GET',
       dataType: 'html',
       url:'/ajax/switch_term',
-      data:{"date":date,"date_type":date_type,"data_type":data_type},
+      data:{
+        "date":date,
+        "date_type":date_type,
+        "action_type":action_type
+      },
       success: function(responce){
 
 	// insert recieved html

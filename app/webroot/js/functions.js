@@ -1,5 +1,6 @@
 function scrollToPageTop(e){
-   e.preventDefault();
+  
+  e.preventDefault();
   
   $("html, body").animate(
     {scrollTop:0},
@@ -10,8 +11,11 @@ function scrollToPageTop(e){
 }
 
 function scrollDownToDestination(e,distance){
+  
   e.preventDefault();
+  
   distance -= 160;
+  
   $("html, body").animate(
     {scrollTop: distance},
     {easing:"swing",duration:500}
@@ -21,17 +25,22 @@ function scrollDownToDestination(e,distance){
 }
 
 function showLoader(){
+  
   $(".loader").fadeIn();
+
 }
 
 function hideLoader(){
+  
   $(".loader").fadeOut();
+
 }
 
 function checkStatusUpdate(){
-    /**
-     * check if there is any tweets yet to have imported
-     */
+
+  /**
+   * check if there is any tweets yet to have imported
+   */
   
   var doUpdate = false;
   var updated_date = "";
@@ -44,6 +53,7 @@ function checkStatusUpdate(){
     dataType:"json",
     
     success: function(responce){
+  
       doUpdate = responce.result;
       updated_date = responce.updated_date;
      
@@ -52,6 +62,7 @@ function checkStatusUpdate(){
 	updateStatus();
 	
       }else{
+
 	// change the view statements
 	$("#update-statuses").text("処理終了");
 	
@@ -92,15 +103,19 @@ function checkFriendUpdate(){
   var updated;
   var updated_date;
   var area_friends = $("#wrap-configurations").find(".friends");
+
   $.ajax({
 
     url: "/ajax/check_friend_update",
     type: "post",
     dataType: "json",
+  
     success: function(responce){
+    
       count = responce.count_friends;
       updated = responce.updated;
       updated_date = responce.updated_date;
+     
       // show the result
       if(updated){
 	
@@ -128,6 +143,7 @@ function checkFriendUpdate(){
       }).fadeIn();
       
     },
+
     error: function(){
       
       area_friends.find(".count .additional-num").fadeOut(function(){
@@ -137,6 +153,7 @@ function checkFriendUpdate(){
       $("#update-friends").text("エラー");
 
     },
+
     complete: function(){
 
       // hide the loading icon
@@ -155,7 +172,7 @@ var continue_process = "";
 var updated_date = "";
 
 function updateStatus(){
-    
+  
   var area_tweets = $("#wrap-configurations").find(".tweets");
   var update_button = $("#update-statuses");
   
@@ -179,7 +196,6 @@ function updateStatus(){
 	area_tweets.find(".additional-num").fadeOut(function(){
 	  $(this).text("+ "+total_count);
 	}).fadeIn();
-
 
 	updateStatus();
 	
@@ -255,11 +271,15 @@ function showDeleteCompleteMessage(flag){
 }
 
 function showDeleteErrorMessage(){
+  
   return showCompleteMessage(false);
+
 }
 
 function redirect(){
+ 
   location.href="/users/logout";
+
 }
 
 // initialize value
@@ -350,6 +370,7 @@ function getStatuses(params){
     },
     
     complete: function(){
+
       if(noStatusAtAll){
 	
 	hideLoader();
@@ -374,6 +395,7 @@ function getStatuses(params){
 }
 
 function getPersentage(fetched_status_count){
+ 
   fetched_status_count = parseInt(fetched_status_count);
   var total = parseInt($("#statuses-count").val()); 
   
@@ -388,5 +410,147 @@ function getPersentage(fetched_status_count){
 }
 
 function setProgress(persentage){
+  
   $(".progress").find(".bar").css("width",persentage+"%");
+
+}
+
+function ajaxSwitchDashbord(actionType){
+
+  /**
+   * switches dashbord according to given actionType
+   * @param actionType should represent from which kind of timeline the dashbord is created
+   */
+
+  var wrap_dashbord = $("#wrap-dashbord");
+  var wrap_term_selectors = $("#wrap-term-selectors");
+  
+  $.ajax({
+    
+    url: "/ajax/switch_dashbord",
+    type: "post",
+    dataType: "html",
+    data:{"action_type":actionType},
+    
+    success: function(res){
+      // insert new html code
+      wrap_term_selectors.html(res);
+
+      // rewrite the data attribute in parent div
+      wrap_dashbord.attr('data-type',actionType);
+    },
+
+    error: function(){
+      alert("ページの読み込みがうまくいきませんでした。リロードしてみて下さい。");
+    }
+    
+  });
+
+}
+
+function ajaxSwitchTerm(date,action_type,mode,e){
+ 
+  /**
+   * load statuses in specified date and dataType
+   * @param date : specifies the timeline's date to show in
+   * @param action_type : the type of timeline
+   * @param mode : the name of event which fired this function
+   */
+  
+  // initialization
+  var date_type = detectDateType(date);
+  
+  // elements
+  var wrap_timeline = $("#wrap-timeline");
+  
+  // show the cover area
+  wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
+  var cover = wrap_timeline.find('.cover');
+  cover.css("height",200);
+  cover.animate({
+    opacity: 0.8
+  },200);
+    
+  // fetch statuses 
+  $.ajax({
+    type: 'GET',
+    dataType: 'html',
+    url:'/ajax/switch_term',
+    data:{
+      "date":date,
+      "date_type":date_type,
+      "action_type":action_type
+    },
+    
+    success: function(responce){
+      
+      // insert recieved html
+      $("#wrap-main").html(responce);
+  
+    },
+    
+    error: function(responce){
+    
+      alert("読み込みに失敗しました。画面をリロードしてください");	
+    
+    },
+    
+    complete: function(){
+
+      // scroll to top
+      scrollToPageTop(e);
+
+      // show the loaded html
+      $("#wrap-main").fadeIn('fast');
+
+      // let the button say that process has been done
+      $("#wrap-term-selectors").find("a").button('complete');
+	
+      if(mode == "click"){
+        // record requested url in the histry
+        window.history.pushState(null,null,href);
+      }
+    
+    }
+  
+  });
+}  
+
+function detectDateParameter(url){
+      
+  var lastSlash = url.lastIndexOf("/");
+  
+  var ret = url.substring(lastSlash + 1);
+  
+  return ret;
+}
+
+function detectDateType(date){
+  var hyphen = "-";
+  var ret;
+  
+  if(date.indexOf(hyphen) != -1){
+    
+    if(date.indexOf(hyphen) == date.lastIndexOf(hyphen)){
+      ret = "month";
+    }else{
+      ret = "day";
+    }
+      
+  }else{
+      
+    if(date.length >= 4){
+      ret = "year";
+    }else{
+      ret = false;
+    }
+  }
+  
+  return ret;
+}
+
+function getActionType(){
+    
+  return $("#wrap-dashbord").data("type");
+
 }
