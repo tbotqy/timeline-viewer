@@ -15,7 +15,7 @@
     <!-- #wrap-term-selectors -->
     <div id="wrap-term-selectors">
     
-      <!-- "wrap-list-years -->
+      <!-- #wrap-list-years -->
       <div id="wrap-list-years">
 	<ul class="list-years">
 	  <?php foreach($date_list as $year=>$val):?>

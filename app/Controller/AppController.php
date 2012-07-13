@@ -74,6 +74,8 @@ class AppController extends Controller {
         $this->set('isAjax',$this->request->isAjax());
     }
 
+
+
     public function checkInitialized(){
      
         $this->userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));

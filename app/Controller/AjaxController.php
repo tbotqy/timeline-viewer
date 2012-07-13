@@ -342,13 +342,37 @@ class AjaxController extends AppController{
         
     }
 
+    public function switch_dashbord(){
+        
+        /**
+         * creates a dashbord html code for requested action type
+         * returns html
+         */
+        
+        $action_type = $this->request->data('action_type');
+       
+        if(!$action_type){
+            echo "action type is not specified";
+            exit;
+        }
+
+        $user_id = $this->Auth->user('id');
+
+        $date_list = $this->Status->getDateList($user_id,$action_type);
+        
+        // render to template
+        $this->autoRender = true;
+        $this->set('date_list',$date_list);
+        $this->set('actionType',$action_type);
+    }
+
     public function switch_term(){
 
         /**
          * retrieve the statuses if specified term
          * renders html
          */
-
+        
         $user = $this->Auth->user();
         $user_id = $user['id'];
         $utc_offset = $user['Twitter']['utc_offset'];
@@ -356,12 +380,12 @@ class AjaxController extends AppController{
         // fetch query string
         $date = $this->request->query['date'];
         $date_type = $this->request->query['date_type'];
-        $data_type = $this->request->query['data_type'];
+        $action_type = $this->request->query['action_type'];
         
         // calculate start/end of term to fetch 
         $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
         
-        switch($data_type){
+        switch($action_type){
 
         case 'sent_tweets':
             // fetch 10 statsues in specified term
@@ -422,10 +446,10 @@ class AjaxController extends AppController{
          */
 
         $oldest_timestamp = $this->request->data('oldest_timestamp');
-        $destination_data_type = $this->request->data('destination_data_type');
+        $destination_action_type = $this->request->data('destination_action_type');
         $user = $this->Auth->user();
  
-        switch($destination_data_type){
+        switch($destination_action_type){
 
         case 'sent_tweets':
             // fetch older statuses

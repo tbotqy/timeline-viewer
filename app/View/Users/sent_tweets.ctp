@@ -1,5 +1,5 @@
 <?php
-echo $this->Html->script('popstate.js',array('inline'=>false));
+  echo $this->Html->script('popstate.js',array('inline'=>false));
 ?>
 
 <?php
