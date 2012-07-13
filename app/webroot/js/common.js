@@ -13,9 +13,10 @@ $(function(){
   
   // click action to hide and show the bottom line in each status
   $(".status-content").live("click",function(e){
-    
+ 
     // do process only if clicked element is not <a>
-    if(!$(e.target).is('a i')){
+    var clicked = $(e.target);
+    if(!clicked.is('a') && !clicked.is('i')){
       
       $(this).find(".bottom").slideToggle('fast');
       
