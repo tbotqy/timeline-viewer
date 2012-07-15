@@ -376,21 +376,39 @@ class AjaxController extends AppController{
         $user = $this->Auth->user();
         $user_id = $user['id'];
         $utc_offset = $user['Twitter']['utc_offset'];
+        
+        $fetchLatest = false;
 
         // fetch query string
         $date = $this->request->query['date'];
-        $date_type = $this->request->query['date_type'];
         $action_type = $this->request->query['action_type'];
         
-        // calculate start/end of term to fetch 
-        $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
+        // check if date parameter is specified
+        if($date === 'notSpecified'){
+            $fetchLatest = true;
+        }else{
+
+            $date_type = $this->request->query['date_type'];
+            
+            // calculate start/end of term to fetch 
+            $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
+        }
         
         switch($action_type){
 
         case 'sent_tweets':
-            // fetch 10 statsues in specified term
-            $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
-        
+            
+            if($fetchLatest){
+                
+                $statuses = $this->Status->getLatestStatus($user_id);
+            
+            }else{
+
+                // fetch 10 statsues in specified term
+                $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
+            
+            }
+
             $last_status = $this->getLastLine($statuses);
             $oldest_timestamp = $last_status['Status']['created_at'];
         
@@ -400,9 +418,18 @@ class AjaxController extends AppController{
             break;
 
         case 'home_timeline':
-            // fetch 10 timeline in specified term
-            $statuses = $this->Status->getTimelineInTerm($user_id,$term['begin'],$term['end']);
-            
+
+            if($fetchLatest){
+
+                $statuses = $this->Status->getLatestTimeline($user_id);
+
+            }else{
+
+                // fetch 10 timeline in specified term
+                $statuses = $this->Status->getTimelineInTerm($user_id,$term['begin'],$term['end']);
+
+            }
+
             $last_status = $this->getLastLine($statuses);
             $oldest_timestamp = $last_status['Status']['created_at'];
             
@@ -413,9 +440,17 @@ class AjaxController extends AppController{
 
         case 'public_timeline':
 
-            // fetch 10 timeline in specified term
-            $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
+            if($fetchLatest){
+                
+                $statuses = $this->Status->getLatestPublicTimeline();
+
+            }else{
+
+                // fetch 10 timeline in specified term
+                $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
             
+            }
+
             $last_status = $this->getLastLine($statuses);
             $oldest_timestamp = $last_status['Status']['created_at'];
             

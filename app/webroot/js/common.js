@@ -39,6 +39,7 @@ $(function(){
         type: "post",
         data:{"status_id_to_delete":status_id_to_delete},
         dataType: "json",
+
         success: function(responce){
 
           // checks if the status trying to deleted is owned by logging user
@@ -310,15 +311,15 @@ $(function(){
     
     // prevent the page from reloading
     e.preventDefault();
-    
+
     // get href attr in clicked button
     var href =$(this).attr('href');
     
     // acquire the date to fetch from clicked button
     var date = $(this).attr('data-date');
     var date_type = $(this).attr('data-date-type');
-    
-   // show the loading icon over the statuses area
+
+    // show the loading icon over the statuses area
     var wrap_timeline = $("#wrap-timeline");
  
     wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
@@ -368,6 +369,31 @@ $(function(){
 	
       }
     });
+  });
+
+  // click event for year selector
+  $("#wrap-list-years").find("a").click(function(){
+    
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-months").find(".selected").removeClass("selected btn-primary");
+
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-days").find(".selected").removeClass("selected btn-primary");
+
+    // make clicked button selected
+    $(this).addClass("selected btn-primary");
+    
+  });
+
+  // click event for month selector
+  $("#wrap-list-months").find("a").click(function(){
+    
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-days").find(".selected").removeClass("selected btn-primary");
+
+    // make clicked button selected
+    $(this).addClass("selected btn-primary");
+    
   });
 
   // click event for day selector

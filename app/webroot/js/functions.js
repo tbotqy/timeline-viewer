@@ -1,6 +1,8 @@
 function scrollToPageTop(e){
   
-  e.preventDefault();
+  if(e){
+    e.preventDefault();
+  }
   
   $("html, body").animate(
     {scrollTop:0},
@@ -448,7 +450,19 @@ function ajaxSwitchDashbord(actionType){
 
 }
 
-function ajaxSwitchTerm(date,action_type,mode,e){
+function getDashbordType(){
+    
+  var ret = $("#wrap-dashbord").data('type');
+  
+  if(!ret){
+    return false;
+  }
+  
+  return ret;
+
+}
+
+function ajaxSwitchTerm(date,action_type,mode){
  
   /**
    * load statuses in specified date and dataType
@@ -457,9 +471,11 @@ function ajaxSwitchTerm(date,action_type,mode,e){
    * @param mode : the name of event which fired this function
    */
   
-  // initialization
-  var date_type = detectDateType(date);
-  
+  if(!date || !action_type || !action_type || !mode){
+    alert("Lacking in required param");
+    return ;
+  }
+
   // elements
   var wrap_timeline = $("#wrap-timeline");
   
@@ -478,7 +494,7 @@ function ajaxSwitchTerm(date,action_type,mode,e){
     url:'/ajax/switch_term',
     data:{
       "date":date,
-      "date_type":date_type,
+      "date_type": detectDateType(date),
       "action_type":action_type
     },
     
@@ -498,8 +514,8 @@ function ajaxSwitchTerm(date,action_type,mode,e){
     complete: function(){
 
       // scroll to top
-      scrollToPageTop(e);
-
+      scrollToPageTop();
+      
       // show the loaded html
       $("#wrap-main").fadeIn('fast');
 
@@ -516,39 +532,105 @@ function ajaxSwitchTerm(date,action_type,mode,e){
   });
 }  
 
-function detectDateParameter(url){
-      
-  var lastSlash = url.lastIndexOf("/");
+function countStr(str,dest){
   
-  var ret = url.substring(lastSlash + 1);
+  var index;
+  var count = 0;
+  var searchFrom = 0;
+  
+  while(true){
+
+    // search dest in str
+    index = str.indexOf(dest,searchFrom);
+    
+    if(index != -1){
+      
+      // if found, count as found
+      count++;
+      
+      // iterate search point
+      searchFrom = index + 1;
+      
+    }else{
+      break;
+    }
+    
+  }
+  
+  return count;
+}
+
+function detectDate(path){
+      
+  // check if given path contains date parameter
+  
+  var lastSlash = path.lastIndexOf("/");
+  
+  if(lastSlash == -1){
+    return false;
+  }
+
+  var ret = path.substring(lastSlash + 1);
   
   return ret;
 }
 
 function detectDateType(date){
+  
   var hyphen = "-";
   var ret;
   
-  if(date.indexOf(hyphen) != -1){
+  if(date.indexOf(hyphen) == -1){
+
+    if(date.length >= 4){
+      ret = "year";
+    }else{
+      ret = false;
+    }
+      
+  }else{
     
     if(date.indexOf(hyphen) == date.lastIndexOf(hyphen)){
       ret = "month";
     }else{
       ret = "day";
     }
-      
-  }else{
-      
-    if(date.length >= 4){
-      ret = "year";
-    }else{
-      ret = false;
-    }
+    
   }
   
   return ret;
 }
 
+function detectActionType(path){
+    
+  /**
+   * detect and get the action_type from given path
+   */
+
+  // action type exists next to the second slash
+  var firstSlash = path.indexOf("/");
+
+  if(firstSlash == -1){
+    return false;
+  }
+  
+  var secondSlash = path.indexOf("/",firstSlash+1);
+
+  if(secondSlash == -1){
+    return false;
+  }
+
+  // check if more slash exists
+  var thirdSlash = path.indexOf("/",secondSlash+1);
+  if(thirdSlash == -1){
+    return path.substr(secondSlash+1);
+  }else{
+    // case that thirdSlash exists
+    var lengthActionType = thirdSlash - secondSlash;
+    return path.substr(secondSlash+1,lengthActionType-1);
+  }
+
+}
 function getActionType(){
     
   return $("#wrap-dashbord").data("type");
