@@ -620,10 +620,11 @@ class Status extends AppModel{
     }
 
     public function updateSavedTime($user_id){
+      
         /**
          * update User.statuses_updated to current unixtime
          */
-
+        
         return $this->User->updateAll(
                                       array(
                                             'User.statuses_updated'=>time()

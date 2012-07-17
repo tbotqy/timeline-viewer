@@ -157,6 +157,23 @@ $(function(){
   ////////////////////////////////////
 
   /**
+   * the process to update profile
+   */
+
+  $("#update-profile").click(function(){
+
+    // change the button's statement
+    $(this).button('loading');
+
+    // show the loading icon 
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".wrap-profile").find(".loader").fadeIn();
+
+    checkProfileUpdate();
+
+  });
+
+  /**
    * the process to update tweets
    */
 

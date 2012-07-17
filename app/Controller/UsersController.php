@@ -161,14 +161,31 @@ class UsersController extends AppController{
         /////////////////////////////////////
 
         // prepare user data to get logged in
-        $user['id'] = $this->User->getIdByTwitterId($verify_credentials['id_str']);
-        $user['Twitter']['id'] = $verify_credentials['id_str'];
-        $user['Twitter']['screen_name'] = $verify_credentials['screen_name'];
-        $user['Twitter']['profile_image_url_https'] = $verify_credentials['profile_image_url_https'];
-        $user['Twitter']['utc_offset'] = $verify_credentials['utc_offset'];
+        $user_data_for_login = array();
+
+        $user_id = $this->User->getIdByTwitterId($verify_credentials['id_str']);
+        $this->User->unbindAllModels();
+        $registored_user_data = $this->User->findById($user_id);
         
+        $user_data_for_login = array(
+                                     'id'=>$user_id,
+                                     'Twitter'=>array('id'=>$registored_user_data['User']['twitter_id'])
+                                     );
+
+        $login_value_list = array('name',
+                                  'screen_name',
+                                  'profile_image_url_https',
+                                  'time_zone',
+                                  'utc_offset',
+                                  'lang'
+                                  );
+        
+        foreach($login_value_list as $val){
+            $user_data_for_login['Twitter'][$val] = $registored_user_data['User'][$val];
+        }
+
         // log the user in
-        if($this->Auth->login($user)){
+        if($this->Auth->login($user_data_for_login)){
           
             $user_id = $this->Auth->user('id');
                     
@@ -437,14 +454,18 @@ class UsersController extends AppController{
 
         $count_statuses = $this->Status->getStatusNum($user_id);
         $count_friends = $this->Friend->getFriendNum($user_id);
+        $date_format = "Y/m/d - H:i:s";
 
-        $status_updated_time = date("Y-m-d　H:i:s",$this->Status->getLastUpdatedTime($user_id)+$utc_offset);
-        $friend_updated_time = date("Y-m-d　H:i:s",$this->Friend->getLastUpdatedTime($user_id)+$utc_offset);
+        $status_updated_time = $this->convertTimeToDate($this->Status->getLastUpdatedTime($user_id),$utc_offset);
+        $friend_updated_time = $this->convertTimeToDate($this->Friend->getLastUpdatedTime($user_id),$utc_offset);
  
+        $profile_updated_time = $this->convertTimeToDate($this->User->getLastUpdatedTime($user_id),$utc_offset);
+
         $this->set('count_statuses',$count_statuses);
         $this->set('count_friends',$count_friends);
         $this->set('status_updated_time',$status_updated_time);
         $this->set('friend_updated_time',$friend_updated_time);
+        $this->set('profile_updated_time',$profile_updated_time);
         $this->set('user',$user);
     }
 

@@ -43,6 +43,8 @@ class AppController extends Controller {
     public function beforeFilter(){
         
         parent::beforeFilter();
+
+        $this->set('title_for_layout','Timedline');
         
         // check if user is logged in
         $loggedIn = $this->Auth->loggedIn();
@@ -99,6 +101,13 @@ class AppController extends Controller {
         
         return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
     
+    }
+
+    public function convertTimeToDate($time,$utc_offset,$format = 'Y/m/d - H:i:s'){
+
+        $user_time = $time + $utc_offset;
+        return date($format,$user_time);
+
     }
 
 }
