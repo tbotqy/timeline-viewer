@@ -4,8 +4,8 @@
   <!-- .wrap-explain -->
   <div class="wrap-explain">
 
-    <h1 class="brand">TimedLine</h1>
-    <p>is a simple view system for those who want to have the access to their past tweets.</p>
+    <h1 class="brand">Timedline</h1>
+    <p>is a simple view system for those who want to have the access to their past timeline.</p>
     
     <div class="wrap-btn-auth">
       <?php

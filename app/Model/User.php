@@ -150,6 +150,21 @@ class User extends AppModel{
         }
     }
 
+    public function getLastUpdatedTime($user_id){
+
+        /**
+         * check when specified user's profile was updated
+         * @param int $user_id
+         * @return int (unixtime)
+         */
+
+        $this->unbindAllModels();
+        
+        $user = $this->findById($user_id);
+        
+        return $user['User']['updated'];
+    }
+
     ///////////////////////////////////////////////
     // functions to save/update/delete something //
     ///////////////////////////////////////////////
@@ -220,6 +235,18 @@ class User extends AppModel{
         
     }
    
+    public function updateTime($user_id){
+
+        return $this->updateAll(
+                                array(
+                                      'User.updated'=>time()
+                                      ),
+                                array(
+                                      'User.id'=>$user_id
+                                      )
+                                );
+    }
+
     ///////////////////////
     // boolean functions //
     ///////////////////////

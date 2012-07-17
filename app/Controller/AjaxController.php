@@ -142,11 +142,10 @@ class AjaxController extends AppController{
             $text = $last_status['text'];       
             $id_str_oldest = $last_status['id_str'];
 
-            $utc_offset = $last_status['user']['utc_offset'];
             $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-            $created_at += $utc_offset;// timezone equal to the one configured in user's twitter profile
-            $created_at = date("Y年m月d日 - H:i",$created_at);
-
+            $utc_offset = $last_status['user']['utc_offset'];
+            $created_at = $this->convertTimeToDate($created_at,$utc_offset,"Y年m月d日 - H:i");
+            
             $ret['id_str_oldest'] = $id_str_oldest;
             $ret['status'] = array(
                                    'date'=>$created_at,
@@ -272,7 +271,7 @@ class AjaxController extends AppController{
         }
 
         $updated_time = $this->Status->getLastUpdatedTime($user['id']);
-        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+        $updated_date = $this->convertTimeToDate($updated_time,$user['Twitter']['utc_offset']);
 
         $ret = array(
                      'count_saved'=>$count_saved,
@@ -574,7 +573,7 @@ class AjaxController extends AppController{
         // record the time updeted
         $this->Status->updateSavedTime($user_id);
         $updated_time = $this->Status->getLastUpdatedTime($user_id);
-        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+        $updated_date = $this->convertTimeToDate($updated_time,$user['Twitter']['utc_offset']);
 
         $ret['updated_date'] = $updated_date;
         
@@ -670,7 +669,7 @@ class AjaxController extends AppController{
         
         // get the updated time
         $updated_time = $this->Friend->getLastUpdatedTime($user_id);
-        $updated_date = date('Y-m-d　H:i:s',$updated_time+$user['Twitter']['utc_offset']);
+        $updated_date = $this->convertTimeToDate($updated_time,$user['Twitter']['utc_offset']);
 
         // prepare the array to return
         $ret = array(
@@ -678,9 +677,94 @@ class AjaxController extends AppController{
                      'count_friends'=>$count_friends,
                      'updated_date'=>$updated_date
                      );
-
+        
         echo json_encode($ret);
 
+    }
+    
+    public function check_profile_update(){
+        
+        /**
+         * checks if there is any difference in user profile between our service and twitter
+         */
+
+        if(!$this->request->isPost()){
+            echo "bad request";
+            exit;
+        }
+
+        // initialization
+        $updated_value = array();
+        $updated = false;// represents whether any valule was updated or not
+        $user = $this->Auth->user();
+        $user_id = $user['id'];
+        $utc_offset = $user['Twitter']['utc_offset'];
+        // list of values to be checked 
+        $check_list = array('name','screen_name','profile_image_url_https','time_zone','utc_offset','lang');        
+        $ret = array();
+
+        // fetch profile on twitter
+        $tw = json_decode($this->Twitter->get('account/verify_credentials',array('skip_status'=>true)),true);
+        
+        // fetch profile on db
+        $this->User->unbindAllModels();
+        $db = $this->User->findById($user_id);
+        
+        // check for each value in list
+        foreach($check_list as $value_name){
+            $checkable = array_key_exists($value_name,$db['User']) && array_key_exists($value_name,$tw);
+            if($checkable){
+            
+                // compare
+                if($tw[$value_name] != $db['User'][$value_name]){
+                    
+                    // if differ, update the value
+                    $this->User->id = $user_id;
+                    
+                    if($this->User->saveField($value_name,$tw[$value_name])){
+                    
+                        $updated = true;
+                        $updated_value[$value_name] = $tw[$value_name];
+                    
+                    }
+                }
+            }
+        }
+
+        /*        
+        // debug
+        $dbg = array(
+                     'name'=>'test name',
+                     'screen_name'=>'testscreenname',
+                     'profile_image_url'=>'https://si0.twimg.com/profile_images/2171967822/b0915d6fb2bc43b0ab0ef0199e487c96_normal.png',
+                     'utc_offset'=>'10',
+                     'lang'=>'en',
+                     'time_zone'=>'tokyo'
+                     );
+                     
+        $updated_value = $dbg;
+        $updated = false;
+        */
+        
+        $this->User->updateTime($user_id);
+        
+        $ret = array(
+                     'updated'=>$updated,
+                     'updated_date'=>$this->convertTimeToDate($this->User->getLastUpdatedTime($user_id),$utc_offset)
+                     );
+        
+        if($updated){
+            $ret['updated_value'] = $updated_value;
+       
+            //[ToDO] manage with user data's change
+            // also update auth data
+            $this->Auth->logout();
+            $this->Auth->login();
+        }
+        
+       
+
+        echo json_encode($ret);
     }
 
 }

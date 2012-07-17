@@ -678,8 +678,94 @@ i{
   font-size: 70%;
 }
 
+#wrap-configurations .wrap-profile{ 
+  width: 100%;
+  float: left;
+  margin: 20px 0 10px 0;
+  border-top: solid 1px #FEFEFE;
+  border-bottom: solid 1px #D7D7D7;
+  background: #F2EEE6;
+  color: #49360D;
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+
+}
+
+#wrap-configurations .wrap-profile .area-profile-image{ 
+  float: left;
+  width: 80px;
+  height: 80px;
+  padding: 10px;
+}
+
+#wrap-configurations .wrap-profile .area-profile-image img{ 
+  border-radius: 2px;
+}
+
+#wrap-configurations .wrap-profile .area-center{ 
+  width: 730px;
+  float: left;
+}
+
+#wrap-configurations .wrap-profile .area-names{ 
+  float: left;
+  width: 730px;
+  margin-top:15px;
+  
+}
+
+#wrap-configurations .wrap-profile .area-names p{ 
+  padding-left: 10px;
+  font-size: 150%;
+}
+
+#wrap-configurations .wrap-profile .area-updated{ 
+  float: left;
+  width: 210px;  
+}
+
+#wrap-configurations .wrap-profile .area-updated p{ 
+  font-size: 80%;
+  padding-left: 10px;
+  color: #696969;
+} 
+
+#wrap-configurations .wrap-profile .area-result{ 
+  float: left;
+  width: 520px;
+  margin: -1px 0 0 0;
+}
+
+#wrap-configurations .wrap-profile .area-result .alert{ 
+  text-align: center;
+  padding: 10px;
+  display: none;
+  font-size: 70%;
+}
+
+#wrap-configurations .wrap-profile .area-button{
+  float: left;
+  margin-top: 35px;
+  margin-left: 2px;
+  width: 148px;
+} 
+
+#wrap-configurations .wrap-profile .area-button button{
+  float: left;
+}
+
+#wrap-configurations .wrap-profile .area-button span{
+  float: left;
+  font-size:80%;
+  padding-top: 4px;
+}
+
+#wrap-configurations .wrap-profile .loader{
+  float: left;
+  margin: 2px 0 0 10px;
+}
+
 #wrap-configurations .table{ 
-  margin: 20px 0;
+  margin: 10px 0 20px 0;
   float: left;
   border-top: solid 1px #fefefe;
   border-bottom: solid 1px #d7d7d7;  
@@ -690,9 +776,12 @@ i{
 
 #wrap-configurations .table td{ 
   line-height: 30px;
+  padding-left: 10px;
 }
 
-#wrap-configurations .table tbody tr{ 
+  
+
+#wrap-configurations .table tbody{ 
   border-top: solid 1px #fefefe;
   border-bottom: solid 1px #d7d7d7;  
 }

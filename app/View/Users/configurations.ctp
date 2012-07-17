@@ -6,9 +6,44 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
 <div id="wrap-configurations">
   
   <h1><i class="icon-hdd"></i><span>データ管理</span></h1>
-   
+
+  <!-- .wrap-profile -->
+  <div class="wrap-profile">
+        
+    <div class="area-profile-image">
+      <img class="profile-image-url" src="<?php echo str_replace('_normal','_reasonably_small',$loggingUser['Twitter']['profile_image_url_https']); ?>" />
+    </div>
+    
+    <div class="area-center">
+      <div class="area-names">
+
+	<p class="name"><?php echo $loggingUser['Twitter']['name'];?></p>
+
+	<p>@<span class="screen-name"><?php echo $loggingUser['Twitter']['screen_name'];?></span></p>
+
+      </div>
+    
+      <div class="area-updated">
+          <p>最終更新 : <span class="updated-date"><?php echo $profile_updated_time;?></span></p>
+      </div>
+    
+      <div class="area-result">
+	<span class="alert"></span>
+      </div>
+
+    </div>
+    <!-- /.area-center -->
+    
+    <div class="area-button">
+      <button id="update-profile" class="btn btn-success" data-loading-text="読み込み中"><i class="icon-refresh"></i>更新</button>
+
+    </div>
+
+  </div>
+  <!-- /.wrap-profile -->
+
   <table class="table">
-  
+<!--  
     <thead>
       <tr>
 	<th></th>
@@ -17,11 +52,11 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
 	<th></th>
       </tr>
     </thead>
-
+-->
     <tbody>
 
       <tr class="tweets">
-	<td>ツイート</td>
+	<td class="head">ツイート</td>
 	<td class="count">
 	  <span class="total-num"><?php echo $count_statuses;?></span>件
 	  <span class="additional-num"></span>
@@ -33,7 +68,7 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
       </tr>
       
       <tr class="friends">
-	<td>フォローリスト</td>
+	<td class="head">フォローリスト</td>
 	<td class="count">
 	  <span class="total-num"><?php echo $count_friends;?></span>件
 	  <span class="additional-num"></span>

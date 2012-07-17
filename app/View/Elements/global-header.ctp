@@ -9,7 +9,7 @@
 	  
 	  <!-- .container -->
 	  <div class="container">
-	    <a  class="brand" href="/">TimedLineβ</a>
+	    <a  class="brand" href="/">Timedline</a>
 	    <?php if($loggedIn):?>
 	    
 	    <?php if($userIsInitialized):?>	      

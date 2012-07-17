@@ -124,8 +124,14 @@ class Friend extends AppModel{
          * updates User.friends_updated
          */
         
-        $this->User->id = $user_id;
-        $this->User->saveField('friends_updated',time());
+        return $this->User->updateAll(
+                                      array(
+                                            'User.friends_updated'=>time()
+                                            ),
+                                      array(
+                                            'User.id'=>$user_id
+                                            )
+                                      );
         
     }
 }
