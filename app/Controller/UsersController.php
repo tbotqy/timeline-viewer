@@ -14,7 +14,7 @@ class UsersController extends AppController{
 
         parent::beforeFilter();
         
-        $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but');
+        $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but','test');
 
     }
 
@@ -172,7 +172,8 @@ class UsersController extends AppController{
                                      'Twitter'=>array('id'=>$registored_user_data['User']['twitter_id'])
                                      );
 
-        $login_value_list = array('name',
+        $login_value_list = array(
+                                  'name',
                                   'screen_name',
                                   'profile_image_url_https',
                                   'time_zone',
@@ -206,6 +207,11 @@ class UsersController extends AppController{
             echo "could not login";
 
         }
+    }
+
+    public function test(){
+        
+        
     }
 
     public function we_are_sorry_but(){
@@ -451,7 +457,7 @@ class UsersController extends AppController{
         $user = $this->Auth->user();
         $user_id = $user['id'];
         $utc_offset = $user['Twitter']['utc_offset'];
-
+        
         $count_statuses = $this->Status->getStatusNum($user_id);
         $count_friends = $this->Friend->getFriendNum($user_id);
         $date_format = "Y/m/d - H:i:s";

@@ -194,13 +194,27 @@ function checkProfileUpdate(){
           if($("."+class_name)[0]){
           
             if(class_name.indexOf("image") != -1){
+              // update profile image area
               $("."+class_name).fadeOut(function(){
                 $(this).attr("src",val.replace("_normal","_reasonably_small"));
               }).fadeIn();
+              // update profile image in header area
+              $("header").find(".twitter-profile img").fadeOut(function(){
+                $(this).attr("src",val);
+              }).fadeIn();
             }else{
+              // update each value
               $("."+class_name).fadeOut(function(){
                 $(this).text(val);
               }).fadeIn();
+              
+              if(class_name.indexOf("screen-name") != -1){
+                // also update screen name in header area
+                $("header").find(".twitter-profile a:last").fadeOut(function(){
+                  $(this).text("@"+val);
+                }).fadeIn();
+              }
+              
             }
             
           }
