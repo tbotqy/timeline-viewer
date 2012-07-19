@@ -32,6 +32,8 @@ App::uses('Model', 'Model');
  */
 class AppModel extends Model {
 
+    public function $useDbConfig = Configure::read('useDbConfig');
+
     public function checkNum($result){
 
         /**

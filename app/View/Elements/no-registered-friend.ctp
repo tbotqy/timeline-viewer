@@ -11,6 +11,7 @@
     <h4>
       Timedlineをやっている友達がいないようです
       <a class="description" href="#"><i class="icon-question-sign"></i></a>
+ 
     </h4>
 
     <!-- .invite-friends -->
@@ -28,6 +29,7 @@
     <?php
           echo $this->element('twitter-share-button');
     ?>
+
   </div>
   <!-- /.area-intent -->
 

@@ -16,7 +16,7 @@
     <!-- .invite-friends -->
     <div class="alert alert-info invite-friends">
       <button class="close">×</button>
-      <p>もしあなたがTwitterで誰かをフォローしているにも関わらずこの画面が出た場合、<br/><a href="/users/configurations">設定画面</a>からフォローリストを更新してみてください。</p>
+      <p>もしあなたがTwitterで誰かをフォローしているにも関わらずこの画面が出たならば、<br/><a href="/users/configurations">設定画面</a>からフォローリストを更新してみてください。</p>
     </div>
     <!-- /.invite-friends -->
 
@@ -25,14 +25,9 @@
 
   <!-- .area-intent -->
   <div class="wrap area-intent">
-    <div class="intent">
-
-      <a href="https://twitter.com/share" class="twitter-share-button" data-lang="ja">ツイート</a>
-      <script>
-	!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");
-      </script>
-      
-    </div>
+      <?php
+          echo $this->element('twitter-share-button');
+      ?>
   </div>
   <!-- /.area-intent -->
 

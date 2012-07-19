@@ -635,6 +635,10 @@ i{
   margin: 10px 0 0 0;
 }
 
+#wrap-main .error-inner .wrap.area-intent .intent{ 
+  margin: 0 0 0 50px;
+}
+
 #wrap-main .error-inner .alert.invite-friends{ 
   display: none;
   width: 500px;

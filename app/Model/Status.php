@@ -216,9 +216,14 @@ class Status extends AppModel{
          * @return array
          */
        
+        // initialization
+        $sum_by_day = array();
+        
         // fetch created_at value of the statuses
         $status_date_list = $this->getCreatedAtList($user_id,$mode);
-        
+        if(!$status_date_list){
+            return false;
+        }
         // get utc_offset for user
         $user_data = $this->User->findById($user_id);
         $utc_offset = $user_data['User']['utc_offset'];
