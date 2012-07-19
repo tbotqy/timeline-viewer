@@ -11,7 +11,7 @@ echo $this->Html->css('header-small',null,array('inline'=>false));
   <div class="wrap-profile">
         
     <div class="area-profile-image">
-      <img class="profile-image-url" src="<?php echo str_replace('_normal','_reasonably_small',$loggingUser['Twitter']['profile_image_url_https']); ?>" />
+      <img class="profile-image-url-https" src="<?php echo str_replace('_normal','_reasonably_small',$loggingUser['Twitter']['profile_image_url_https']); ?>" />
     </div>
     
     <div class="area-center">

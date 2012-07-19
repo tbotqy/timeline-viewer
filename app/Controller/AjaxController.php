@@ -731,21 +731,6 @@ class AjaxController extends AppController{
             }
         }
 
-        /*        
-        // debug
-        $dbg = array(
-                     'name'=>'test name',
-                     'screen_name'=>'testscreenname',
-                     'profile_image_url'=>'https://si0.twimg.com/profile_images/2171967822/b0915d6fb2bc43b0ab0ef0199e487c96_normal.png',
-                     'utc_offset'=>'10',
-                     'lang'=>'en',
-                     'time_zone'=>'tokyo'
-                     );
-                     
-        $updated_value = $dbg;
-        $updated = false;
-        */
-        
         $this->User->updateTime($user_id);
         
         $ret = array(
@@ -756,13 +741,14 @@ class AjaxController extends AppController{
         if($updated){
             $ret['updated_value'] = $updated_value;
        
-            //[ToDO] manage with user data's change
-            // also update auth data
-            $this->Auth->logout();
-            $this->Auth->login();
+            // update logging data
+            $login_data = $this->Auth->user();
+            foreach($updated_value as $name=>$value){
+                $login_data['Twitter'][$name] = $value;
+            }
+            $this->Session->write('Auth.User',$login_data);
+
         }
-        
-       
 
         echo json_encode($ret);
     }
