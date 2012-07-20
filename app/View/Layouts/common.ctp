@@ -24,6 +24,13 @@
       echo $this->fetch('css');
       echo $this->fetch('script');
     ?>
+    
+    <meta property="og:title" content="<?php echo $title_for_layout;?>" />
+    <meta property="og:description" content="Simple webapp to see your passed timeline." />
+    <meta property="og:url" content="http://timedline.phpfogapp.com/" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="http://timedline.phpfogapp.com/favicon.ico" />
+
     <title><?php echo $title_for_layout; ?></title>
   </head>
   <body>

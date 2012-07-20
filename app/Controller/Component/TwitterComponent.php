@@ -10,7 +10,7 @@ class TwitterComponent extends Component{
     public $components = array('Auth');
 
     public function createClient(){
-        return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
+        return new OAuthClient( Configure::read('twitter_consumer_key'), Configure::read('twitter_consumer_secret'));
     }
 
     public function initialize($controller){
