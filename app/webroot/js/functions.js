@@ -433,7 +433,7 @@ function getStatuses(params){
 	  // stop animation
 	  $(".progress").removeClass("active");
 	  
-	  hideLoader(".tweets");
+	  hideLoader("#wrap-import");
 	}
       }
     },
@@ -442,7 +442,7 @@ function getStatuses(params){
       
       //show the error message
       $(".progress").removeClass("active");
-      hideLoader(".tweets");
+      hideLoader("#wrap-import");
 
       $(".wrap-progress-bar").fadeOut(function(){
 	$(".wrap-lower").html("<div class=\"alert alert-warning\"><p>サーバーが混み合っているようです。<br/>すみませんが、しばらくしてからもう一度お試しください。</p></div>");
@@ -456,7 +456,7 @@ function getStatuses(params){
 
       if(noStatusAtAll){
 	
-	hideLoader(".tweets");
+	hideLoader("#wrap-import");
       
       }else{
 

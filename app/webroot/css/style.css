@@ -146,6 +146,27 @@ i{
 }
 
 /* --------------------------------------------------
+   under construction
+-------------------------------------------------- */
+.box.under-construction{ 
+  width: 100%;
+  margin: 200px 0 0 0;
+  float:left;
+}
+
+.box.under-construction .alert{ 
+  width: 100%;
+  float: left;
+  margin:0;
+  padding:15px 0 10px 0;
+}
+
+.box.under-construction h2{ 
+  text-align:center;
+}
+
+
+/* --------------------------------------------------
    dashbord
 -------------------------------------------------- */
 
@@ -446,7 +467,7 @@ i{
   padding: 10px;
   text-align: center;
   font-size: 80%;
-  line-height: 0;
+  line-height: 20px;
 }
 
 #wrap-import .progress{

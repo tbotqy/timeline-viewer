@@ -15,7 +15,11 @@ class UsersController extends AppController{
         parent::beforeFilter();
         
         $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but','test');
-
+        
+        if(Configure::read('underConstruction')){
+            return $this->render('under-construction');
+        }
+        
     }
 
     public function index(){
@@ -67,17 +71,17 @@ class UsersController extends AppController{
 
         /**
          * redirect user to api.twitter.com to make Twitter OAuth process.
-         * Aquire request token -> redirect user to authentication screen on twitter
+         * Aquire request token and redirect user to authentication screen on twitter
          */
-        
+
         // get request token 
         $client = $this->Twitter->createClient();
         $requestToken = $client->getRequestToken
             (
              'https://api.twitter.com/oauth/request_token',
-             'http://' . $_SERVER['HTTP_HOST'] . '/users/callback'
+             'http://' . env('HTTP_HOST') . '/users/callback'
              );
-        
+
         // check if request token was successfully acquired
         if($requestToken){
             
@@ -91,6 +95,7 @@ class UsersController extends AppController{
             $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
             
         }else{
+
             // if failed in acquiring request token, tell the user that something is wrong with twitter.com
             $this->Session->setFlash('failed in connecting to twitter. Please try again later.');
         }

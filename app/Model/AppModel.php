@@ -30,12 +30,16 @@ App::uses('Model', 'Model');
  *
  * @package       app.Model
  */
+
 class AppModel extends Model {
-
-    public function $useDbConfig = Configure::read('useDbConfig');
-
+   
+    public function __construct($id = false,$table = null,$ds = null){
+        $this->useDbConfig = Configure::read('useDbConfig');
+        parent::__construct($id,$table,$ds);
+    }
+    
     public function checkNum($result){
-
+        
         /**
          * check if given $result contains any record
          * returns array if there is any
@@ -49,6 +53,5 @@ class AppModel extends Model {
         }
    
     }
-
 
 }

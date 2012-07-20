@@ -39,7 +39,7 @@ class AppController extends Controller {
     public $uses = array('User','Status','Entity','Friend');
     
     public $userIsInitialized = false;
-
+    
     public function beforeFilter(){
         
         parent::beforeFilter();
@@ -69,14 +69,13 @@ class AppController extends Controller {
         }
             
         $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
+        
         $this->set('userIsInitialized',$userIsInitialized);
-    
         $this->set('loggedIn',$loggedIn);
         $this->set('actionType',$this->request->params['action']);
         $this->set('isAjax',$this->request->isAjax());
+        
     }
-
-
 
     public function checkInitialized(){
      
@@ -99,7 +98,7 @@ class AppController extends Controller {
 
     public function createClient(){
         
-        return new OAuthClient(CONSUMER_KEY,SECRET_KEY);
+        return new OAuthClient( Configure::read('twitter_consumer_key'), Configure::read('twitter_consumer_secret'));
     
     }
 
