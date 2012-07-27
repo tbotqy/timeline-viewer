@@ -20,10 +20,10 @@
 		<a class="dropdown-toggle link-timeline" data-toggle="dropdown" href="#">  <i class="icon-comments-alt"></i>  <b class="caret"></b></a>
 		
 		<ul class="dropdown-menu">
-		  <li><a href="/users/sent_tweets">ツイート</a></li>
 		  <li><a href="/users/home_timeline">ホームタイムライン</a></li>
-		  <li class="divider"></li>
 		  <li><a href="/users/public_timeline">パブリックタイムライン</a></li>
+		  <li class="divider"></li>
+		  <li><a href="/users/sent_tweets">あなたのツイート</a></li>
 		</ul>
 	      </li>
 	    </ul>

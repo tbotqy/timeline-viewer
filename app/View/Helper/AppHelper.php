@@ -31,4 +31,12 @@ App::uses('Helper', 'View');
  * @package       app.View.Helper
  */
 class AppHelper extends Helper {
+    
+    public function convertTimeToDate($time,$utc_offset,$format = 'Y/m/d - H:i:s'){
+
+        $user_time = $time + $utc_offset;
+        return date($format,$user_time);
+
+    }
+
 }

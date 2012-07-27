@@ -165,6 +165,26 @@ class User extends AppModel{
         return $user['User']['updated'];
     }
 
+    public function getGoneUsers(){
+
+        /**
+         * retrieve all the users that has already left from our service 
+         */
+
+        $this->unbindAllModels();
+
+        $ret = $this->find(
+                           'all',
+                           array(
+                                 'conditions'=>array(
+                                                     'User.deleted_flag'=>true
+                                                     )
+                                 )
+                           );
+        return $ret;
+
+    }
+
     ///////////////////////////////////////////////
     // functions to save/update/delete something //
     ///////////////////////////////////////////////
@@ -231,7 +251,7 @@ class User extends AppModel{
                       'updated' => time()
                       );
         
-        return $this->User->save($data) ? true : false;
+        return $this->save($data) ? true : false;
         
     }
    
