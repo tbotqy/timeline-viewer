@@ -15,4 +15,4 @@ tags
 .#*
 empty
 /app/webroot/img/
-/backup
+/sql_backup

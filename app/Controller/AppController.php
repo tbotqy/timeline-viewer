@@ -34,9 +34,9 @@ App::uses('Controller', 'Controller');
 
 class AppController extends Controller {
 
+    public $uses = array('User','Status','Entity','Friend');
     public $components = array('Auth','Session','Twitter');
     public $helpers = array('Html','Session','Text','Link');
-    public $uses = array('User','Status','Entity','Friend');
     
     public $userIsInitialized = false;
     
@@ -74,9 +74,9 @@ class AppController extends Controller {
         $this->set('loggedIn',$loggedIn);
         $this->set('actionType',$this->request->params['action']);
         $this->set('isAjax',$this->request->isAjax());
-        
+        $this->set('showFooter',false);
     }
-
+    
     public function checkInitialized(){
      
         $this->userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));

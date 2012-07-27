@@ -1,7 +1,4 @@
 @charset "utf-8";
-@import url(http://fonts.googleapis.com/css?family=Emblema+One);
-@import url(http://fonts.googleapis.com/css?family=Questrial);
-@import url(http://fonts.googleapis.com/css?family=PT+Sans);
 
 /* --------------------------------------------------
    body
@@ -93,17 +90,11 @@ i{
 -------------------------------------------------- */
 
 #container-footer{
-  float: left;
+  position: absolute;
   width: 100%;
-  margin: 30px auto 0 auto;
-  background: white;
+  bottom: 0px;
   color: #7a6e7e;
-  text-align: center;
-}
-
-#container-footer .inner{ 
-  width: 1200px;
-  margin: 0 auto;
+  background: #E8E0CF;
 }
 
 #container-footer a:link,
@@ -112,6 +103,83 @@ i{
 #container-footer a:visited{
   text-decoration: none;
   color: #7a6e7e;
+}
+
+#container-footer .inner{ 
+  width: 1200px;
+  margin: 0 auto;
+}
+
+#container-footer .area-upper{ 
+  width: 100%;
+  float: left;
+  padding: 20px 0;
+  border-bottom: solid 1px #d7d7d7;  
+}
+
+
+#container-footer .area-left{ 
+  width: 900px;
+  float: left;
+  padding: 10px 0 0 0;
+}
+
+#container-footer .area-right{ 
+  width: 300px;
+  float: right;
+}
+
+#container-footer .area-right .wrap-catch{ 
+  float: left;
+  width: 100%;
+  text-align: left;
+  color:#a9a9a9;
+}
+
+#container-footer .area-right .wrap-catch .description{
+  padding: 0 0 0 5px;
+  margin: 0px;
+}
+
+#container-footer .area-right .brand{ 
+  font-family: 'Emblema One', cursive;
+  font-size: 30px;
+  font-weight: bold;
+  height: 30px;
+  line-height: 30px;
+  margin: 0;
+}
+
+#container-footer footer{ 
+  width: 100%;
+  float: left;
+  margin: 0 0 20px 0;
+  border-top: solid 1px #fefefe;
+}
+
+#container-footer footer .container{ 
+  float: left;
+  width: 100%;
+  margin: 10px 0 0 0;
+}
+
+#container-footer footer .container .copyright{ 
+  float: left;
+  width: 125px;
+}
+
+#container-footer footer .wrap-social-plugins{ 
+  float: left;
+  width: 975px;
+}
+
+#container-footer footer .wrap-social-plugins div{ 
+  float: left;
+  margin: 0 0 0 10px;
+}
+
+#container-footer footer .wrap-social-plugins .wrap-fb{ 
+  margin: 0 10px;
 }
 
 /* --------------------------------------------------
@@ -165,6 +233,55 @@ i{
   text-align:center;
 }
 
+/* --------------------------------------------------
+   admin
+-------------------------------------------------- */
+#wrap-admin{ 
+  width: 980px;
+  margin: 20px auto;
+}
+
+#wrap-admin h1{ 
+  font-size: 130%;
+  border-bottom: solid 1px gray;
+}
+
+#wrap-admin table{ 
+  margin: 20px 0;
+  border-top: solid 1px #FEFEFE;
+  border-bottom: solid 1px #D7D7D7;
+  background: #F2EEE6;
+}
+
+#wrap-admin table td,
+#wrap-admin table th{
+  line-height: 37px;
+}
+
+#wrap-admin table .centroid{ 
+  text-align: center;
+ }
+
+#wrap-admin table td.chk { 
+  width: 50px;
+}
+
+#wrap-admin table td.chk button{ 
+  width: 100%;
+}
+
+#wrap-admin table td.chk button{ 
+  margin: 0;
+}
+#wrap-admin .wrap-button{ 
+  border-top: solid 1px #d7d7d7;
+  padding: 10px 0;
+  text-align: right;
+}
+
+#wrap-admin .wrap-button button{ 
+  width: 160px;
+}
 
 /* --------------------------------------------------
    dashbord
@@ -479,44 +596,79 @@ i{
 #wrap-import .bar{ 
   line-height: 30px;
 }
+
 #wrap-import .wrap-lower .alert{ 
   font-size: 80%;
   text-align: center;
   padding: 10px 0 0 0;
   width: 90%;
   margin: 0 auto;
-
- }
+}
 
 /* --------------------------------------------------
    users.login
 -------------------------------------------------- */
+
+#container-main.login{ 
+  height: 400px;
+}
 
 #wrap-login{ 
   width: 100%;
   float: left;
 }
 
-.wrap-explain{ 
-  float: right;
-  width: 300px;
-  margin: 50px 10px 0 0;
+#wrap-login header{ 
+  width: 100%;
+  text-align: center;
+  margin: 150px 0 0 0;
 }
 
-.wrap-explain p{ 
-  padding: 0 0 0 5px; 
-}
-
-#wrap-login .brand{ 
+#wrap-login header .brand{ 
   width: 100%;
   font-size: 30px;
   float: left;
   font-family: 'Emblema One', cursive;
 }
 
-#wrap-login .wrap-btn-auth{
-  width: 300px;
+#wrap-login header .version{ 
+  font-size: 20px;
+  position: relative;
+  top: -24px;
+  left: 115px;
+  font-family: 'Emblema One', cursive;
+  color: #800000;
+  color: #CD8500;
+  opacity:0.7;
+}
+
+#wrap-login header .catch{ 
+  float: left;
+  width: 100%;
+  margin: -15px 0 0 0;
+}
+
+#wrap-login .remark{ 
+  float: left;
+  width: 100%;
+  text-align: center;
   margin: 10px 0 0 0;
+  padding: 10px 0 0 0;
+  border-top: solid 1px silver;
+  color: gray;
+}
+
+#wrap-login .remark a{ 
+  color: #CD8500;
+color:#e6e6fa;
+color:#4169e1;
+}
+
+#wrap-login .wrap-btn-auth{
+  float: left;
+  width: 100%;
+  margin: 10px 0 0 0;
+  text-align: center;
 }
 
 .btn-auth:link,
@@ -544,6 +696,14 @@ i{
   -webkit-box-shadow: none;
   border:none;
 }
+
+#modal-how-data-are-treated .modal-body{ 
+  font-size: 80%;
+}
+
+#modal-how-data-are-treated .modal-body p i{ 
+  float: left;
+ }
 
 /* --------------------------------------------------
    users.we_are_sorry

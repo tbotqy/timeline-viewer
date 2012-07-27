@@ -1,20 +1,24 @@
 <!-- #wrap-login -->
 <div id="wrap-login">
-  
-  <!-- .wrap-explain -->
-  <div class="wrap-explain">
 
-    <h1 class="brand">Timedline</h1>
-    <p>is a simple view system for those who want to have the access to their past timeline.</p>
-    
-    <div class="wrap-btn-auth">
-      <?php
-        echo $this->Html->link('Sign in with Twitter',array('controller'=>'users','action'=>'authorize'),array('class'=>'btn-auth'));
-      ?>
-    </div>
+  <header>
+    <h1 class="brand">Timedline</h1><span class="version">beta</span>
+    <p class="catch">あの日のタイムラインを眺められるちょっとしたアプリケーション</p>
+  </header>
 
+  <div class="remark">
+    Timedlineは<a href="#modal-how-data-are-treated" data-toggle="modal">あなたのTwitterアカウントと連携</a>します
   </div>
-  <!-- /.wrap-explain -->
+      
+  <div class="wrap-btn-auth">
+    <?php
+      echo $this->Html->link('Sign in with Twitter',array('controller'=>'users','action'=>'authorize'),array('class'=>'btn-auth'));
+	?>
+  </div>
 
 </div>
 <!-- /#wrap-login -->
+
+<?php
+    echo $this->element('modal-how-data-are-treated');
+?>
