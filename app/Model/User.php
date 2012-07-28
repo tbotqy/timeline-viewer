@@ -220,18 +220,21 @@ class User extends AppModel{
 
     }
 
-    public function deleteAccount($user_id){
+    public function deleteAccount($user_id,$physically_delete = false){
         
         /**
          * delete all the data related to User
          */
 
-        // delete all related data
-        //return $this->delete($user_id,true);
-        
-        // just switch the delete flag
-        $this->id = $user_id;
-        return $this->saveField('deleted_flag',true);
+        if($physically_delete){
+
+            // delete all related data
+            return $this->delete($user_id,true);
+        }else{
+            // just switch the delete flag
+            $this->id = $user_id;
+            return $this->saveField('deleted_flag',true);
+        }
     }
     
     public function updateTokens($user_id,$tokens){

@@ -340,6 +340,23 @@ class AjaxController extends AppController{
         echo json_encode($ret);
         
     }
+    
+    public function delete_him(){
+
+        if(!$this->request->isPost()){
+            echo "bad request";
+            exit;
+        }
+
+        $dest_id = $this->request->data('dest_id');
+
+        if($this->User->deleteAccount($dest_id,true)){
+            echo "OK";
+        }else{
+            echo "NG";
+        }
+        
+    }
 
     public function switch_dashbord(){
         
