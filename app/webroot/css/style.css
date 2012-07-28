@@ -240,6 +240,10 @@ i{
   width: 980px;
   margin: 20px auto;
 }
+#wrap-admin .loader{
+  margin: 0 0 0 10px;
+  display: none;
+} 
 
 #wrap-admin h1{ 
   font-size: 130%;

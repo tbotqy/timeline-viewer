@@ -22,6 +22,12 @@ class UsersController extends AppController{
         
     }
 
+    public function test(){
+
+        $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
+        pr($following_friends);
+    }
+
     public function index(){
 
         /**
@@ -214,11 +220,6 @@ class UsersController extends AppController{
             echo "could not login";
 
         }
-    }
-
-    public function test(){
-        
-        
     }
 
     public function we_are_sorry_but(){

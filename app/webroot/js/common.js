@@ -119,7 +119,7 @@ $(function(){
     import_button.button('loading');
     
     // show the loader icon
-    showLoader();
+    showLoader("#wrap-import");
     
     /// show the progress bar
     wrap_progress_bar.fadeIn(function(){

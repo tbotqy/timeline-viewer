@@ -26,16 +26,26 @@ function scrollDownToDestination(e,distance){
   return false;
 }
 
-function showLoader(){
-  
-  $(".loader").fadeIn();
+function showLoader(parentName){
+  var type = typeof(parentName);
 
+  if(type == "string"){
+    $(parentName).find(".loader").fadeIn();      
+  }else if(type == "object"){
+    parentName.find(".loader").fadeIn();
+  }
+  
 }
 
 function hideLoader(parentName){
+  var type = typeof(parentName);
   
-  $(parentName).find(".loader").fadeOut();
-
+  if(type == "string"){
+    $(parentName).find(".loader").fadeOut();
+  }else if(type == "object"){
+    parentName.find(".loader").fadeOut();
+  }
+  
 }
 
 function checkStatusUpdate(){
