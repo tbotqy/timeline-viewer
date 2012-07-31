@@ -122,7 +122,7 @@ class OAuthClient {
 
         $response = array();
         parse_str($data, $response);
-
+       
         return $this->createOAuthToken($response);
     }
 }

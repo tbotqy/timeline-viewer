@@ -14,7 +14,7 @@
     <p><i class="icon-info-sign"></i>保存されたあなたのツイートは、Timedlineに登録している人達と共有されます。<br/>（アプリ内の共有タイムラインに表示され、ログインしている人たちが見ることができます。）</p>
     <p><i class="icon-info-sign"></i>アプリの性質上、Twitterアカウントに鍵をかけている方は登録ができない造りになっています。</p>
     <p><i class="icon-info-sign"></i>一度取り込んだデータは、あなたの好きな時に削除する事ができます。</p>
-    <p><i class="icon-info-sign"></i>このアプリの仕様を満たす目的以外であなたのデータを利用する事はありません。</p>
+    <p><i class="icon-info-sign"></i>このアプリは<a href="https://twitter.com/timedline_tw" target="_blank">@timedline_tw</a>が個人的に公開しております :)</p>
   </div> 
   <!-- /.modal-body -->
 

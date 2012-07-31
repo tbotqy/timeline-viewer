@@ -10,6 +10,90 @@ class LinkHelper extends AppHelper{
 
     public $helpers = array('Text');
 
+    public function removeNumParam($path){
+        
+        /**
+         * remove numeric params from given path
+         */
+
+        // check the type of path
+        $typeList = array(
+                          'tweets',
+                          'home_timeline',
+                          'public_timeline'
+                          );
+        // check if given path includes any value in $typeLits
+        $isDestType = false;
+        $destType = "";
+        foreach($typeList as $type){
+        
+            if(strpos($path,$type) != false){
+                $isDestType = true;
+                $destType = $type;
+                break;
+            }
+
+        }
+
+        if(!$isDestType){
+            return $path;
+        }
+
+        switch($destType){
+        case 'tweets':
+        case 'home_timeline':
+            $ret = $this->removeThirdParam($path);
+            break;
+        case 'public_timeline':
+            $ret = $this->removeSecondParam($path);
+            break;
+        default:
+            return "unknown type detected";
+        }
+                
+        return $ret;
+    }
+
+    public function removeSecondParam($path){
+        /**
+         * remove second param from given path
+         */
+        // check if given path includes two slashes
+        $countSlashes = substr_count($path,'/');
+        if($countSlashes < 2){
+            return $path;
+        }
+
+        // remove second param from given path
+        $posFirst = strpos($path,'/');
+        $posSecond = strpos($path,'/',$posFirst+1);
+        $ret = substr($path,$posFirst,$posSecond);
+
+        return $ret;
+
+    }
+
+    public function removeThirdParam($path){
+        /**
+         * remove third param from given path
+         */
+
+        // check if given path includes three slashes
+        $countSlashes = substr_count($path, '/');
+        if($countSlashes < 3){
+            return $path;
+        }
+
+        // remove third param from given path
+        $posFirst = strpos($path,'/');
+        $posSecond = strpos($path,'/',$posFirst+1);
+        $posThird = strpos($path,'/',$posSecond+1);
+        $ret = substr($path,$posFirst,$posThird);
+
+        return $ret;
+
+    }
+
     public function addLinks($text){
 
         // linkify urls

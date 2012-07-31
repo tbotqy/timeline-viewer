@@ -25,7 +25,7 @@ class StatusesController extends AppController{
         
         // redirect user if already has been initialized
         if($this->User->isInitialized($user['id'])){
-            return $this->redirect('/users/sent_tweets');
+            return $this->redirect('/your/tweets');
         }
         
         // get the total number of tweets user has on twitter        
@@ -33,6 +33,7 @@ class StatusesController extends AppController{
                        'user_id'=>$user['Twitter']['id'],
                        'include_entities'=>true
                        );
+
         $twitter_user_info = json_decode($this->Twitter->get('users/show',$param),true);
         $statuses_count = $twitter_user_info['statuses_count'];
         

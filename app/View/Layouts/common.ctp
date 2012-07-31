@@ -19,7 +19,9 @@
              'libs/jquery-1.7.2.min',
              'libs/bootstrap',
              'functions',
-             'common'
+             'common',
+             'twitter_tweet_button',
+             'twitter_follow_button'
              )
        );
       
@@ -29,7 +31,7 @@
     ?>
     
     <meta property="og:title" content="<?php echo $title_for_layout;?>" />
-    <meta property="og:description" content="Simple webapp to see your passed timeline." />
+    <meta property="og:description" content="A simple webapp to see your past timeline." />
     <meta property="og:url" content="http://timedline.phpfogapp.com/" />
     <meta property="og:type" content="website" />
     <meta property="og:image" content="http://timedline.phpfogapp.com/favicon.ico" />
@@ -51,14 +53,7 @@
   </head>
   <body>
     <div id="fb-root"></div>
-    <script>(function(d, s, id) {
-      var js, fjs = d.getElementsByTagName(s)[0];
-      if (d.getElementById(id)) return;
-      js = d.createElement(s); js.id = id;
-      js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=258025897640441";
-      fjs.parentNode.insertBefore(js, fjs);
-      }(document, 'script', 'facebook-jssdk'));</script>
-
+    
     <?php echo $this->element('global-header');?>
 
     <!-- #container-main -->

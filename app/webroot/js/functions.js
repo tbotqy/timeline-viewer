@@ -1,3 +1,12 @@
+function facebook(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/ja_JP/all.js#xfbml=1&appId=258025897640441";
+  fjs.parentNode.insertBefore(js, fjs);
+}
+
+
 function scrollToPageTop(e){
   
   if(e){
@@ -479,7 +488,7 @@ function getStatuses(params){
       if(progress == 100){
 	// when done, redirect after 2 seconds 
 	setTimeout(function(){
-	  location.href = "/users/sent_tweets";
+	  location.href = "/your/tweets";
 	},2000);
       }
 
@@ -563,7 +572,7 @@ function ajaxSwitchTerm(date,action_type,mode){
    */
   
   if(!date || !action_type || !action_type || !mode){
-    alert("Lacking in required param");
+    alert("required params not supplied");
     return ;
   }
 
@@ -704,13 +713,18 @@ function detectActionType(path){
   if(firstSlash == -1){
     return false;
   }
+
+  // check if current action type is public_timeline
+  if(path.indexOf("public_timeline") != -1){
+      return "public_timeline";
+  }
   
   var secondSlash = path.indexOf("/",firstSlash+1);
 
   if(secondSlash == -1){
     return false;
   }
-
+  
   // check if more slash exists
   var thirdSlash = path.indexOf("/",secondSlash+1);
   if(thirdSlash == -1){
@@ -720,10 +734,5 @@ function detectActionType(path){
     var lengthActionType = thirdSlash - secondSlash;
     return path.substr(secondSlash+1,lengthActionType-1);
   }
-
-}
-function getActionType(){
-    
-  return $("#wrap-dashbord").data("type");
 
 }

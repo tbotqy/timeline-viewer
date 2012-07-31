@@ -34,7 +34,7 @@ class AdminController extends AppController{
         // check if current logging user is included in adminList
         foreach($adminList as $name){
             
-            if($user['Twitter']['screen_name'] == $name){
+            if($user['Twitter']['id'] == $name){
                 $isAdmin = true;
                 break;
             }
