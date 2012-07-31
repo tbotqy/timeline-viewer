@@ -16,16 +16,6 @@ class UsersController extends AppController{
         
         $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but','test');
         
-        if(Configure::read('underConstruction')){
-            return $this->render('under-construction');
-        }
-        
-    }
-
-    public function test(){
-
-        $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
-        pr($following_friends);
     }
 
     public function index(){
@@ -36,11 +26,11 @@ class UsersController extends AppController{
         
         if($this->Auth->loggedIn()){
     
-            $this->redirect('/users/home_timeline');
+            $this->redirect('/your/home_timeline');
         
         }else{
         
-            $this->redirect('/users/login');
+            $this->redirect('/login');
         
         }
 
@@ -54,7 +44,7 @@ class UsersController extends AppController{
         
         if($this->Auth->loggedIn()){
         
-            $this->redirect('/users/index');
+            $this->redirect('/');
         
         }
 
@@ -70,7 +60,7 @@ class UsersController extends AppController{
 
         if($this->Auth->logout()){
         
-            $this->redirect('/users/');
+            $this->redirect('/');
        
         }
     }
@@ -84,10 +74,11 @@ class UsersController extends AppController{
 
         // get request token 
         $client = $this->Twitter->createClient();
+        
         $requestToken = $client->getRequestToken
             (
              'https://api.twitter.com/oauth/request_token',
-             'http://' . env('HTTP_HOST') . '/users/callback'
+             'http://' . env('HTTP_HOST') . '/twitter/callback'
              );
 
         // check if request token was successfully acquired
@@ -103,8 +94,8 @@ class UsersController extends AppController{
             $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
             
         }else{
-
-            // if failed in acquiring request token, tell the user that something is wrong with twitter.com
+            
+            // if failed in acquiring request token
             $this->Session->setFlash('failed in connecting to twitter. Please try again later.');
         }
     }
@@ -120,6 +111,7 @@ class UsersController extends AppController{
         
         // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
+        
         $client = $this->createClient();
         
         // fetch access token for this user
@@ -162,7 +154,7 @@ class UsersController extends AppController{
             $protected = $verify_credentials['protected'];
             if($protected){
                 $this->Session->write('redirected',true);
-                return $this->redirect('/users/we_are_sorry_but');
+                return $this->redirect('/we_are_sorry_but');
             }else{
                 // register if user hasn't registered yet
                 $this->User->register($tokens,$verify_credentials);
@@ -212,7 +204,7 @@ class UsersController extends AppController{
             
             }else{
                 
-                $this->redirect('/users/home_timeline');
+                $this->redirect('/your/home_timeline');
             
             }
         }else{

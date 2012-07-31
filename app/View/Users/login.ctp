@@ -6,15 +6,17 @@
     <p class="catch">あの日のタイムラインを眺められるちょっとしたアプリケーション</p>
   </header>
 
-  <div class="remark">
-    Timedlineは<a href="#modal-how-data-are-treated" data-toggle="modal">あなたのTwitterアカウントと連携</a>します
-  </div>
+  <section>
+    <div class="remark">
+      Timedlineは<a href="#modal-how-data-are-treated" data-toggle="modal">あなたのTwitterアカウントと連携</a>します
+    </div>
       
-  <div class="wrap-btn-auth">
-    <?php
-      echo $this->Html->link('Sign in with Twitter',array('controller'=>'users','action'=>'authorize'),array('class'=>'btn-auth'));
-	?>
-  </div>
+    <div class="wrap-btn-auth">
+
+      <a href="/twitter/authorize" class="btn-auth">Sign in with Twitter</a>
+    
+    </div>
+  </section>
 
 </div>
 <!-- /#wrap-login -->

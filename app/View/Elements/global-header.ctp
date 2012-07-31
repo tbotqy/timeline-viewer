@@ -20,10 +20,10 @@
 		<a class="dropdown-toggle link-timeline" data-toggle="dropdown" href="#">  <i class="icon-comments-alt"></i>  <b class="caret"></b></a>
 		
 		<ul class="dropdown-menu">
-		  <li><a href="/users/home_timeline">ホームタイムライン</a></li>
-		  <li><a href="/users/public_timeline">パブリックタイムライン</a></li>
+		  <li><a href="/your/home_timeline">ホームタイムライン</a></li>
+		  <li><a href="/public_timeline">パブリックタイムライン</a></li>
 		  <li class="divider"></li>
-		  <li><a href="/users/sent_tweets">あなたのツイート</a></li>
+		  <li><a href="/your/tweets">あなたのツイート</a></li>
 		</ul>
 	      </li>
 	    </ul>
@@ -49,12 +49,12 @@
 		<ul class="dropdown-menu">
 		  <?php if($userIsInitialized):?>
 		  <li>
-		    <a class="link-config" href="/users/configurations"><i class="icon-cog"></i>設定</a>
+		    <a class="link-config" href="/your/data"><i class="icon-hdd"></i>データ管理</a>
 		  </li>
 		  <li class="divider"></li>
 		  <?php endif;?>
 		  <li>
-		    <a class="link-logout" href="/users/logout"><i class="icon-signout"></i>ログアウト</a>
+		    <a class="link-logout" href="/logout"><i class="icon-signout"></i>ログアウト</a>
 		  </li>
 		</ul>
 		<!-- /.dropdown-menu -->

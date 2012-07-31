@@ -7,6 +7,14 @@ $(function(){
   $("body").css("background-image","url("+urlToBg+")");
   $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
 
+  // make loading social plugin delayed
+  setTimeout(function(){
+    $.getScript('/js/twitter_follow_button.js');
+    $.getScript('/js/twitter_tweet_button.js');
+    $.getScript('//b.st-hatena.com/js/bookmark_button.js');
+    facebook(document, 'script', 'facebook-jssdk');
+  },3000);
+
   //////////////////////////
   // code for each status //
   //////////////////////////
@@ -86,7 +94,7 @@ $(function(){
       dataType:"html",
       data:{
 	"oldest_timestamp":$("#oldest-timestamp").attr("value"),
-	"destination_action_type":getActionType()
+	"destination_action_type":detectActionType(location.pathname)
       },
       url: '/ajax/read_more',
       success: function(responce){
@@ -350,8 +358,9 @@ $(function(){
     },200);
 
     // check the type of data currently being shown
-    var action_type = $("#wrap-dashbord").data("type");
-    
+    var path = location.pathname;
+    var action_type = detectActionType(path);
+    console.log("+"+action_type);
     // fetch statuses 
     $.ajax({
       type: 'GET',

@@ -59,6 +59,10 @@ i{
   line-height: 20px;
 }
 
+#container-header .link-timeline{
+  color: #CD8500;
+}
+
 #container-header .twitter-profile img{ 
   border-radius: 2px;
   float:left;
@@ -639,9 +643,8 @@ i{
   font-size: 20px;
   position: relative;
   top: -24px;
-  left: 115px;
+  left: 120px;
   font-family: 'Emblema One', cursive;
-  color: #800000;
   color: #CD8500;
   opacity:0.7;
 }
@@ -652,12 +655,18 @@ i{
   margin: -15px 0 0 0;
 }
 
+#wrap-login section{ 
+  width: 50%;
+  margin: 10px auto;
+  
+}
+
 #wrap-login .remark{ 
   float: left;
   width: 100%;
   text-align: center;
   margin: 10px 0 0 0;
-  padding: 10px 0 0 0;
+  padding: 20px 0 0 0;
   border-top: solid 1px silver;
   color: gray;
 }

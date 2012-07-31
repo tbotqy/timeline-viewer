@@ -44,7 +44,13 @@ class AppController extends Controller {
         
         parent::beforeFilter();
 
+        $this->disableCache();
+
         $this->set('title_for_layout','Timedline');
+
+        if(Configure::read('underConstruction')){
+            return $this->render('under-construction');
+        }
         
         // check if user is logged in
         $loggedIn = $this->Auth->loggedIn();

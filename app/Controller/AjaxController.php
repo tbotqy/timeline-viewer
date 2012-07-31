@@ -412,7 +412,7 @@ class AjaxController extends AppController{
         
         switch($action_type){
 
-        case 'sent_tweets':
+        case 'tweets':
             
             if($fetchLatest){
                 
@@ -502,7 +502,7 @@ class AjaxController extends AppController{
  
         switch($destination_action_type){
 
-        case 'sent_tweets':
+        case 'tweets':
             // fetch older statuses
             $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
 
@@ -756,13 +756,18 @@ class AjaxController extends AppController{
                      );
         
         if($updated){
+
             $ret['updated_value'] = $updated_value;
        
             // update logging data
             $login_data = $this->Auth->user();
+
             foreach($updated_value as $name=>$value){
+
                 $login_data['Twitter'][$name] = $value;
+
             }
+
             $this->Session->write('Auth.User',$login_data);
 
         }
