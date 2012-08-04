@@ -2,9 +2,9 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <!--[endif]-->    
+    <!--[if lte IE 9]>
+	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->    
     <link href='http://fonts.googleapis.com/css?family=Contrail+One|Fugaz+One|Emblema+One|Questrial|PT+Sans' rel='stylesheet' type='text/css'>
     <?php
       echo $this->Html->css

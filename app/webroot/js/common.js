@@ -331,6 +331,8 @@ $(function(){
  
   });
 
+  if('pushState' in history){
+
   // click action to change the term of statuses to show
   $("#wrap-term-selectors").find("a").click(function(e){
     
@@ -396,6 +398,10 @@ $(function(){
       }
     });
   });
+      
+  }
+
+
 
   // click event for year selector
   $("#wrap-list-years").find("a").click(function(){

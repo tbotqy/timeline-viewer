@@ -28,11 +28,9 @@ class UsersController extends AppController{
     
             $this->redirect('/your/home_timeline');
         
-        }else{
-        
-            $this->redirect('/login');
-        
         }
+
+        $this->set('showFooter',true);
 
     }
 
@@ -41,14 +39,14 @@ class UsersController extends AppController{
         /**
          * just shows the view for login.
          */
+
+        $this->set('shoqFooter',true);
         
         if($this->Auth->loggedIn()){
         
             $this->redirect('/');
         
         }
-
-        $this->set('showFooter',true);
         
     }
 
