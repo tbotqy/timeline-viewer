@@ -47,10 +47,6 @@ class AppController extends Controller {
         $this->disableCache();
 
         $this->set('title_for_layout','Timedline');
-
-        if(Configure::read('underConstruction')){
-            return $this->render('under-construction');
-        }
         
         // check if user is logged in
         $loggedIn = $this->Auth->loggedIn();
@@ -81,6 +77,11 @@ class AppController extends Controller {
         $this->set('actionType',$this->request->params['action']);
         $this->set('isAjax',$this->request->isAjax());
         $this->set('showFooter',false);
+
+        if(Configure::read('underConstruction')){
+            return $this->render('under-construction');
+        }
+        
     }
     
     public function checkInitialized(){
