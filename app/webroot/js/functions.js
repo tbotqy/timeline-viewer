@@ -6,6 +6,25 @@ function facebook(d, s, id) {
   fjs.parentNode.insertBefore(js, fjs);
 }
 
+function getUserAgent(){
+
+  var userAgent = window.navigator.userAgent.toLowerCase();
+
+  if (userAgent.indexOf('opera') != -1) {
+    return 'opera';
+  } else if (userAgent.indexOf('msie') != -1) {
+    return 'ie';
+  } else if (userAgent.indexOf('chrome') != -1) {
+    return 'chrome';
+  } else if (userAgent.indexOf('safari') != -1) {
+    return 'safari';
+  } else if (userAgent.indexOf('firefox') != -1) {
+    return 'firefox';
+  } else {
+    return false;
+  }
+    
+}
 
 function scrollToPageTop(e){
   
@@ -488,7 +507,7 @@ function getStatuses(params){
       if(progress == 100){
 	// when done, redirect after 2 seconds 
 	setTimeout(function(){
-	  location.href = "/your/tweets";
+          location.href = "/your/tweets";
 	},2000);
       }
 

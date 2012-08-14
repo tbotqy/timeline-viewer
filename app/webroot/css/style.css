@@ -19,6 +19,7 @@ body{
 
 ul{ 
   list-style: none;
+  margin-left: 0;
 }
 
 .cake-sql-log{
@@ -44,6 +45,24 @@ footer .copyright{
   font-family: 'Questrial', Helvetica,"メイリオ", sans-serif;
 }
 
+.adsense.footer{ 
+  width: 728px;
+  margin: 0 auto;
+}
+
+.adsense.timeline{ 
+  float: right;
+  width: 336px;
+  height: 250px;
+}
+
+.adsense.timeline div{
+  float: left;
+  width: 160px;
+  margin: 10px 4px;
+} 
+
+
 /* --------------------------------------------------
    nav
 -------------------------------------------------- */
@@ -56,7 +75,7 @@ footer .copyright{
 }
 
 #container-header .navbar .container{ 
-  width: 1200px;
+  width: 1085px;
 }
 
 #container-header .link-timeline,
@@ -65,7 +84,7 @@ footer .copyright{
 }
 
 #container-header .link-timeline{
-  color: #CD8500;
+  color: #fcf8e3;
 }
 
 #container-header .twitter-profile img{ 
@@ -90,7 +109,7 @@ footer .copyright{
 }
 
 #container-main .inner{ 
-  width: 1200px;
+  width: 1085px;
   margin: 0 auto;
 }
 
@@ -115,7 +134,7 @@ footer .copyright{
 }
 
 #container-footer .inner{ 
-  width: 1200px;
+  width: 1085px;
   margin: 0 auto;
 }
 
@@ -128,14 +147,15 @@ footer .copyright{
 
 
 #container-footer .area-left{ 
-  width: 900px;
+  width: 835px;
   float: left;
   padding: 10px 0 0 0;
 }
 
 #container-footer .area-right{ 
-  width: 300px;
+  width: 250px;
   float: right;
+  padding: 10px 0 0 0;
 }
 
 #container-footer .area-right .wrap-catch{ 
@@ -178,7 +198,7 @@ footer .copyright{
 
 #container-footer footer .wrap-social-plugins{ 
   float: left;
-  width: 975px;
+  width: 855px;
 }
 
 #container-footer footer .wrap-social-plugins div{ 
@@ -194,11 +214,40 @@ footer .copyright{
    scroller toward top
 -------------------------------------------------- */
 
+.error-inner.error404{ 
+  width: 70%;
+  margin: 200px auto 0 auto;
+}
+
+.error-inner.error404 .wrap{ 
+  width: 100%;
+  float: left;
+  text-align: center;
+}
+
+.error-inner.error404 .alert.not-found{ 
+  width: 500px;
+  height: 30px;
+  margin: 0 auto 10px auto;
+  padding: 0;
+}
+
+.error-inner.error404 .alert.not-found p{ 
+  width: 100%;
+  height: 100%;
+  line-height: 30px;
+  margin:0;
+}
+
+/* --------------------------------------------------
+   scroller toward top
+-------------------------------------------------- */
+
 .to-page-top{ 
   width: 120px;
   position: fixed;
-  bottom: 5px;
-  right: 15px;
+  top: 174px;
+  left: 620px;
   background: black;
   opacity: 0.5;
   border-radius: 10px;
@@ -240,12 +289,88 @@ footer .copyright{
 .box.under-construction h2{ 
   text-align:center;
 }
+/* --------------------------------------------------
+   browser
+-------------------------------------------------- */
+.box.browser{ 
+  width: 100%;
+  margin: 0;
+  float:left;
+}
+
+.box.browser header{ 
+  width: 100%;
+  text-align: center;
+  margin: 150px 0 0 0;
+}
+
+.box.browser header .brand{ 
+  width: 100%;
+  font-size: 30px;
+  float: left;
+  //font-family: 'Emblema One', cursive;
+}
+
+.box.browser header .version{ 
+  font-size: 20px;
+  position: relative;
+  top: -24px;
+  left: 120px;
+  color: #CD8500;
+  opacity:0.7;
+}
+
+.box.browser header .catch{ 
+  float: left;
+  width: 100%;
+  margin: -15px 0 0 0;
+}
+
+.box.browser .lower{ 
+  width: 80%;
+  margin: 0 auto;
+}
+
+.box.browser .alert{ 
+  width: 100%;
+  float: left;
+  margin: 20px 0 0 0;
+  padding:15px 0 10px 0;
+}
+
+.box.browser h2{ 
+  text-align:center;
+  font-size: 99%;
+}
+
+.box.browser .browsers{ 
+  width: 100%;
+  float: left;
+  margin: 10px 0 0 0;
+}
+
+.box.browser .browsers ul li{ 
+  width: 25%;
+  float:left;
+  text-align: center;
+}
+
+.box.browser .browsers ul li img{ 
+  width: 64px;
+  margin: 5px auto;
+}
+
+.box.browser .browsers ul li span.link{ 
+  width: 100%;
+  float: left;
+  margin: 5px 0 0 0;
+}
 
 /* --------------------------------------------------
    admin
 -------------------------------------------------- */
 #wrap-admin{ 
-  width: 980px;
+  width: 1085px;
   margin: 20px auto;
 }
 #wrap-admin .loader{
@@ -301,7 +426,7 @@ footer .copyright{
 
 #wrap-dashbord{ 
   float: left;
-  width: 1200px;
+  width: 1085px;
   height: 123px;
   font-family: 'Questrial', sans-serif;
 }
@@ -364,7 +489,7 @@ footer .copyright{
 
 .list-months li a,
 .list-days li a{ 
-  width: 15px;
+  width: 13px;
 }
 
 /* --------------------------------------------------
@@ -531,28 +656,40 @@ footer .copyright{
   border-radius:10px;
   -webkit-border-radius:10px;
   -moz-border-radius:10px;
+/*
+  background: linear-gradient(to bottom, #d5cea6 0%, #b7ad70 100%); 
   background: -webkit-gradient(linear, left top, left bottom, color-stop(1.00, #b7ad70), color-stop(0.00, #d5cea6));
   background: -webkit-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
   background: -moz-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
   background: -o-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
   background: -ms-linear-gradient(top, #d5cea6 0%, #b7ad70 100%);
-  background: linear-gradient(to bottom, #d5cea6 0%, #b7ad70 100%);
+*/
+  background: #e8e0cf;
   box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.4), 0 0 10px #999;
+  opacity: 0.9;
+}
+
+#wrap-import .wrap-tweet .inner .body{ 
+  margin: 0 0 5px 5px;
 }
 
 #wrap-import .wrap-tweet .inner .date{ 
   text-align: right;
+  font-size: 80%;
+  margin: 0 0 -5px 0;
+  color: gray;
 }
 
 .triangle{ 
   position: relative;
   width: 0;
   height: 0;
-  top: -7px;
+  top: -3px;
   left: 40px;
   bottom:0;
-  border-top: 20px solid #b8ae71;
+  border-top: 20px solid #e8e0cf;
   border-right: 20px solid  transparent;
+  opacity: 0.8;
 }
 
 #wrap-import .wrap-profile-image{ 
@@ -745,6 +882,10 @@ color:#4169e1;
 /* --------------------------------------------------
    users.sent_tweets
 -------------------------------------------------- */
+#wrap-timeline-lower{ 
+  width: 100%;
+  float: left;
+}
 
 #wrap-main{ 
   float: left;
@@ -867,7 +1008,7 @@ color:#4169e1;
 -------------------------------------------------- */
 
 #wrap-configurations{ 
-  width:980px;
+  width:1085px;
   margin: 20px auto;
 }
 
@@ -906,7 +1047,7 @@ color:#4169e1;
 }
 
 #wrap-configurations .wrap-profile .area-center{ 
-  width: 730px;
+  width: 835px;
   float: left;
 }
 

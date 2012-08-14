@@ -14,7 +14,7 @@ class UsersController extends AppController{
 
         parent::beforeFilter();
         
-        $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but','test');
+        $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but','under_construction','browser','test');
         
     }
 
@@ -28,10 +28,10 @@ class UsersController extends AppController{
     
             $this->redirect('/your/home_timeline');
         
+        }else{
+            $this->set('showFooter',true);         
+            $this->render('login');
         }
-
-        $this->set('showFooter',true);
-
     }
 
     public function login(){
@@ -40,7 +40,7 @@ class UsersController extends AppController{
          * just shows the view for login.
          */
 
-        $this->set('shoqFooter',true);
+        $this->set('showFooter',true);
         
         if($this->Auth->loggedIn()){
         
@@ -227,6 +227,33 @@ class UsersController extends AppController{
         
     }
 
+    public function under_construction(){
+
+        if(!Configure::read('underConstruction')){
+            $this->redirect('/');
+        }
+
+        $this->set('title_for_layout','Timedline | メンテナンス中です');
+        
+        // tell that site is under construction
+        $this->set('showFooter',true);
+
+    }
+
+    public function browser(){
+
+        // tell that user's browser is out of support
+
+        if($this->browserOk){
+            $this->redirect('/');
+        }
+
+        $this->set('title_for_layout','Timedline | 対応ブラウザについて');
+        
+        $this->set('showFooter',true);
+
+    }
+
     public function sent_tweets(){
         
         /**
@@ -234,6 +261,8 @@ class UsersController extends AppController{
          */
 
         $this->rejectUnInitialized();
+
+        $this->set('title_for_layout','Timedline | あなたのツイート');
 
         // initialization
         $user_data = array(); 
@@ -299,6 +328,8 @@ class UsersController extends AppController{
          */
         
         $this->rejectUnInitialized();
+
+        $this->set('title_for_layout','Timedline | ホームタイムライン');
 
         // initialization
         $statuses = array();
@@ -387,6 +418,8 @@ class UsersController extends AppController{
         
         $this->rejectUninitialized();
 
+        $this->set('title_for_layout','Timedline | パブリックタイムライン');
+
         // initialization
         $statuses = array();
         $date_list = array();
@@ -458,6 +491,8 @@ class UsersController extends AppController{
          */
        
         $this->rejectUnInitialized();
+
+        $this->set('title_for_layout','Timedline | データ管理');
 
         $user = $this->Auth->user();
         $user_id = $user['id'];

@@ -1,7 +1,3 @@
-<?php
-echo $this->Html->css('header-small',null,array('inline'=>false));
-?>
-
 <!-- #wrap-configurations -->
 <div id="wrap-configurations">
   
