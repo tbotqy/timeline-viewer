@@ -20,6 +20,8 @@ class StatusesController extends AppController{
         /**
          * show the screen for operating import method
          */
+
+        $this->set('title_for_layout','Timedline | データの取り込み');
         
         $user =  $this->Auth->user();
         
@@ -40,6 +42,7 @@ class StatusesController extends AppController{
         $this->set('statuses_count',$statuses_count);
         $this->set('screen_name',$user['Twitter']['screen_name']);
         $this->set('profile_image_url_https',$user['Twitter']['profile_image_url_https']);
+        $this->set('showFooter',true);
         
     }
     

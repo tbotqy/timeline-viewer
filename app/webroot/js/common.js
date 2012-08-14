@@ -7,6 +7,11 @@ $(function(){
   $("body").css("background-image","url("+urlToBg+")");
   $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
 
+  // check user agent
+  var userAgent = getUserAgent();
+  var uaWhiteList = ['chrome','safari','firefox'];
+  var isValidUA = false;
+
   // make loading social plugin delayed
   setTimeout(function(){
     $.getScript('/js/twitter_follow_button.js');
@@ -133,7 +138,6 @@ $(function(){
     wrap_progress_bar.fadeIn(function(){
 
       // show the area displaying the status body currently saving
-      //$("#status").css({"display":"block"});
       $("#status").fadeIn();
     
     });
@@ -362,7 +366,7 @@ $(function(){
     // check the type of data currently being shown
     var path = location.pathname;
     var action_type = detectActionType(path);
-    console.log("+"+action_type);
+  
     // fetch statuses 
     $.ajax({
       type: 'GET',

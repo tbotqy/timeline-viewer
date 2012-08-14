@@ -39,15 +39,36 @@ class AppController extends Controller {
     public $helpers = array('Html','Session','Text','Link');
     
     public $userIsInitialized = false;
-    
+    public $browserOk = false;
+
     public function beforeFilter(){
         
         parent::beforeFilter();
-
-        $this->disableCache();
-
+     
         $this->set('title_for_layout','Timedline');
+
+        $actionType = $this->request->params['action'];
         
+        // check if current http request is created by facebook plugin
+        // because facebook like plugin doesn't work if set url to like fires any redirect
+        if(!$this->isRequestedByFacebookPlugin()){
+            
+            if(Configure::read('underConstruction')){
+                
+                if($actionType !== 'under_construction'){
+                    return $this->redirect('/under_construction');
+                }elseif($actionType === 'under_construction'){
+                    return;
+                }
+                
+            }
+               
+            if(!$this->isCompatibleBrowser() && $actionType != 'browser'){
+                return $this->redirect('/browser');
+            }
+
+        }
+
         // check if user is logged in
         $loggedIn = $this->Auth->loggedIn();
 
@@ -68,20 +89,123 @@ class AppController extends Controller {
             }
             
             $this->set('loggingUser',$loggingUser);
+            
         }
             
         $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
         
         $this->set('userIsInitialized',$userIsInitialized);
         $this->set('loggedIn',$loggedIn);
-        $this->set('actionType',$this->request->params['action']);
+        $this->set('actionType',$actionType);
         $this->set('isAjax',$this->request->isAjax());
         $this->set('showFooter',false);
+    
+    }
 
-        if(Configure::read('underConstruction')){
-            return $this->render('under-construction');
+    public function beforeRender(){
+        
+        if($this->name == "CakeError"){
+            $this->layout = "common";
+            $this->set('title_for_layout','Timedline | error');
+            $this->set('showFooter',true);
+        }
+
+    }
+    
+    public function isCompatibleBrowser(){
+        
+        $ret = false;
+        $ua = $this->getUserAgent();
+
+        // the list of user agents to be accepted
+        $uaWhiteList = array(
+                             'msie',
+                             'chrome',
+                             'firefox',
+                             'safari',
+                             );
+        
+        foreach($uaWhiteList as $uaName){
+
+            if($ua === $uaName){
+
+                if($uaName === 'msie'){
+                    // if IE,only 9+ is accepted
+                    $version = (int)$this->getIEVersion();
+                    if($version >= 9){
+                        $ret = true;
+                    }
+                }else{
+                    $ret = true;
+                }
+            }
+
+        }
+
+        if($ret){
+            $this->browserOk = true;
+        }
+
+        return $ret;
+
+    }
+    
+    public function isRequestedByFacebookPlugin(){
+
+        // check if current http request is made by facebook plugin
+        // by checking if HTTP_USER_AGENT contains string 'facebook
+        
+        //$destinationString = "facebookexternalhit/1.1 (+http://www.facebook.com/externalhit_uatext.php)"
+        $ua = env('HTTP_USER_AGENT');
+
+        // check ua
+        if(strpos($ua,'facebook') !== false){
+            return true;
+        }else{
+            return false;
+        }
+
+    }
+
+    public function getUserAgent(){
+
+        if(!env('HTTP_USER_AGENT')){
+            return false;
         }
         
+        $httpUA = env('HTTP_USER_AGENT');
+
+        $uaStrList = array(
+                           'msie',
+                           'chrome',
+                           'safari',
+                           'firefox',
+                           'opera'
+                           );
+
+        foreach($uaStrList as $uaName){
+        
+            if(stripos($httpUA,$uaName) !== false){
+                return $uaName;
+            }
+       
+        }
+
+        return "unkown agent";
+        
+    }
+
+    public function getIEVersion(){
+
+        if(!env('HTTP_USER_AGENT')){
+            return false;
+        }
+        
+        $httpUA = env('HTTP_USER_AGENT');
+        $pos = stripos($httpUA,'msie');
+        $ver = substr($httpUA, $pos+5, 1);
+        
+        return $ver;
     }
     
     public function checkInitialized(){
@@ -97,8 +221,17 @@ class AppController extends Controller {
          * @param array $array
          * @return array
          */
+
+        if(!is_array($array)){
+            return false;
+        }
         
-        $itr_last = count($array) - 1;
+        if(count($array) > 0){
+            $itr_last = count($array) - 1;
+        }else{
+            $itr_last = 0;
+        }
+
         return $array[$itr_last];
     }
 

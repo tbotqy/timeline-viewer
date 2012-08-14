@@ -44,9 +44,12 @@ class AdminController extends AppController{
             return $this->redirect('/users/logout');
         }
 
+        $this->set('title_for_layout','Timedline | Admin');
+
         $gone_users = $this->User->getGoneUsers();
 
         $this->set('gone_users',$gone_users);
+        $this->set('showFooter',true);
       
     }
 

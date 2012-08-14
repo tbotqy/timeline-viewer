@@ -1,11 +1,24 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8">
-    <!--[if lte IE 9]>
-	<script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <meta charset="UTF-8"/>
+    <meta name="robots" content="index,follow"/>
+    <meta name="description" content="あの日のタイムラインを眺められる、ちょっとしたアプリケーション"/>
+    <meta name="keywords" content="タイムライン,過去のタイムライン,過去のつぶやき,過去のツイート"/>
+
+    <meta property="og:locale" content="ja_JP">
+    <meta property="fb:app_id" content="258025897640441" />
+    <meta property="og:site_name" content="Timdeline" />
+    <meta property="og:title" content="<?php echo $title_for_layout;?>" />
+    <meta property="og:description" content="Timedline is a simple view system for those who want to have the access to their past timeline." />
+    <meta property="og:url" content="http://<?php echo env('HTTP_HOST');?>" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="http://<?php echo env('HTTP_HOST');?>/favicon.ico" />
+    <!--[if lt IE 9]>
+	<script src="http://html5shim.googlecode.com/svn/trunk/html5.js" type="text/javascript"></script>
     <![endif]-->    
     <link href='http://fonts.googleapis.com/css?family=Contrail+One|Fugaz+One|Emblema+One|Questrial|PT+Sans' rel='stylesheet' type='text/css'>
+
     <?php
       echo $this->Html->css
       (array(
@@ -30,12 +43,6 @@
       echo $this->fetch('script');
     ?>
     
-    <meta property="og:title" content="<?php echo $title_for_layout;?>" />
-    <meta property="og:description" content="A simple webapp to see your past timeline." />
-    <meta property="og:url" content="http://timedline.phpfogapp.com/" />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="http://timedline.phpfogapp.com/favicon.ico" />
-
     <title><?php echo $title_for_layout; ?></title>
     <script>
 
@@ -58,6 +65,7 @@
 
     <!-- #container-main -->
     <div id="container-main" class="<?php echo $actionType;?>">
+
       <div class="inner">
 	<?php
           echo $this->fetch('content');

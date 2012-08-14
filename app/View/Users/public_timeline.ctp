@@ -8,12 +8,22 @@ echo $this->Html->script('popstate.js',array('inline'=>false));
   }
 ?>
 
-<!-- #wrap-main -->
-    <div id="wrap-main">
-      
-  <?php
+<!-- #wrap-timeline-lower -->
+<div id="wrap-timeline-lower">
+
+  <!-- #wrap-main -->
+  <div id="wrap-main">
+    
+    <?php
         echo $this->element('timeline');
+    ?>
+    
+  </div>
+  <!-- /#wrap-main -->
+
+  <?php
+    echo $this->element('ads-timeline');
   ?>
   
 </div>
-<!-- /#wrap-main -->
+<!-- /#wrap-timeline-lower -->

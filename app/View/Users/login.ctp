@@ -14,7 +14,7 @@
     <div class="wrap-btn-auth">
 
       <a href="/twitter/authorize" class="btn-auth">Sign in with Twitter</a>
-    
+
     </div>
   </section>
 

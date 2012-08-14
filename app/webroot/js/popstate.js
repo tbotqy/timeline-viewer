@@ -4,7 +4,7 @@ $(function(){
   // code for popstate event //
   /////////////////////////////
 
-  if('popstate' in history){
+  if('pushState' in history){
 
     window.setTimeout(function(){
       $(window).bind("popstate",function(e){
@@ -44,17 +44,14 @@ $(function(){
           }
           
           var action_type = detectActionType(path);
-          console.log(date);
-          console.log(action_type);
           
           ajaxSwitchTerm(date,action_type,"pjax");
           
           // reset all the term selectors
           $("#wrap-term-selectors").find("a.selected").removeClass("btn-primary selected");
           
-          //location.reload(false);
-          console.log("popped");
-          
+          console.log("popped");          
+
         }else{
           console.log("not popped");
         }

@@ -24,5 +24,13 @@
   </div>
   <!-- /.area-alert -->  
 
+  <!-- .area-intent -->
+  <div class="wrap area-intent">
+      <?php
+          echo $this->element('twitter-share-button');
+      ?>
+  </div>
+  <!-- /.area-intent -->
+
 </div>
 <!-- /.error-inner -->
