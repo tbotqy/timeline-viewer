@@ -36,10 +36,10 @@ class StatusesController extends AppController{
                        'include_entities'=>true
                        );
 
-        $twitter_user_info = json_decode($this->Twitter->get('users/show',$param),true);
-        $statuses_count = $twitter_user_info['statuses_count'];
+        $twitterUserInfo = json_decode($this->Twitter->get('users/show',$param),true);
+        $statusesCount = $twitterUserInfo['statuses_count'];
         
-        $this->set('statuses_count',$statuses_count);
+        $this->set('statuses_count',$statusesCount);
         $this->set('screen_name',$user['Twitter']['screen_name']);
         $this->set('profile_image_url_https',$user['Twitter']['profile_image_url_https']);
         $this->set('showFooter',true);

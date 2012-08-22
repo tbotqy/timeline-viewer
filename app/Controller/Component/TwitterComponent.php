@@ -42,16 +42,16 @@ class TwitterComponent extends Component{
                                              )
                                        );
             $token = $tokens['User']['token'];
-            $token_secret = $tokens['User']['token_secret'];
+            $tokenSecret = $tokens['User']['token_secret'];
         
         }else{
         
             $token = $tokens['token'];
-            $token_secret = $tokens['token_secret'];
+            $tokenSecret = $tokens['token_secret'];
        
         }
         
-        return $client->get($token,$token_secret,$url,$options);
+        return $client->get($token,$tokenSecret,$url,$options);
     }
 
 }

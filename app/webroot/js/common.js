@@ -1,9 +1,9 @@
 $(function(){
       
   // set background image to dashbord same with html's background
-  var urlToBg = "/img/html_bg_linen.png";
-  var urlToDashbord = "/img/html_bg_linen.png";
-  
+  var urlToBg = "/img/html_bg_redox.png";
+  //var urlToDashbord = "/img/html_bg_linen.png";
+  var urlToDashbord = urlToBg;
   $("body").css("background-image","url("+urlToBg+")");
   $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
 

@@ -127,35 +127,35 @@ class UsersController extends AppController{
         $tokens['token'] = $accessToken->key;
         $tokens['token_secret'] = $accessToken->secret;
 
-        $verify_credentials = $this->Twitter->get('account/verify_credentials',array(),$tokens);
-        $verify_credentials = json_decode($verify_credentials,true);
+        $verifyCredentials = $this->Twitter->get('account/verify_credentials',array(),$tokens);
+        $verifyCredentials = json_decode($verifyCredentials,true);
         
         /////////////////////////////////////////////////////////////////
         // check if user with authorized twitter id exists in database //
         /////////////////////////////////////////////////////////////////
 
-        if($this->User->existByTwitterId($verify_credentials['id_str'])){
+        if($this->User->existByTwitterId($verifyCredentials['id_str'])){
 
             // get user id
-            $user_id = $this->User->getIdByTwitterId($verify_credentials['id_str']);
+            $userId = $this->User->getIdByTwitterId($verifyCredentials['id_str']);
             
             // check if stored tokens are up-to-date by comparing with acquired tokens
-            $stored_tokens = $this->User->getTokens($user_id);
-            if( $stored_tokens['User']['token'] != $tokens['token'] || $stored_tokens['User']['token_secret'] != $tokens['token_secret'] ){
+            $storedTokens = $this->User->getTokens($userId);
+            if( $storedTokens['User']['token'] != $tokens['token'] || $storedTokens['User']['token_secret'] != $tokens['token_secret'] ){
                 // if not, update them
-                $this->User->updateTokens($user_id,$tokens);
+                $this->User->updateTokens($userId,$tokens);
             }
 
         }else{
             
             // check if user's twitter profile is protected
-            $protected = $verify_credentials['protected'];
+            $protected = $verifyCredentials['protected'];
             if($protected){
                 $this->Session->write('redirected',true);
                 return $this->redirect('/we_are_sorry_but');
             }else{
                 // register if user hasn't registered yet
-                $this->User->register($tokens,$verify_credentials);
+                $this->User->register($tokens,$verifyCredentials);
             }
         }
 
@@ -164,18 +164,18 @@ class UsersController extends AppController{
         /////////////////////////////////////
 
         // prepare user data to get logged in
-        $user_data_for_login = array();
+        $userDataForLogin = array();
 
-        $user_id = $this->User->getIdByTwitterId($verify_credentials['id_str']);
+        $userId = $this->User->getIdByTwitterId($verifyCredentials['id_str']);
         $this->User->unbindAllModels();
-        $registored_user_data = $this->User->findById($user_id);
+        $registoredUserData = $this->User->findById($userId);
         
-        $user_data_for_login = array(
-                                     'id'=>$user_id,
-                                     'Twitter'=>array('id'=>$registored_user_data['User']['twitter_id'])
+        $userDataForLogin = array(
+                                     'id'=>$userId,
+                                     'Twitter'=>array('id'=>$registoredUserData['User']['twitter_id'])
                                      );
 
-        $login_value_list = array(
+        $loginValueList = array(
                                   'name',
                                   'screen_name',
                                   'profile_image_url_https',
@@ -184,17 +184,17 @@ class UsersController extends AppController{
                                   'lang'
                                   );
         
-        foreach($login_value_list as $val){
-            $user_data_for_login['Twitter'][$val] = $registored_user_data['User'][$val];
+        foreach($loginValueList as $val){
+            $userDataForLogin['Twitter'][$val] = $registoredUserData['User'][$val];
         }
 
         // log the user in
-        if($this->Auth->login($user_data_for_login)){
+        if($this->Auth->login($userDataForLogin)){
           
-            $user_id = $this->Auth->user('id');
+            $userId = $this->Auth->user('id');
                     
             // check if user has aleady imported his status on twitter
-            $hasBeenInitialized = $this->User->isInitialized($user_id);
+            $hasBeenInitialized = $this->User->isInitialized($userId);
             
             if(!$hasBeenInitialized){
         
@@ -218,7 +218,7 @@ class UsersController extends AppController{
         if($this->Session->read('redirected')){
         
             $this->Session->delete('redirected');
-        
+            $this->set('showFooter',true);
         }else{
         
             return $this->redirect('/');
@@ -265,17 +265,17 @@ class UsersController extends AppController{
         $this->set('title_for_layout','Timedline | あなたのツイート');
 
         // initialization
-        $user_data = array(); 
+        $userData = array(); 
         $statuses = array();
-        $oldest_timestamp = "";      
-        $date_list = array();
+        $oldestTimestamp = "";      
+        $dateList = array();
         $hasNext = false;
         
         // load user info 
         $user = $this->Auth->user();
 
         // fetch user's twitter account info
-        $user_data = $this->User->findById($user['id']);
+        $userData = $this->User->findById($user['id']);
 
         // check if requested uri includes query string
         $term = isset($this->params['pass']['0']) ? $this->params['pass']['0'] : false;
@@ -283,13 +283,13 @@ class UsersController extends AppController{
         if($term){
           
             // check the type of given term
-            $date_type = $this->Parameter->getParamType($term);
+            $dateType = $this->Parameter->getParamType($term);
 
             // load user's utc offset
-            $utc_offset = $user_data['User']['utc_offset'];
+            $utcOffset = $userData['User']['utc_offset'];
             
             // convert given term from string to unixtime
-            $term = $this->Parameter->termToTime($term,$date_type,$utc_offset);
+            $term = $this->Parameter->termToTime($term,$dateType,$utcOffset);
             
             // fetch statuses in specified term
             $statuses = $this->Status->getStatusInTerm($this->Auth->user('id'),$term['begin'],$term['end'],'DESC',$limit = '10');
@@ -303,20 +303,20 @@ class UsersController extends AppController{
                 
         // get primary key of last status in fetched array
         $num = count($statuses)-1;
-        $oldest_timestamp = $statuses[$num]['Status']['created_at'];
-        $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
+        $oldestTimestamp = $statuses[$num]['Status']['created_at'];
+        $hasNext = $this->Status->hasOlderStatus($user['id'],$oldestTimestamp);
 
         // create the list of all the statuses user has.           
-        $date_list = $this->Status->getDateList($user['id']);
+        $dateList = $this->Status->getDateList($user['id']);
         
         if(!$statuses){
             $this->set('showFooter',true);
         }
         
-        $this->set('user_data',$user_data); 
+        $this->set('user_data',$userData); 
         $this->set('statuses',$statuses);
-        $this->set('oldest_timestamp',$oldest_timestamp);      
-        $this->set('date_list',$date_list);
+        $this->set('oldest_timestamp',$oldestTimestamp);      
+        $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
     }
     
@@ -333,10 +333,10 @@ class UsersController extends AppController{
 
         // initialization
         $statuses = array();
-        $date_list = array();
+        $dateList = array();
         $hasNext = false;
-        $oldest_timestamp = "";
-        $error_type = "";
+        $oldestTimestamp = "";
+        $errorType = "";
 
         // load user's account info
         $user = $this->Auth->user();
@@ -352,16 +352,16 @@ class UsersController extends AppController{
             if($term){
           
                 // check the type of given term
-                $date_type = $this->Parameter->getParamType($term);
+                $dateType = $this->Parameter->getParamType($term);
 
                 // fetch user's twitter account info
-                $user_data = $this->User->findById($user['id']);
+                $userData = $this->User->findById($user['id']);
         
                 // load user's utc offset
-                $utc_offset = $user_data['User']['utc_offset'];
+                $utcOffset = $userData['User']['utc_offset'];
             
                 // convert given term from string to unixtime
-                $term = $this->Parameter->termToTime($term,$date_type,$utc_offset);
+                $term = $this->Parameter->termToTime($term,$dateType,$utcOffset);
             
                 // fetch statuses in specified term
                 $statuses = $this->Status->getTimelineInTerm($user['id'],$term['begin'],$term['end']);
@@ -376,12 +376,12 @@ class UsersController extends AppController{
             if($statuses){
 
                 // get oldest status's created_at timestamp
-                $last_status = $this->getLastLine($statuses);
-                $oldest_timestamp = $last_status['Status']['created_at'];
+                $lastStatus = $this->getLastLine($statuses);
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
    
-                $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+                $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldestTimestamp);
           
-                $date_list = $this->Status->getDateList($user['id'],'home_timeline');
+                $dateList = $this->Status->getDateList($user['id'],'home_timeline');
                 
             }
 
@@ -389,24 +389,23 @@ class UsersController extends AppController{
          
             if(!$hasFriendList){
 
-                $error_type = "noFriendList";
+                $errorType = "noFriendList";
 
             }elseif(!$hasRegisteredFriend){
 
-                $error_type = "noRegisteredFriend";
+                $errorType = "noRegisteredFriend";
 
             }
 
             $this->set('showFooter',true);
 
-
         }
 
-        $this->set('error_type',$error_type);
+        $this->set('error_type',$errorType);
         $this->set('statuses',$statuses);
-        $this->set('date_list',$date_list);
+        $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
-        $this->set('oldest_timestamp',$oldest_timestamp);
+        $this->set('oldest_timestamp',$oldestTimestamp);
         
     }
 
@@ -422,12 +421,12 @@ class UsersController extends AppController{
 
         // initialization
         $statuses = array();
-        $date_list = array();
-        $oldest_timestamp = "";
+        $dateList = array();
+        $oldestTimestamp = "";
         $hasNext = false;
         $noStatusAtAll = false;
 
-        $user_id = $this->Auth->user('id');
+        $userId = $this->Auth->user('id');
 
         // check if requested uri includes query string
         $term = isset($this->params['pass']['0']) ? $this->params['pass']['0'] : false;
@@ -437,16 +436,16 @@ class UsersController extends AppController{
             // fetch statuses whose created_at is between $term
                     
             // check the type of given term
-            $date_type = $this->Parameter->getParamType($term);
+            $dateType = $this->Parameter->getParamType($term);
             
             // fetch user's twitter account info
-            $user_data = $this->User->findById($user_id);
+            $userData = $this->User->findById($userId);
         
             // load user's utc offset
-            $utc_offset = $user_data['User']['utc_offset'];
+            $utcOffset = $userData['User']['utc_offset'];
             
             // convert given term from string to unixtime
-            $term = $this->Parameter->termToTime($term,$date_type,$utc_offset);
+            $term = $this->Parameter->termToTime($term,$dateType,$utcOffset);
             
             // fetch statuses in specified term
             $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
@@ -461,11 +460,11 @@ class UsersController extends AppController{
         if($statuses){
 
             // get oldest status's created_at timestamp
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $lastStatus = $this->getLastLine($statuses);
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
             
             // check if there are more public statuses
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
             
         }else{
             
@@ -475,12 +474,12 @@ class UsersController extends AppController{
         }
 
         // get date list
-        $date_list = $this->Status->getDateList($user_id,'public_timeline');
+        $dateList = $this->Status->getDateList($userId,'public_timeline');
         
         $this->set('statuses',$statuses);
-        $this->set('date_list',$date_list);
+        $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
-        $this->set('oldest_timestamp',$oldest_timestamp);
+        $this->set('oldest_timestamp',$oldestTimestamp);
         
     }
 
@@ -495,23 +494,23 @@ class UsersController extends AppController{
         $this->set('title_for_layout','Timedline | データ管理');
 
         $user = $this->Auth->user();
-        $user_id = $user['id'];
-        $utc_offset = $user['Twitter']['utc_offset'];
+        $userId = $user['id'];
+        $utcOffset = $user['Twitter']['utc_offset'];
         
-        $count_statuses = $this->Status->getStatusNum($user_id);
-        $count_friends = $this->Friend->getFriendNum($user_id);
-        $date_format = "Y/m/d - H:i:s";
+        $countStatuses = $this->Status->getStatusNum($userId);
+        $countFriends = $this->Friend->getFriendNum($userId);
+        $dateFormat = "Y/m/d - H:i:s";
 
-        $status_updated_time = $this->convertTimeToDate($this->Status->getLastUpdatedTime($user_id),$utc_offset);
-        $friend_updated_time = $this->convertTimeToDate($this->Friend->getLastUpdatedTime($user_id),$utc_offset);
+        $statusUpdatedTime = $this->convertTimeToDate($this->Status->getLastUpdatedTime($userId),$utcOffset);
+        $friendUpdatedTime = $this->convertTimeToDate($this->Friend->getLastUpdatedTime($userId),$utcOffset);
  
-        $profile_updated_time = $this->convertTimeToDate($this->User->getLastUpdatedTime($user_id),$utc_offset);
+        $profileUpdatedTime = $this->convertTimeToDate($this->User->getLastUpdatedTime($userId),$utcOffset);
 
-        $this->set('count_statuses',$count_statuses);
-        $this->set('count_friends',$count_friends);
-        $this->set('status_updated_time',$status_updated_time);
-        $this->set('friend_updated_time',$friend_updated_time);
-        $this->set('profile_updated_time',$profile_updated_time);
+        $this->set('count_statuses',$countStatuses);
+        $this->set('count_friends',$countFriends);
+        $this->set('status_updated_time',$statusUpdatedTime);
+        $this->set('friend_updated_time',$friendUpdatedTime);
+        $this->set('profile_updated_time',$profileUpdatedTime);
         $this->set('user',$user);
         $this->set('showFooter',true);
     }

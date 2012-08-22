@@ -46,7 +46,7 @@ class AjaxController extends AppController{
         $noStatusAtAll = false;
         $continue = false;
         $statuses = array();
-        $following_list = array();
+        $followingList = array();
         $ret = array();
         
         $user = $this->Auth->user();
@@ -57,17 +57,17 @@ class AjaxController extends AppController{
         ///////////////////////////////                           
         
         // set params for api call
-        $api_params = array(
+        $apiParams = array(
                             'include_rts'=>true,
                             'include_entities'=>true,
                             'screen_name'=>$user['Twitter']['screen_name']
                             );
         
         // this is the oldest tweet's id of the statuses which have imported so far
-        $max_id = $this->request->data('id_str_oldest');
+        $maxId = $this->request->data('id_str_oldest');
                 
         // configure parameters 
-        if(!$max_id){
+        if(!$maxId){
 
             /*
              * this is the case for first ajax request
@@ -77,15 +77,15 @@ class AjaxController extends AppController{
             $this->Status->deletePreSavedStatus($user['id']);
             
             // set 100 as the number of statuses to acquire
-            $api_params['count'] = 100;
+            $apiParams['count'] = 100;
             
             // acquire latest 100 statuses
-            $statuses = $this->Twitter->get('statuses/user_timeline',$api_params);
+            $statuses = $this->Twitter->get('statuses/user_timeline',$apiParams);
             $statuses = json_decode($statuses['body'],true);
 
             // retrieve following list
-            $following_list = json_decode($this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true)),true);
-            $this->Friend->saveFriends($user['id'],$following_list['ids']);
+            $followingList = json_decode($this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true)),true);
+            $this->Friend->saveFriends($user['id'],$followingList['ids']);
             
             if(count($statuses) == 0){
                 // set the flag that there was no status to acquire at all
@@ -95,11 +95,11 @@ class AjaxController extends AppController{
         }else{
             
             // acquire 101 statuses which are older than the status with max_id
-            $api_params['count'] = 101;
-            $api_params['max_id'] = $max_id;
+            $apiParams['count'] = 101;
+            $apiParams['max_id'] = $maxId;
             
             // acquire 101 statuses older than max_id
-            $statuses = $this->Twitter->get('statuses/user_timeline',$api_params);
+            $statuses = $this->Twitter->get('statuses/user_timeline',$apiParams);
             $statuses = json_decode($statuses['body'],true);
          
             // remove the newest status from result because it has been already saved in previous loop
@@ -129,26 +129,26 @@ class AjaxController extends AppController{
         $continue = count($statuses) > 0 ? true : false;
     
         // number of statuses added to database
-        $saved_count = count($statuses);
+        $savedCount = count($statuses);
 
         $ret['continue'] = $continue;
-        $ret['saved_count'] = $saved_count;
+        $ret['saved_count'] = $savedCount;
         $ret['noStatusAtAll'] = $noStatusAtAll;
 
         if($continue){
         
             // the status to show as one which is currently fetching
-            $last_status = end($statuses);
-            $text = $last_status['text'];       
-            $id_str_oldest = $last_status['id_str'];
+            $lastStatus = end($statuses);
+            $text = $lastStatus['text'];       
+            $idStrOldest = $lastStatus['id_str'];
 
-            $created_at = strtotime($last_status['created_at']);// convert its format to unix time
-            $utc_offset = $last_status['user']['utc_offset'];
-            $created_at = $this->convertTimeToDate($created_at,$utc_offset,"Y年m月d日 - H:i");
+            $createdAt = strtotime($lastStatus['created_at']);// convert its format to unix time
+            $utcOffset = $lastStatus['user']['utc_offset'];
+            $createdAt = $this->convertTimeToDate($createdAt,$utcOffset,"Y年m月d日 - H:i");
             
-            $ret['id_str_oldest'] = $id_str_oldest;
+            $ret['id_str_oldest'] = $idStrOldest;
             $ret['status'] = array(
-                                   'date'=>$created_at,
+                                   'date'=>$createdAt,
                                    'text'=>$text
                                    );
         
@@ -185,15 +185,15 @@ class AjaxController extends AppController{
         $user = $this->Auth->user();
         
         // initialization
-        $count_saved = 0;
+        $countSaved = 0;
         $continue = true;
-        $oldest_id_str = "";
-        $updated_date = "";
+        $oldestIdStr = "";
+        $updatedDate = "";
 
         // recieve the status_id of the status which is oldest of all the statuses saved in last loop
-        $max_id = $this->request->data('oldest_id_str');
+        $maxId = $this->request->data('oldest_id_str');
         
-        if($max_id){
+        if($maxId){
             
             // set params for api request            
             $params = array(
@@ -201,13 +201,13 @@ class AjaxController extends AppController{
                             'include_entities'=>true,
                             'count'=>101,
                             'user_id'=>$user['Twitter']['id'],
-                            'max_id'=>$max_id
+                            'max_id'=>$maxId
                             );
                            
             // fetch tweets via api
             $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
             
-            // delete duplicating status from $tweets if $max_id was set
+            // delete duplicating status from $tweets if $maxId was set
             array_shift($tweets);
         
         }else{
@@ -231,22 +231,22 @@ class AjaxController extends AppController{
         if($tweets){
 
             // check id_str of oldest status
-            $oldest_status = $this->getLastLine($tweets);
-            $oldest_id_str = $oldest_status['id_str'];
+            $oldestStatus = $this->getLastLine($tweets);
+            $oldestIdStr = $oldestStatus['id_str'];
         
             // set the destination value for created_at
-            $latest_status = $this->Status->getLatestStatus($user['id'],1);
-            $destination_time = $latest_status[0]['Status']['created_at'];
+            $latestStatus = $this->Status->getLatestStatus($user['id'],1);
+            $destinationTime = $latestStatus[0]['Status']['created_at'];
         
         
             // save lacking tweets if any
             foreach($tweets as $tweet){
 
-                if(strtotime($tweet['created_at']) > $destination_time){
+                if(strtotime($tweet['created_at']) > $destinationTime){
                
                     // save it
                     $this->Status->saveStatus($user,$tweet);
-                    $count_saved++;
+                    $countSaved++;
 
                 }else{
 
@@ -270,14 +270,14 @@ class AjaxController extends AppController{
 
         }
 
-        $updated_time = $this->Status->getLastUpdatedTime($user['id']);
-        $updated_date = $this->convertTimeToDate($updated_time,$user['Twitter']['utc_offset']);
+        $updatedTime = $this->Status->getLastUpdatedTime($user['id']);
+        $updatedDate = $this->convertTimeToDate($updatedTime,$user['Twitter']['utc_offset']);
 
         $ret = array(
-                     'count_saved'=>$count_saved,
+                     'count_saved'=>$countSaved,
                      'continue'=>$continue,
-                     'oldest_id_str'=>$oldest_id_str,
-                     'updated_date'=>$updated_date
+                     'oldest_id_str'=>$oldestIdStr,
+                     'updated_date'=>$updatedDate
                      );
         
         echo json_encode($ret);
@@ -291,15 +291,15 @@ class AjaxController extends AppController{
             exit;
         }
         
-        $status_id = $this->request->data('status_id_to_delete');
-        $user_id = $this->Auth->user('id');
+        $statusId = $this->request->data('status_id_to_delete');
+        $userId = $this->Auth->user('id');
         $deleted = false;
         $owns = false;
         
-        // check if user owns the status with $status_id
-        if($this->User->ownsStatus($user_id,$status_id)){
+        // check if user owns the status with $statusId
+        if($this->User->ownsStatus($userId,$statusId)){
             $owns = true;
-            $this->Status->id = $status_id;
+            $this->Status->id = $statusId;
             
             // delete the status and switch the flag
             if($this->Status->delete()){
@@ -326,12 +326,12 @@ class AjaxController extends AppController{
 
         }
 
-        $user_id = $this->Auth->user('id');
+        $userId = $this->Auth->user('id');
         
         // initialize the flag representing if deleting went well 
         $deleted = false;
 
-        if($this->User->deleteAccount($user_id)){
+        if($this->User->deleteAccount($userId)){
             $deleted = true;
         }
   
@@ -348,9 +348,9 @@ class AjaxController extends AppController{
             exit;
         }
 
-        $dest_id = $this->request->data('dest_id');
+        $destinationUserId = $this->request->data('dest_id');
 
-        if($this->User->deleteAccount($dest_id,true)){
+        if($this->User->deleteAccount($destinationUserId,true)){
             echo "OK";
         }else{
             echo "NG";
@@ -365,21 +365,21 @@ class AjaxController extends AppController{
          * returns html
          */
         
-        $action_type = $this->request->data('action_type');
+        $actionType = $this->request->data('action_type');
        
-        if(!$action_type){
+        if(!$actionType){
             echo "action type is not specified";
             exit;
         }
 
-        $user_id = $this->Auth->user('id');
+        $userId = $this->Auth->user('id');
 
-        $date_list = $this->Status->getDateList($user_id,$action_type);
+        $dateList = $this->Status->getDateList($userId,$actionType);
         
         // render to template
         $this->autoRender = true;
-        $this->set('date_list',$date_list);
-        $this->set('actionType',$action_type);
+        $this->set('date_list',$dateList);
+        $this->set('actionType',$actionType);
     }
 
     public function switch_term(){
@@ -390,46 +390,46 @@ class AjaxController extends AppController{
          */
         
         $user = $this->Auth->user();
-        $user_id = $user['id'];
-        $utc_offset = $user['Twitter']['utc_offset'];
+        $userId = $user['id'];
+        $utcOffset = $user['Twitter']['utc_offset'];
         
         $fetchLatest = false;
 
         // fetch query string
         $date = $this->request->query['date'];
-        $action_type = $this->request->query['action_type'];
+        $actionType = $this->request->query['action_type'];
         
         // check if date parameter is specified
         if($date === 'notSpecified'){
             $fetchLatest = true;
         }else{
 
-            $date_type = $this->request->query['date_type'];
+            $dateType = $this->request->query['date_type'];
             
             // calculate start/end of term to fetch 
-            $term = $this->Parameter->termToTime($date,$date_type,$utc_offset);
+            $term = $this->Parameter->termToTime($date,$dateType,$utcOffset);
         }
         
-        switch($action_type){
+        switch($actionType){
 
         case 'tweets':
             
             if($fetchLatest){
                 
-                $statuses = $this->Status->getLatestStatus($user_id);
+                $statuses = $this->Status->getLatestStatus($userId);
             
             }else{
 
                 // fetch 10 statsues in specified term
-                $statuses = $this->Status->getStatusInTerm($user_id,$term['begin'],$term['end']);
+                $statuses = $this->Status->getStatusInTerm($userId,$term['begin'],$term['end']);
             
             }
 
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $lastStatus = $this->getLastLine($statuses);
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
         
             // check if any older status exists in user's timeline  
-            $hasNext = $this->Status->hasOlderStatus($user_id,$oldest_timestamp);                    
+            $hasNext = $this->Status->hasOlderStatus($userId,$oldestTimestamp);                    
            
             break;
 
@@ -437,20 +437,20 @@ class AjaxController extends AppController{
 
             if($fetchLatest){
 
-                $statuses = $this->Status->getLatestTimeline($user_id);
+                $statuses = $this->Status->getLatestTimeline($userId);
 
             }else{
 
                 // fetch 10 timeline in specified term
-                $statuses = $this->Status->getTimelineInTerm($user_id,$term['begin'],$term['end']);
+                $statuses = $this->Status->getTimelineInTerm($userId,$term['begin'],$term['end']);
 
             }
 
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $lastStatus = $this->getLastLine($statuses);
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
             
             // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($user_id,$oldest_timestamp);
+            $hasNext = $this->Status->hasOlderTimeline($userId,$oldestTimestamp);
 
             break;
 
@@ -467,11 +467,11 @@ class AjaxController extends AppController{
             
             }
 
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $lastStatus = $this->getLastLine($statuses);
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
             
             // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
 
             break;
 
@@ -482,7 +482,7 @@ class AjaxController extends AppController{
         }
         
         $this->autoRender = true;
-        $this->set('oldest_timestamp',$oldest_timestamp);
+        $this->set('oldest_timestamp',$oldestTimestamp);
         $this->set('hasNext',$hasNext);
         $this->set('statuses',$statuses);       
 
@@ -496,59 +496,59 @@ class AjaxController extends AppController{
          * renders html
          */
 
-        $oldest_timestamp = $this->request->data('oldest_timestamp');
-        $destination_action_type = $this->request->data('destination_action_type');
+        $oldestTimestamp = $this->request->data('oldest_timestamp');
+        $destinationActionType = $this->request->data('destination_action_type');
         $user = $this->Auth->user();
  
-        switch($destination_action_type){
+        switch($destinationActionType){
 
         case 'tweets':
             // fetch older statuses
-            $statuses = $this->Status->getOlderStatus($user['id'],$oldest_timestamp);
+            $statuses = $this->Status->getOlderStatus($user['id'],$oldestTimestamp);
 
             // set created_at of last status 
-            $last_status = $this->getLastLine($statuses);
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $lastStatus = $this->getLastLine($statuses);
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
 
             // check if any older status exists
-            $hasNext = $this->Status->hasOlderStatus($user['id'],$oldest_timestamp);
+            $hasNext = $this->Status->hasOlderStatus($user['id'],$oldestTimestamp);
            
             break;
 
         case 'home_timeline':
            
             // fetch older timeline
-            $statuses = $this->Status->getOlderTimeline($user['id'],$oldest_timestamp);
+            $statuses = $this->Status->getOlderTimeline($user['id'],$oldestTimestamp);
             
             // set created_at of last status 
-            $last_status = $this->getLastLine($statuses);
+            $lastStatus = $this->getLastLine($statuses);
             
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
             
             // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldest_timestamp);
+            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldestTimestamp);
             
             break;
 
         case 'public_timeline':
            
             // fetch older timeline
-            $statuses = $this->Status->getOlderPublicTimeline($oldest_timestamp);
+            $statuses = $this->Status->getOlderPublicTimeline($oldestTimestamp);
             
             // set created_at of last status 
-            $last_status = $this->getLastLine($statuses);
+            $lastStatus = $this->getLastLine($statuses);
             
-            $oldest_timestamp = $last_status['Status']['created_at'];
+            $oldestTimestamp = $lastStatus['Status']['created_at'];
             
             // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldest_timestamp);
+            $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
             
             break;
         }
         
         $this->autoRender = true;
         $this->set('hasNext',$hasNext);
-        $this->set('oldest_timestamp',$oldest_timestamp);        
+        $this->set('oldest_timestamp',$oldestTimestamp);        
         $this->set('statuses',$statuses);
     
     }
@@ -560,7 +560,7 @@ class AjaxController extends AppController{
          */
         
         $user = $this->Auth->user();
-        $user_id = $user['id'];
+        $userId = $user['id'];
                 
         $params = array(
                         'user_id'=>$user['Twitter']['id'],
@@ -568,14 +568,14 @@ class AjaxController extends AppController{
                         'include_rts'=>true,
                         );
         
-        $latest_tweet = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
-        $latest_status = $this->Status->getLatestStatus($user_id,1);
+        $latestTweet = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+        $latestStatus = $this->Status->getLatestStatus($userId,1);
         
-        $latest_tweet_created_at = strtotime($latest_tweet[0]['created_at']);
-        $latest_status_created_at = $latest_status[0]['Status']['created_at'];
+        $latestTweetCreatedAt = strtotime($latestTweet[0]['created_at']);
+        $latestStatusCreatedAt = $latestStatus[0]['Status']['created_at'];
 
         // compare created_at
-        if($latest_tweet_created_at > $latest_status_created_at){
+        if($latestTweetCreatedAt > $latestStatusCreatedAt){
         
             // updatable
             $ret = array('result'=>true);
@@ -588,11 +588,11 @@ class AjaxController extends AppController{
         }
         
         // record the time updeted
-        $this->Status->updateSavedTime($user_id);
-        $updated_time = $this->Status->getLastUpdatedTime($user_id);
-        $updated_date = $this->convertTimeToDate($updated_time,$user['Twitter']['utc_offset']);
+        $this->Status->updateSavedTime($userId);
+        $updatedTime = $this->Status->getLastUpdatedTime($userId);
+        $updatedDate = $this->convertTimeToDate($updatedTime,$user['Twitter']['utc_offset']);
 
-        $ret['updated_date'] = $updated_date;
+        $ret['updated_date'] = $updatedDate;
         
         echo json_encode($ret);
         
@@ -612,13 +612,13 @@ class AjaxController extends AppController{
         }
         
         $user = $this->Auth->user();
-        $user_id = $user['id'];
+        $userId = $user['id'];
 
         // initialization
         $doUpdate = false;
 
         // fetch the list of user's friends
-        $friends['db'] = $this->Friend->getFriendIds($user_id);
+        $friends['db'] = $this->Friend->getFriendIds($userId);
 
         // check if user has any friends imported
         if(!$friends['db']){
@@ -629,14 +629,14 @@ class AjaxController extends AppController{
         }else{
             
             // fetch same list from twitter
-            $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
-            $friends['twitter'] = $following_friends['ids'];
+            $followingFriends = json_decode($this->Twitter->get('friends/ids'),true);
+            $friends['twitter'] = $followingFriends['ids'];
 
             // compare the number of ids contained in each array
-            $count_db = count($friends['db']);
-            $count_twitter = count($friends['twitter']);
+            $countDb = count($friends['db']);
+            $countTwitter = count($friends['twitter']);
 
-            if($count_db != $count_twitter){
+            if($countDb != $countTwitter){
 
                 // if not equals
                 $doUpdate = true;
@@ -644,9 +644,9 @@ class AjaxController extends AppController{
             }else{
                 
                 // check if $friends['twitter'] contains any id that is not contained in $friends['db']
-                foreach($friends['twitter'] as $my_tw_friend){
+                foreach($friends['twitter'] as $myTwitterFriend){
 
-                    $idExists = in_array($my_tw_friend,$friends['db']);
+                    $idExists = in_array($myTwitterFriend,$friends['db']);
 
                     if(!$idExists){
 
@@ -666,33 +666,33 @@ class AjaxController extends AppController{
 
             if(!isset($friends['twitter'])){
              
-                $following_friends = json_decode($this->Twitter->get('friends/ids'),true);
-                $friends['twitter'] = $following_friends['ids'];
+                $followingFriends = json_decode($this->Twitter->get('friends/ids'),true);
+                $friends['twitter'] = $followingFriends['ids'];
 
             }
 
             // update friends list
-            $this->Friend->updateFriends($user_id,$friends['twitter']);
+            $this->Friend->updateFriends($userId,$friends['twitter']);
         
         }else{
        
             // just update friends_updeted time
-            $this->Friend->updateTime($user_id);
+            $this->Friend->updateTime($userId);
         
         }
 
         // get the total number of friends
-        $count_friends = $this->Friend->getFriendNum($user_id);
+        $countFriends = $this->Friend->getFriendNum($userId);
         
         // get the updated time
-        $updated_time = $this->Friend->getLastUpdatedTime($user_id);
-        $updated_date = $this->convertTimeToDate($updated_time,$user['Twitter']['utc_offset']);
+        $updatedTime = $this->Friend->getLastUpdatedTime($userId);
+        $updatedDate = $this->convertTimeToDate($updatedTime,$user['Twitter']['utc_offset']);
 
         // prepare the array to return
         $ret = array(
                      'updated'=>$doUpdate,
-                     'count_friends'=>$count_friends,
-                     'updated_date'=>$updated_date
+                     'count_friends'=>$countFriends,
+                     'updated_date'=>$updatedDate
                      );
         
         echo json_encode($ret);
@@ -711,13 +711,13 @@ class AjaxController extends AppController{
         }
 
         // initialization
-        $updated_value = array();
+        $updatedValue = array();
         $updated = false;// represents whether any valule was updated or not
         $user = $this->Auth->user();
-        $user_id = $user['id'];
-        $utc_offset = $user['Twitter']['utc_offset'];
+        $userId = $user['id'];
+        $utcOffset = $user['Twitter']['utc_offset'];
         // list of values to be checked 
-        $check_list = array('name','screen_name','profile_image_url_https','time_zone','utc_offset','lang');        
+        $checkList = array('name','screen_name','profile_image_url_https','time_zone','utc_offset','lang');        
         $ret = array();
 
         // fetch profile on twitter
@@ -725,50 +725,50 @@ class AjaxController extends AppController{
         
         // fetch profile on db
         $this->User->unbindAllModels();
-        $db = $this->User->findById($user_id);
+        $db = $this->User->findById($userId);
         
         // check for each value in list
-        foreach($check_list as $value_name){
-            $checkable = array_key_exists($value_name,$db['User']) && array_key_exists($value_name,$tw);
+        foreach($checkList as $valueName){
+            $checkable = array_key_exists($valueName,$db['User']) && array_key_exists($valueName,$tw);
             if($checkable){
             
                 // compare
-                if($tw[$value_name] != $db['User'][$value_name]){
+                if($tw[$valueName] != $db['User'][$valueName]){
                     
                     // if differ, update the value
-                    $this->User->id = $user_id;
+                    $this->User->id = $userId;
                     
-                    if($this->User->saveField($value_name,$tw[$value_name])){
+                    if($this->User->saveField($valueName,$tw[$valueName])){
                     
                         $updated = true;
-                        $updated_value[$value_name] = $tw[$value_name];
+                        $updatedValue[$valueName] = $tw[$valueName];
                     
                     }
                 }
             }
         }
 
-        $this->User->updateTime($user_id);
+        $this->User->updateTime($userId);
         
         $ret = array(
                      'updated'=>$updated,
-                     'updated_date'=>$this->convertTimeToDate($this->User->getLastUpdatedTime($user_id),$utc_offset)
+                     'updated_date'=>$this->convertTimeToDate($this->User->getLastUpdatedTime($userId),$utcOffset)
                      );
         
         if($updated){
 
-            $ret['updated_value'] = $updated_value;
+            $ret['updated_value'] = $updatedValue;
        
             // update logging data
-            $login_data = $this->Auth->user();
+            $loginData = $this->Auth->user();
 
-            foreach($updated_value as $name=>$value){
+            foreach($updatedValue as $name=>$value){
 
-                $login_data['Twitter'][$name] = $value;
+                $loginData['Twitter'][$name] = $value;
 
             }
 
-            $this->Session->write('Auth.User',$login_data);
+            $this->Session->write('Auth.User',$loginData);
 
         }
 

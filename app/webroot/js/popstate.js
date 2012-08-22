@@ -49,11 +49,6 @@ $(function(){
           
           // reset all the term selectors
           $("#wrap-term-selectors").find("a.selected").removeClass("btn-primary selected");
-          
-          console.log("popped");          
-
-        }else{
-          console.log("not popped");
         }
         
       });
