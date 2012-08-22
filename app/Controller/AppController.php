@@ -49,21 +49,35 @@ class AppController extends Controller {
 
         $actionType = $this->request->params['action'];
         
-        // check if current http request is created by facebook plugin
-        // because facebook like plugin doesn't work if set url to like fires any redirect
-        if(!$this->isRequestedByFacebookPlugin()){
-            
+
+        // check if user agent is compatible
+        if($this->isCompatibleUA()){
+
+            // check if the site is under construction
             if(Configure::read('underConstruction')){
-                
-                if($actionType !== 'under_construction'){
-                    return $this->redirect('/under_construction');
-                }elseif($actionType === 'under_construction'){
-                    return;
+
+                if($this->isRequestedByFacebookPlugin()){
+                    // do nothing
+                }else{
+
+                    // check if already showing under_construction page
+                    if($actionType == "under_construction"){
+                        // do nothing
+                    }else{
+                        return $this->redirect('/under_construction');
+                    }
                 }
-                
+
+            }else{
+                // do nothing
             }
-               
-            if(!$this->isCompatibleBrowser() && $actionType != 'browser'){
+
+        }else{
+
+            // check if already showing browser waring page
+            if($actionType == "browser"){
+                // do nothing
+            }else{
                 return $this->redirect('/browser');
             }
 
@@ -111,43 +125,36 @@ class AppController extends Controller {
         }
 
     }
-    
-    public function isCompatibleBrowser(){
-        
-        $ret = false;
-        $ua = $this->getUserAgent();
 
-        // the list of user agents to be accepted
-        $uaWhiteList = array(
-                             'msie',
-                             'chrome',
-                             'firefox',
-                             'safari',
-                             );
+    
+    public function isCompatibleUA(){
         
-        foreach($uaWhiteList as $uaName){
+        $ua = $this->getUserAgent();
+        
+        // the list of user agents not to be accepted
+        $uaBlackList = array(
+                             'opera',
+                             'msie'
+                             );  
+        
+        foreach($uaBlackList as $uaName){
 
             if($ua === $uaName){
 
-                if($uaName === 'msie'){
-                    // if IE,only 9+ is accepted
+                if($ua === "msie"){
                     $version = (int)$this->getIEVersion();
                     if($version >= 9){
-                        $ret = true;
+                        return true;
                     }
-                }else{
-                    $ret = true;
                 }
+                
+                return false;
+
             }
 
         }
 
-        if($ret){
-            $this->browserOk = true;
-        }
-
-        return $ret;
-
+        return true;
     }
     
     public function isRequestedByFacebookPlugin(){
@@ -167,13 +174,15 @@ class AppController extends Controller {
 
     }
 
-    public function getUserAgent(){
-
+    public function getUserAgent($plane=false){
+        
         if(!env('HTTP_USER_AGENT')){
             return false;
         }
         
         $httpUA = env('HTTP_USER_AGENT');
+
+        if($plane) return $httpUA;
 
         $uaStrList = array(
                            'msie',
@@ -227,12 +236,12 @@ class AppController extends Controller {
         }
         
         if(count($array) > 0){
-            $itr_last = count($array) - 1;
+            $itrLast = count($array) - 1;
         }else{
-            $itr_last = 0;
+            $itrLast = 0;
         }
 
-        return $array[$itr_last];
+        return $array[$itrLast];
     }
 
 
@@ -242,10 +251,10 @@ class AppController extends Controller {
     
     }
 
-    public function convertTimeToDate($time,$utc_offset,$format = 'Y/m/d - H:i:s'){
+    public function convertTimeToDate($time,$utcOffset,$format = 'Y/m/d - H:i:s'){
 
-        $user_time = $time + $utc_offset;
-        return date($format,$user_time);
+        $userTime = $time + $utcOffset;
+        return date($format,$userTime);
 
     }
 

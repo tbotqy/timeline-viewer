@@ -46,9 +46,9 @@ class AdminController extends AppController{
 
         $this->set('title_for_layout','Timedline | Admin');
 
-        $gone_users = $this->User->getGoneUsers();
+        $goneUsers = $this->User->getGoneUsers();
 
-        $this->set('gone_users',$gone_users);
+        $this->set('gone_users',$goneUsers);
         $this->set('showFooter',true);
       
     }

@@ -2,7 +2,12 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8"/>
+    <?php if(Configure::read('underConstruction') || Configure::read('useDbConfig') == "dev"):
+    ?>
+    <meta name="robots" content="noindex,nofollow,nocache"/>
+    <?php else:?>
     <meta name="robots" content="index,follow"/>
+    <?php endif;?>
     <meta name="description" content="あの日のタイムラインを眺められる、ちょっとしたアプリケーション"/>
     <meta name="keywords" content="タイムライン,過去のタイムライン,過去のつぶやき,過去のツイート"/>
 
@@ -22,7 +27,8 @@
     <?php
       echo $this->Html->css
       (array(
-             'bootstrap',
+             'bootstrap.min',
+             'bootstrap.2.1.nav.min',
              'font-awesome',
              'style',
              )
@@ -30,7 +36,7 @@
       echo $this->Html->script
       (array(
              'libs/jquery-1.7.2.min',
-             'libs/bootstrap',
+             'libs/bootstrap.min',
              'functions',
              'common',
              'twitter_tweet_button',
@@ -44,12 +50,16 @@
     ?>
     
     <title><?php echo $title_for_layout; ?></title>
-    <script>
+    <?php
+      if(stripos(env('HTTP_HOST'),'dev') === false):
+    ?>
+
+    <script type="text/javascript">
 
       var _gaq = _gaq || [];
-      _gaq.push(['_setAccount', 'UA-33538459-1']);
+      _gaq.push(['_setAccount', 'UA-28886746-8']);
       _gaq.push(['_trackPageview']);
-
+      
       (function() {
         var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
         ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
@@ -57,6 +67,10 @@
       })();
       
     </script>
+
+    <?php
+      endif;
+    ?>
   </head>
   <body>
     <div id="fb-root"></div>
