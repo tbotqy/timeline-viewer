@@ -1,1 +1,446 @@
-$(function(){var j="/img/html_bg_fibers.png";var k=j;$("body").css("background-image","url("+j+")");$("#wrap-dashbord").find(".inner").css("background-image","url("+k+")");var l=getUserAgent();var m=['chrome','safari','firefox'];var n=false;setTimeout(function(){$.getScript('/js/twitter_follow_button.js');$.getScript('/js/twitter_tweet_button.js');$.getScript('//b.st-hatena.com/js/bookmark_button.js');facebook(document,'script','facebook-jssdk')},3000);$(".status-content").live("click",function(e){var a=$(e.target);if(!a.is('a')&&!a.is('i')){$(this).find(".bottom").slideToggle('fast')}});$(".status-content").find(".link-delete a").live("click",function(e){e.preventDefault();if(confirm('ツイートを削除します。よろしいですか？')){var b=$(this).parent().data('status-id');$.ajax({url:"/ajax/delete_status",type:"post",data:{"status_id_to_delete":b},dataType:"json",success:function(a){if(a.owns){if(a.deleted){$("div[data-status-id="+b+"]").fadeOut()}else{alert("ごめんなさい。削除に失敗しました。画面をリロードしてもう一度お試しください。")}}else{alert("不正な操作です。")}},error:function(){alert("エラーが発生しました。")}})}});$("#read-more").live("click",function(e){e.preventDefault();var b=$(this).offset().top;$(this).button('loading');$.ajax({type:"POST",dataType:"html",data:{"oldest_timestamp":$("#oldest-timestamp").attr("value"),"destination_action_type":detectActionType(location.pathname)},url:'/ajax/read_more',success:function(a){$("#oldest-timestamp").remove();$("#wrap-read-more").remove();$(".wrap-each-status:last").after(a)},error:function(a){alert("読み込みに失敗しました。")},complete:function(){scrollDownToDestination(e,b)}})});var o=$(".wrap-progress-bar");var p=$("#start-import");p.click(function(){p.button('loading');showLoader("#wrap-import");o.fadeIn(function(){$("#status").fadeIn()});var a={"id_str_oldest":""};getStatuses(a)});$(".error-inner").find(".description").click(function(e){e.preventDefault();$(".error-inner").find(".invite-friends").fadeIn()});$(".error-inner").find(".invite-friends .close").click(function(e){e.preventDefault();$(".error-inner").find(".invite-friends").fadeOut()});$("#update-profile").click(function(){$(this).button('loading');$(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");$(".wrap-profile").find(".loader").fadeIn();checkProfileUpdate()});$("#update-statuses").click(function(){$(this).button('loading');$(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");$(".tweets").find(".loader").fadeIn();checkStatusUpdate()});$("#update-friends").click(function(){$(this).button('loading');$(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");$(".friends").find(".loader").fadeIn();checkFriendUpdate()});var q="";$("#delete-account").click(function(){$("#modal-delete-account").find(".modal-header .close").fadeOut();$("#modal-delete-account").find(".modal-footer .cancel-delete").addClass("disabled");$(this).button('loading');$("#modal-delete-account").find(".status").fadeOut(function(){$(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />")}).fadeIn();$.ajax({url:'/ajax/delete_account',type:'post',dataType:'json',success:function(a){q=a.deleted;showDeleteCompleteMessage(a.deleted)},error:function(){showDeleteErrorMessage()},complete:function(){if(q){setTimeout(function(){redirect()},3000)}else{alert("処理がうまくいきませんでした。")}}})});$(window).scroll(function(){var a=$(document).scrollTop();if(a>=200){$(".to-page-top").fadeIn()}else{$(".to-page-top").fadeOut()}});$(".to-page-top").find("a").click(function(e){scrollToPageTop(e)});$(".list-years").find("li").mouseover(function(){$(".list-years").find("a").removeClass("btn-primary selected");$(this).find('a').addClass("btn-primary selected");$("#wrap-list-months").find("ul").css('display','none');$("#wrap-list-days").find("ul").css('display','none');var a=$(this).attr('data-date');$("#wrap-list-months").find("."+a).css('display','block')});$(".list-months").find("li").mouseover(function(){$(".list-months").find("li").find("a").removeClass("btn-primary selected");$(this).find('a').addClass("btn-primary selected");$("#wrap-list-days").find("ul").css('display','none');var a=$(this).attr('data-date');$("#wrap-list-days").find("."+a).css('display','block')});if('pushState'in history){$("#wrap-term-selectors").find("a").click(function(e){e.preventDefault();var b=$(this).attr('href');var c=$(this).attr('data-date');var d=$(this).attr('data-date-type');var f=$("#wrap-timeline");f.html("<div class=\"cover\"><span>Loading</span></div>");var g=f.find('.cover');g.css("height",200);g.animate({opacity:0.8},200);var h=location.pathname;var i=detectActionType(h);$.ajax({type:'GET',dataType:'html',url:'/ajax/switch_term',data:{"date":c,"date_type":d,"action_type":i},success:function(a){$("#wrap-main").html(a)},error:function(a){alert("読み込みに失敗しました。画面をリロードしてください")},complete:function(){scrollToPageTop(e);$("#wrap-main").fadeIn('fast');$("#wrap-term-selectors").find("a").button('complete');window.history.pushState(null,null,b)}})})}$("#wrap-list-years").find("a").click(function(){$("#wrap-list-months").find(".selected").removeClass("selected btn-primary");$("#wrap-list-days").find(".selected").removeClass("selected btn-primary");$(this).addClass("selected btn-primary")});$("#wrap-list-months").find("a").click(function(){$("#wrap-list-days").find(".selected").removeClass("selected btn-primary");$(this).addClass("selected btn-primary")});$("#wrap-list-days").find("a").click(function(){$("#wrap-list-days").find(".selected").removeClass("selected btn-primary");$(this).addClass("selected btn-primary")})});
+$(function(){
+      
+  // set background image to dashbord same with html's background
+  var urlToBg = "/img/html_bg_fibers.png";
+  //var urlToDashbord = "/img/html_bg_linen.png";
+  var urlToDashbord = urlToBg;
+  $("body").css("background-image","url("+urlToBg+")");
+  $("#wrap-dashbord").find(".inner").css("background-image","url("+urlToDashbord+")");
+
+  // check user agent
+  var userAgent = getUserAgent();
+  var uaWhiteList = ['chrome','safari','firefox'];
+  var isValidUA = false;
+
+  // make loading social plugin delayed
+  setTimeout(function(){
+    $.getScript('/js/twitter_follow_button.js');
+    $.getScript('/js/twitter_tweet_button.js');
+    $.getScript('//b.st-hatena.com/js/bookmark_button.js');
+    facebook(document, 'script', 'facebook-jssdk');
+  },3000);
+
+  //////////////////////////
+  // code for each status //
+  //////////////////////////
+  
+  // click action to hide and show the bottom line in each status
+  $(".status-content").live("click",function(e){
+ 
+    // do process only if clicked element is not <a>
+    var clicked = $(e.target);
+    if(!clicked.is('a') && !clicked.is('i')){
+      
+      $(this).find(".bottom").slideToggle('fast');
+      
+    }
+    
+  });
+
+  // click action to fire a delete ajax action
+  $(".status-content").find(".link-delete a").live("click",function(e){
+    
+    e.preventDefault();
+    
+    if(confirm('ツイートを削除します。よろしいですか？')){
+
+      var status_id_to_delete = $(this).parent().data('status-id');
+      
+      $.ajax({
+        
+        url: "/ajax/delete_status",
+        type: "post",
+        data:{"status_id_to_delete":status_id_to_delete},
+        dataType: "json",
+
+        success: function(responce){
+
+          // checks if the status trying to deleted is owned by logging user
+          if(responce.owns){
+            
+            // checks id delete process was correctly done
+            if(responce.deleted){
+                
+              $("div[data-status-id="+status_id_to_delete+"]").fadeOut();
+            }else{
+              
+              alert("ごめんなさい。削除に失敗しました。画面をリロードしてもう一度お試しください。");
+            
+            }
+          
+          }else{
+            // the status trying to be deleted is not owned by logging user
+            alert("不正な操作です。");
+          }
+
+        },
+        
+        error: function(){
+          // internal error
+          alert("エラーが発生しました。");
+        }
+      });
+    }
+  });          
+  
+  // click action for read more button
+  $("#read-more").live("click",function(e){
+    
+    e.preventDefault();
+    var distance = $(this).offset().top;
+
+    // let button say 'loading'
+    $(this).button('loading');
+    
+    // fetch more statuses to show
+    $.ajax({
+
+      type:"POST",
+      dataType:"html",
+      data:{
+	"oldest_timestamp":$("#oldest-timestamp").attr("value"),
+	"destination_action_type":detectActionType(location.pathname)
+      },
+      url: '/ajax/read_more',
+      success: function(responce){
+	// remove the element representing last status's timestamp
+	$("#oldest-timestamp").remove();
+	
+	$("#wrap-read-more").remove();
+
+	// insert loaded html code 
+	$(".wrap-each-status:last").after(responce);
+      },
+      error: function(responce){
+	alert("読み込みに失敗しました。");
+      },
+      complete: function(){
+	
+	scrollDownToDestination(e,distance);
+
+      }
+    });
+  });
+
+  var wrap_progress_bar = $(".wrap-progress-bar");
+  var import_button = $("#start-import");  
+
+  //click event activated when start button is clicked
+  import_button.click(function(){
+    
+    // change the button statement
+    import_button.button('loading');
+    
+    // show the loader icon
+    showLoader("#wrap-import");
+    
+    /// show the progress bar
+    wrap_progress_bar.fadeIn(function(){
+
+      // show the area displaying the status body currently saving
+      $("#status").fadeIn();
+    
+    });
+      
+    //initialize data to post
+    var data_to_post = {"id_str_oldest":""};
+    
+    // post ajax request 
+    getStatuses(data_to_post);
+    
+  });
+  
+  ////////////////////////////////////
+  // code for /users/home_timeline  //
+  ////////////////////////////////////
+  
+  $(".error-inner").find(".description").click(function(e){
+    e.preventDefault();
+    $(".error-inner").find(".invite-friends").fadeIn();
+  });
+
+  $(".error-inner").find(".invite-friends .close").click(function(e){
+    e.preventDefault();
+    $(".error-inner").find(".invite-friends").fadeOut();
+  });
+
+  ////////////////////////////////////
+  // code for /users/configurations //
+  ////////////////////////////////////
+
+  /**
+   * the process to update profile
+   */
+
+  $("#update-profile").click(function(){
+
+    // change the button's statement
+    $(this).button('loading');
+
+    // show the loading icon 
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".wrap-profile").find(".loader").fadeIn();
+
+    checkProfileUpdate();
+
+  });
+
+  /**
+   * the process to update tweets
+   */
+
+  $("#update-statuses").click(function(){
+
+    // change the button's statement
+    $(this).button('loading');
+
+    // show the loading icon 
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".tweets").find(".loader").fadeIn();
+
+    checkStatusUpdate();
+
+  });
+
+  /**
+   * the process to update friend list
+   */
+
+  $("#update-friends").click(function(){
+    
+    // change the button's statement
+    $(this).button('loading');
+
+    // show the loading icon
+    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    $(".friends").find(".loader").fadeIn();
+
+    checkFriendUpdate();
+    
+  });
+  
+  /**
+   * the process for account deletion
+   */
+
+  var deleted = "";
+ 
+  // click event to delete account
+  $("#delete-account").click(function(){
+
+    // disable cancel button
+    $("#modal-delete-account").find(".modal-header .close").fadeOut();
+    $("#modal-delete-account").find(".modal-footer .cancel-delete").addClass("disabled");
+
+    $(this).button('loading');
+    $("#modal-delete-account")
+      .find(".status")
+      .fadeOut(function(){
+	$(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />"); 
+      })
+      .fadeIn();
+    
+    $.ajax({
+      
+      url: '/ajax/delete_account',
+      type: 'post',
+      dataType: 'json',
+      
+      success: function(res){
+	deleted = res.deleted;
+	showDeleteCompleteMessage(res.deleted);
+      },
+
+      error: function(){
+	showDeleteErrorMessage();
+      },
+      
+      complete: function(){
+	if(deleted){
+
+	  setTimeout(
+	    function(){
+	      redirect();
+	    }, 3000
+	  );
+	  
+	}else{
+          alert("処理がうまくいきませんでした。");
+        }
+      }
+
+    });
+  });
+
+
+  ///////////////////////////////////////////////
+  // code for the button to scroll to page top //
+  ///////////////////////////////////////////////
+
+  $(window).scroll(function() {
+    var topy = $(document).scrollTop();
+    if (topy >= 200) {
+      $(".to-page-top").fadeIn();
+    }else{
+      $(".to-page-top").fadeOut();
+    }
+  });
+  
+  $(".to-page-top").find("a").click (function(e) {
+    scrollToPageTop(e);
+  });
+  
+  ////////////////////////////////
+  // code for elements/dashbord //
+  ////////////////////////////////
+
+  // mouseover action for year list in dashbord
+  $(".list-years").find("li").mouseover(function(){
+    
+    // normalize all the buttons for years
+    $(".list-years").find("a").removeClass("btn-primary selected");
+ 
+    // apply unique css feature only to focused button 
+    $(this).find('a').addClass("btn-primary selected");
+    
+    // hide all the lists for months and days
+    $("#wrap-list-months").find("ul").css('display','none');
+    $("#wrap-list-days").find("ul").css('display','none');
+    
+    // get the data-date value in hovered button
+    var year = $(this).attr('data-date');
+
+    // show the months list whose class is equal to var year
+    $("#wrap-list-months").find("."+year).css('display','block');
+    
+  });
+
+  // mouseover action for months list in dashbord
+  $(".list-months").find("li").mouseover(function(){
+    
+    // normalize all the buttons for months
+    $(".list-months").find("li").find("a").removeClass("btn-primary selected");
+  
+    // apply unique css feature only to focused button 
+    $(this).find('a').addClass("btn-primary selected");
+
+    // hide all the days lists
+    $("#wrap-list-days").find("ul").css('display','none');
+
+    // get the data-date value in hovered button 
+    var month = $(this).attr('data-date');
+   
+    // show the days list whose class is equal to var month
+    $("#wrap-list-days").find("."+month).css('display','block');
+ 
+  });
+
+  if('pushState' in history){
+
+  // click action to change the term of statuses to show
+  $("#wrap-term-selectors").find("a").click(function(e){
+    
+    // prevent the page from reloading
+    e.preventDefault();
+
+    // get href attr in clicked button
+    var href =$(this).attr('href');
+    
+    // acquire the date to fetch from clicked button
+    var date = $(this).attr('data-date');
+    var date_type = $(this).attr('data-date-type');
+
+    // show the loading icon over the statuses area
+    var wrap_timeline = $("#wrap-timeline");
+ 
+    wrap_timeline.html("<div class=\"cover\"><span>Loading</span></div>");
+
+    var cover = wrap_timeline.find('.cover');
+ 
+    cover.css("height",200);
+    
+    cover.animate({
+      opacity: 0.8
+    },200);
+
+    // check the type of data currently being shown
+    var path = location.pathname;
+    var action_type = detectActionType(path);
+  
+    // fetch statuses 
+    $.ajax({
+      type: 'GET',
+      dataType: 'html',
+      url:'/ajax/switch_term',
+      data:{
+        "date":date,
+        "date_type":date_type,
+        "action_type":action_type
+      },
+      success: function(responce){
+
+	// insert recieved html
+	$("#wrap-main").html(responce);
+      },
+      error: function(responce){
+	alert("読み込みに失敗しました。画面をリロードしてください");	
+      },
+      complete: function(){
+
+	// scroll to top
+	scrollToPageTop(e);
+
+	// show the loaded html
+	$("#wrap-main").fadeIn('fast');
+
+	// let the button say that process has been done
+	$("#wrap-term-selectors").find("a").button('complete');
+	
+	// record requested url in the histry
+	window.history.pushState(null,null,href);
+	
+      }
+    });
+  });
+      
+  }
+
+
+
+  // click event for year selector
+  $("#wrap-list-years").find("a").click(function(){
+    
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-months").find(".selected").removeClass("selected btn-primary");
+
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-days").find(".selected").removeClass("selected btn-primary");
+
+    // make clicked button selected
+    $(this).addClass("selected btn-primary");
+    
+  });
+
+  // click event for month selector
+  $("#wrap-list-months").find("a").click(function(){
+    
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-days").find(".selected").removeClass("selected btn-primary");
+
+    // make clicked button selected
+    $(this).addClass("selected btn-primary");
+    
+  });
+
+  // click event for day selector
+  $("#wrap-list-days").find("a").click(function(){
+    
+    // normalize all the buttons labeled as day selector
+    $("#wrap-list-days").find(".selected").removeClass("selected btn-primary");
+
+    // make clicked button selected
+    $(this).addClass("selected btn-primary");
+    
+  });
+
+});
