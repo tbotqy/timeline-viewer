@@ -1,1 +1,80 @@
-$(function(){var e=$("#wrap-admin");e.find(".delete-each").click(function(){var a=$(this).parent();showLoader(a);var b=$(this).data('dest-id');deleteHim(b)});e.find("#delete-selected").click(function(){var b=$(this).parent();showLoader(b);var c;var d=e.find("tbody tr .chk button.active");if(d.length>0){d.each(function(i,a){c=$(a).data("dest-id");deleteHim(c)},hideLoader(b))}else{alert("nothing is selected");hideLoader(".wrap-button")}})});function deleteHim(b){var c=$("#wrap-admin");$.ajax({url:"/ajax/delete_him",type:"post",data:{"dest_id":b},dataType:"text",success:function(a){if(a=="NG"){alert("something went wrong with deleting account")}else{c.find("tr[data-dest-id="+b+"]").fadeOut()}},error:function(){alert("Ajax error")}})}
+$(function(){
+
+  // admin screen
+  var admin = $("#wrap-admin");
+  
+  // ----
+
+  // click event handler for the button to delete each single account
+  admin.find(".delete-each").click(function(){
+
+    var parent = $(this).parent();
+
+    // show the loader
+    showLoader(parent);
+
+    // check which user id does clicked button point
+    var dest_id = $(this).data('dest-id');
+    deleteHim(dest_id);
+    
+    
+  });
+                                  
+  // click event handler for the button to delete selected accounts 
+  admin.find("#delete-selected").click(function(){
+
+    var parent = $(this).parent();
+
+    // show the loader
+    showLoader(parent);
+    
+    // array to contain the destination ids
+    var dest_id;
+    
+    var checked_buttons = admin.find("tbody tr .chk button.active");
+  
+    if(checked_buttons.length > 0){
+        
+      checked_buttons.each(function(i,element){
+        
+        dest_id = $(element).data("dest-id");
+        
+        deleteHim(dest_id);
+
+      },hideLoader(parent));;
+
+    }else{
+      
+      // no button is selected 
+      alert("nothing is selected");
+      hideLoader(".wrap-button");
+    }
+
+  });
+
+});
+
+function deleteHim(dest_id){
+  
+  var admin = $("#wrap-admin");
+
+  $.ajax({
+    url:"/ajax/delete_him",
+    type:"post",
+    data:{"dest_id":dest_id},
+    dataType: "text",
+    success: function(res){
+      if(res == "NG"){
+        
+        alert("something went wrong with deleting account");
+      }else{
+        // hide the element of deleted account
+        admin.find("tr[data-dest-id="+dest_id+"]").fadeOut();
+      }
+    },
+    error: function(){
+
+      alert("Ajax error");
+    }
+  });
+}
