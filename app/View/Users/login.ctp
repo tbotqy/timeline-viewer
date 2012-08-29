@@ -4,7 +4,7 @@
   <!-- .upper -->
   <div class="upper">
     <header>
-      <h1 class="brand">Timedline</h1><span class="version">beta</span>
+      <h1 class="brand"><span>Timedline</span><span class="version">beta</span></h1>
       <p class="catch">あの日のタイムラインを眺められるちょっとしたアプリケーション</p>
 
     <a href="/public_timeline" target="_self" class="btn btn-primary">パブリックタイムラインを見る</a>
@@ -14,19 +14,19 @@
   
   <!-- .lower -->
   <div class="lower">
-
-  <section>
+    
+    <section>
       
-    <div class="remark">
-      Timedlineは<a href="#modal-how-data-are-treated" data-toggle="modal">あなたのTwitterアカウントと連携</a>します
-    </div>
+      <div class="remark">
+	Timedlineは<a href="#modal-how-data-are-treated" data-toggle="modal">あなたのTwitterアカウントと連携</a>します
+      </div>
+      
+      <div class="wrap-btn-auth">
+	<a href="/twitter/authorize" class="btn-auth">Sign in with Twitter</a>
+      </div>
+      
+    </section>
     
-    <div class="wrap-btn-auth">
-      <a href="/twitter/authorize" class="btn-auth">Sign in with Twitter</a>
-    </div>
-    
-  </section>
-
   </div>
   <!-- /.lower -->
   
