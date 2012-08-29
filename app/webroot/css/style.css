@@ -833,16 +833,11 @@ footer .copyright{
   font-size: 90%;
 }
 
-#wrap-login .left,
-#wrap-login .right{ 
-  float: left;
-  width: 50%;
-  text-align: center;
-  background: white;
-}
-
-#wrap-login .right,
-#wrap-login .left { 
+#wrap-login .upper{ 
+  width: 100%;
+  height: 60px;
+  margin: 0 auto;
+  text-align: left;
   border-top: solid 1px #fefefe;
   border-bottom: solid 1px #d7d7d7;  
   background: #f2eee6;
@@ -850,32 +845,26 @@ footer .copyright{
 
 #wrap-login header{ 
   width: 100%;
-  text-align: center;
 }
 
 #wrap-login header .brand{ 
-  width: 100%;
-  font-size: 30px;
+  float: left;
+  font-size: 40px;
+}
+
+#wrap-login header span{ 
   float: left;
 }
 
 #wrap-login header .version{ 
+  float: left;
   font-size: 20px;
-  position: relative;
-  top: -24px;
-  left: 120px;
   color: #CD8500;
   opacity:0.7;
 }
 
 #wrap-login header .catch{ 
   float: left;
-  width: 100%;
-  margin: -15px 0 0 0;
-}
-
-#wrap-login section{ 
-  
 }
 
 #wrap-login .remark{ 
