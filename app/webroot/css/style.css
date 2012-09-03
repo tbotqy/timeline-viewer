@@ -830,6 +830,7 @@ footer .copyright{
 #wrap-login{ 
   width: 100%;
   float: left;
+  font-size: 90%;
 }
 
 #wrap-login header{ 
