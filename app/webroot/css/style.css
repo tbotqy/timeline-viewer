@@ -11,6 +11,7 @@ body{
   font-family: Helvetica,"メイリオ", sans-serif;
   color: #7a6e7e;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); 
+  background-image: url(/img/html_bg_fibers.png);
 }
 
 /* --------------------------------------------------
@@ -41,7 +42,8 @@ i{
   margin: 0 5px 0 0;
 }
 
-.brand{ 
+.brand,
+.version{ 
   font-family: 'Emblema One', cursive;
 }
 
@@ -70,6 +72,12 @@ footer .copyright{
 .btn{ 
   font-size: 13px;
   padding: 4px 10px 4px;
+}
+
+.caramel{ 
+  border-top: solid 1px #fefefe;
+  border-bottom: solid 1px #d7d7d7;  
+  background: #f2eee6;
 }
 
 /* --------------------------------------------------
@@ -466,9 +474,9 @@ footer .copyright{
   position: fixed;
   top: 40px;
   border-bottom: solid 2px #808080;
-  background: black;
   z-index: 1000;
   opacity: 1;
+  background-image: url(/img/html_bg_fibers.png);
 }
 
 #wrap-term-selectors{
@@ -837,41 +845,58 @@ footer .copyright{
   width: 100%;
   height: 60px;
   margin: 0 auto;
-  text-align: left;
-  border-top: solid 1px #fefefe;
-  border-bottom: solid 1px #d7d7d7;  
-  background: #f2eee6;
+  text-align: center;
+}
+
+#wrap-login .middle{ 
+  float: left;
+  width: 100%;
+  height: 150px;
+  border-top: solid 1px silver;
+  padding: 10px 0 13px 0;
 }
 
 #wrap-login header{ 
   width: 100%;
+  text-align: center;
 }
 
 #wrap-login header .brand{ 
   float: left;
+  width: 100%;
+}
+
+#wrap-login header .brand .name{ 
+  float: left;
+  width: 100%;
   font-size: 40px;
 }
 
-#wrap-login header span{ 
-  float: left;
-}
-
-#wrap-login header .version{ 
-  float: left;
+#wrap-login header .brand .version{ 
   font-size: 20px;
   color: #CD8500;
   opacity:0.7;
+  position: relative;
+  top: -23px;
+  left: 150px;
 }
 
 #wrap-login header .catch{ 
   float: left;
+  clear: both;
+  width: 100%;
+}
+
+#wrap-login .middle .explanation-box{ 
+  float: left;
+  width: 100%;
+  height: 150px;
 }
 
 #wrap-login .remark{ 
   float: left;
   width: 100%;
   text-align: center;
-  margin: 10px 0 0 0;
   padding: 20px 0 0 0;
   border-top: solid 1px silver;
   color: gray;
