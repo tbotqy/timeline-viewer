@@ -589,6 +589,29 @@ class Status extends AppModel{
     // utils //
     ///////////
 
+    public function getTotalStatusNum(){
+        
+        /**
+         * count the number of total statuses active
+         * @return int
+         */
+
+        // get the active user list
+
+        $activeUser = $this->User->getIds();
+
+        return $this->find(
+                           'count',
+                           array(
+                                 'conditions'=>array(
+                                                     'Status.user_id'=>$activeUser,
+                                                     'Status.pre_saved'=>false
+                                                     )
+                                 )
+                           );
+
+    }
+
     public function getStatusNum($user_id){
 
         /**
