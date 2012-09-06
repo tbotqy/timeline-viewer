@@ -29,7 +29,8 @@ class UsersController extends AppController{
             $this->redirect('/your/home_timeline');
         
         }else{
-            $this->set('showFooter',true);         
+            $this->set('showFooter',true);
+            $this->set('totalStatusNum',$this->Status->getTotalStatusNum());
             $this->render('login');
         }
     }
@@ -41,7 +42,8 @@ class UsersController extends AppController{
          */
 
         $this->set('showFooter',true);
-        
+        $this->set('totalStatusNum',$this->Status->getTotalStatusNum());
+
         if($this->Auth->loggedIn()){
         
             $this->redirect('/');

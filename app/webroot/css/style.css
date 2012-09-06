@@ -112,7 +112,6 @@ footer .copyright{
 }
 
 #container-header .link-timeline{
-  //color: #fcf8e3;
   color: silver;
 }
 
@@ -341,7 +340,6 @@ footer .copyright{
   width: 100%;
   font-size: 30px;
   float: left;
-  //font-family: 'Emblema One', cursive;
 }
 
 .box.browser header .version{ 
@@ -835,40 +833,43 @@ footer .copyright{
   height: 400px;
 }
 
-#wrap-login{ 
-  width: 100%;
-  float: left;
+#wrap-login {
+  width: 85%;
   font-size: 90%;
+  margin: 130px auto 0 auto;
+}
+
+#wrap-login h3{ 
+  margin: 5px 0;
+}
+
+#wrap-login .description{ 
+  height: 60px;
+  padding: 5px 0 0 0;
+  margin: 0 0 5px 0;
+}
+
+#wrap-login .description .lower-line{
+  position: relative;
+  top: 12px;
 }
 
 #wrap-login .upper{ 
-  width: 100%;
-  height: 60px;
-  margin: 0 auto;
-  text-align: center;
-}
-
-#wrap-login .middle{ 
   float: left;
   width: 100%;
-  height: 150px;
-  border-top: solid 1px silver;
-  padding: 10px 0 13px 0;
-}
-
-#wrap-login header{ 
-  width: 100%;
+  margin: 0 auto;
+  padding: 20px 0 0 0;
   text-align: center;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
 }
 
 #wrap-login header .brand{ 
-  float: left;
   width: 100%;
+  margin: 0 auto;
 }
 
 #wrap-login header .brand .name{ 
-  float: left;
-  width: 100%;
   font-size: 40px;
 }
 
@@ -881,37 +882,69 @@ footer .copyright{
   left: 150px;
 }
 
-#wrap-login header .catch{ 
+#wrap-login .lower{
   float: left;
-  clear: both;
   width: 100%;
+  margin: 10px 0 0 0;
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
-#wrap-login .middle .explanation-box{ 
-  float: left;
+#wrap-login .inner{ 
   width: 100%;
-  height: 150px;
+  float: left;
+  margin: 15px 0;
+}
+
+#wrap-login .lower .left,
+#wrap-login .lower .right{ 
+  float: left;
+  width: 49%;
+}
+
+#wrap-login .lower .left{
+  border-right: solid 1px #fefefe;
+}
+
+#wrap-login .lower .right{ 
+  border-left: solid 1px #d7d7d7;  
+}
+
+#wrap-login .lower .right .link{ 
+  position: relative;
+  top: 3px;
 }
 
 #wrap-login .remark{ 
   float: left;
   width: 100%;
   text-align: center;
-  padding: 20px 0 0 0;
-  border-top: solid 1px silver;
   color: gray;
 }
 
 #wrap-login .remark a{ 
-  color: #CD8500;
-color:#e6e6fa;
-color:#4169e1;
+  color:#4169e1;
 }
 
-#wrap-login .wrap-btn-auth{
+#wrap-login .lower .info{ 
+  padding: 4px 6px;
+  font-size: 80%;
+}
+
+#wrap-login .lower .readme{
+  position: relative;
+  top: -13px;
+  left: 310px;
+}
+
+#wrap-login .lower .readme a{
+  color: #4169e1;
+}
+
+#wrap-login .wrap-btn-auth,
+#wrap-login .wrap-btn-public{
   float: left;
   width: 100%;
-  margin: 10px 0 0 0;
   text-align: center;
 }
 
@@ -921,7 +954,6 @@ color:#4169e1;
   border: 1px solid #39D;
   color: #FFF;
   font-weight: 700;
-  margin: 0 5px 0 0;
   padding: 4px 10px 5px;
   text-shadow: 0 -1px 0 #39D;
   text-decoration: none;
@@ -949,7 +981,7 @@ color:#4169e1;
 
 #modal-how-data-are-treated .modal-body p i{ 
   float: left;
- }
+}
 
 /* --------------------------------------------------
    users.we_are_sorry
