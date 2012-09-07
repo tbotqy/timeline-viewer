@@ -17,6 +17,8 @@ class AjaxController extends AppController{
         
         // make all the actions need authentication
         $this->Auth->deny();
+        // only allow some methods,which are accessed from /public_timedline
+        $this->Auth->allow('read_more','switch_term');
 
         // reject non-ajax requests
         if(!$this->request->isAjax()){
