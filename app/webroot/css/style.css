@@ -942,6 +942,7 @@ footer .copyright{
   position: relative;
   top: -13px;
   left: 310px;
+  font-size: 90%;
 }
 
 #wrap-login .lower .readme a{
