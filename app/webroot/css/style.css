@@ -872,6 +872,7 @@ footer .copyright{
 
 #wrap-login header .brand .name{ 
   font-size: 40px;
+  letter-spacing: -1px;
 }
 
 #wrap-login header .brand .version{ 
