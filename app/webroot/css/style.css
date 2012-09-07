@@ -833,12 +833,11 @@ footer .copyright{
   height: 400px;
 }
 
-<<<<<<< HEAD
 #wrap-login{ 
   width: 100%;
   float: left;
   font-size: 90%;
-=======
+
 #wrap-login {
   width: 85%;
   font-size: 90%;
@@ -859,7 +858,6 @@ footer .copyright{
 #wrap-login .description .lower-line{
   position: relative;
   top: 12px;
->>>>>>> login-horizontal-buttons
 }
 
 #wrap-login .upper{ 
