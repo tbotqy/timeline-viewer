@@ -13,7 +13,7 @@
 <!-- .wrap-each-status -->
 <div class="wrap-each-status" 
      <?php
-          if($status['User']['twitter_id'] === $loggingUser['Twitter']['id']):
+          if($loggedIn && $status['User']['twitter_id'] === $loggingUser['Twitter']['id']):
      ?>
      data-status-id="<?php echo $status['Status']['id'];?>"
   <?php endif;?>
@@ -68,7 +68,7 @@
           <a href="https://twitter.com/<?php echo $status['User']['screen_name'];?>/status/<?php echo $status['Status']['status_id_str'];?>" target="_blank">詳細</a>
       </span>
       <?php
-          if($status['User']['twitter_id'] === $loggingUser['Twitter']['id']):
+          if($loggedIn && $status['User']['twitter_id'] === $loggingUser['Twitter']['id']):
       ?>
       <span class="link-delete" data-status-id="<?php echo $status['Status']['id'];?>">
 	<a href="#"> <i class="icon-trash"></i> </a>

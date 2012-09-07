@@ -14,7 +14,7 @@ class UsersController extends AppController{
 
         parent::beforeFilter();
         
-        $this->Auth->allow('index','login','authorize','callback','logout','we_are_sorry_but','under_construction','browser','test');
+        $this->Auth->allow('index','login','authorize','callback','logout','public_timeline','we_are_sorry_but','under_construction','browser','test');
         
     }
 
@@ -29,7 +29,8 @@ class UsersController extends AppController{
             $this->redirect('/your/home_timeline');
         
         }else{
-            $this->set('showFooter',true);         
+            $this->set('showFooter',true);
+            $this->set('totalStatusNum',$this->Status->getTotalStatusNum());
             $this->render('login');
         }
     }
@@ -41,7 +42,8 @@ class UsersController extends AppController{
          */
 
         $this->set('showFooter',true);
-        
+        $this->set('totalStatusNum',$this->Status->getTotalStatusNum());
+
         if($this->Auth->loggedIn()){
         
             $this->redirect('/');
@@ -415,7 +417,7 @@ class UsersController extends AppController{
          * shows the public timeline, the line of tweets presented by all the users registered 
          */
         
-        $this->rejectUninitialized();
+        //$this->rejectUninitialized();
 
         $this->set('title_for_layout','Timedline | パブリックタイムライン');
 
@@ -438,11 +440,15 @@ class UsersController extends AppController{
             // check the type of given term
             $dateType = $this->Parameter->getParamType($term);
             
-            // fetch user's twitter account info
-            $userData = $this->User->findById($userId);
-        
-            // load user's utc offset
-            $utcOffset = $userData['User']['utc_offset'];
+            // fetch user's twitter account info if logged in
+            if($userId){
+                $userData = $this->User->findById($userId);
+
+                // load user's utc offset
+                $utcOffset = $userData['User']['utc_offset'];
+            }else{
+                $utcOffset = 32400;
+            }
             
             // convert given term from string to unixtime
             $term = $this->Parameter->termToTime($term,$dateType,$utcOffset);
@@ -470,7 +476,6 @@ class UsersController extends AppController{
             
             $noStatusAtAll = true;
        
-            $this->set('showFooter',true);
         }
 
         // get date list
