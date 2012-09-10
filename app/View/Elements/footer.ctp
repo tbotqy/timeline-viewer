@@ -23,7 +23,7 @@
       <div class="area-right">
 
 	<div class="wrap-catch">
-	  <p class="brand">Timedline</h1>
+	  <p class="brand">Timedline</p>
 	  <p class="description">is a simple view system for those who want to have the access to their past timeline.</p>
 	</div>
 
