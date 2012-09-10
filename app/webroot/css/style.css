@@ -12,6 +12,7 @@ body{
   color: #7a6e7e;
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6); 
   background-image: url(/img/html_bg_fibers.png);
+  overflow-x: hidden;
 }
 
 /* --------------------------------------------------
