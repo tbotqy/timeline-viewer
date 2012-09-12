@@ -1,4 +1,4 @@
-timedline
+timeline-viewer
 =========
 
-timedline is (meant to be) the simple view system for those who want to have the access to their past tweets.
+timeline-viewer is (meant to be) the simple view system for those who want to have the access to their past tweets.
