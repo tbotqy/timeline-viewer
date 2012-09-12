@@ -27,7 +27,7 @@ class TwitterComponent extends Component{
         
         $client = $this->createClient();
 
-        $url = "https://api.twitter.com/1/".$method.".json";
+        $url = "https://api.twitter.com/1.1/".$method.".json";
 
         if(!$tokens){
             
