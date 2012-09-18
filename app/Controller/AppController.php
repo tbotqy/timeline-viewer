@@ -74,7 +74,7 @@ class AppController extends Controller {
 
         }else{
 
-            // check if already showing browser waring page
+            // check if already showing browser warning page
             if($actionType == "browser"){
                 // do nothing
             }else{
