@@ -7,6 +7,9 @@
       <h1 class="name">Timedline</h1>
       <span class="version">beta</span>
     </div>
+    <div class="sub-title">
+      
+    </div>
   </header>
   <!-- /.upper -->
 
@@ -20,11 +23,11 @@
       <div class="left">
 	
 	<div class="remark">
-	  <h3>Jump to that day</h3>
+	  <h3>つぶやきから分かる、あの日の出来事</h3>
 	
 	  <div class="description">
-	    <p>Timedlineでは、日付を指定してタイムラインをさかのぼる事ができます</p>
-     <span class="info alert alert-info">現在の共有ツイート数 : <?php echo $totalStatusNum;?></span>
+	    <p>Timedlineでは人々がつぶやいた事を、日付を指定して振り返る事ができます</p>
+	    <span class="info alert alert-info">現在の共有ツイート数 : <?php echo $totalStatusNum;?></span>
 	  </div>
 	
 	</div>
@@ -40,7 +43,7 @@
       <div class="right">
 	
 	<div class="remark">
-	  <h3>Look back what you said</h3>
+	  <h3>あの日の自分を振り返る</h3>
 	  <div class="description">
 	    <p>サインインすれば、あなたやあなたがフォローしている人たちによる<br/><span class="lower-line"> タイムラインを振り返ることもできます</span></p>
 	  </div>
