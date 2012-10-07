@@ -837,7 +837,7 @@ footer .copyright{
 #wrap-login {
   width: 85%;
   font-size: 90%;
-  margin: 130px auto 0 auto;
+  margin: 170px auto 0 auto;
 }
 
 #wrap-login h3{ 
@@ -888,7 +888,6 @@ footer .copyright{
 #wrap-login .lower{
   float: left;
   width: 100%;
-  margin: 10px 0 0 0;
   border-bottom-left-radius: 10px;
   border-bottom-right-radius: 10px;
 }
