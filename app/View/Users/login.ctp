@@ -26,7 +26,7 @@
 	  <h3>つぶやきから分かる、あの日の出来事</h3>
 	
 	  <div class="description">
-	    <p>Timedlineでは人々がつぶやいた事を、日付を指定して振り返る事ができます</p>
+	    <p>人々がつぶやいた事を日付を指定して振り返る事ができます</p>
 	    <span class="info alert alert-info">現在の共有ツイート数 : <?php echo $totalStatusNum;?></span>
 	  </div>
 	
