@@ -23,7 +23,7 @@
             $count = 0;
 	     ?>
 	  <?php foreach($date_list as $year=>$val):?>
-	  <li data-date="date-<?php echo $year;?>"><a class="btn <?php if($count++ == 0){echo 'first';}elseif($count == $max){echo 'last';}else{ echo 'mid';}?>" data-date-type="year" href="<?php echo $this->Link->removeNumParam($this->Html->url(null,false));?>/<?php echo $year;?>" data-date="<?php echo $year;?>" data-complete-text="<?php echo $year;?>"> <?php echo $year;?></a></li>
+	  <li data-date="date-<?php echo $year;?>"><a class="btn <?php if($max==1){echo 'first last';}elseif($count++ == 0){echo 'first';}elseif($count == $max){echo 'last';}else{ echo 'mid';}?>" data-date-type="year" href="<?php echo $this->Link->removeNumParam($this->Html->url(null,false));?>/<?php echo $year;?>" data-date="<?php echo $year;?>" data-complete-text="<?php echo $year;?>"> <?php echo $year;?></a></li>
 	    <?php endforeach;?>
 	</ul>
       </div>
@@ -38,7 +38,7 @@
             $count = 0;
       ?>
 	  <?php foreach($months as $month=>$val):?>
-	  <li data-date="date-<?php echo $year.'-'.$month;?>"><a data-date-type="month" href="<?php echo $this->Link->removeNumParam($this->Html->url(null,false));?>/<?php echo $year.'-'.$month;?>" data-date="<?php echo $year.'-'.$month;?>" class="btn <?php if($count++ == 0){echo 'first';}elseif($count == $max){echo 'last';}else{ echo 'mid';}?>" data-complete-text="<?php echo $month;?>"><?php echo $month;?></a></li>
+	  <li data-date="date-<?php echo $year.'-'.$month;?>"><a data-date-type="month" href="<?php echo $this->Link->removeNumParam($this->Html->url(null,false));?>/<?php echo $year.'-'.$month;?>" data-date="<?php echo $year.'-'.$month;?>" class="btn <?php if($max==1){echo 'first last';}elseif($count++ == 0){echo 'first';}elseif($count == $max){echo 'last';}else{ echo 'mid';}?>" data-complete-text="<?php echo $month;?>"><?php echo $month;?></a></li>
 	  <?php endforeach;?>
 	</ul>
 	<?php endforeach;?>
@@ -57,7 +57,7 @@
 
 	  <?php foreach($days as $day=>$sum):?>
 
-	  <li data-date="date-<?php echo $year.'-'.$month.'-'.$day;?>"><a data-date-type="day" href="<?php echo $this->Link->removeNumParam($this->Html->url(null,false));?>/<?php echo $year.'-'.$month.'-'.$day;?>" data-date="<?php echo $year.'-'.$month.'-'.$day;?>" class="btn <?php if($count++ == 0){echo 'first';}elseif($count == $max){echo 'last';}else{ echo 'mid';}?>" data-complete-text="<?php echo $day;?>"><?php echo $day;?></a></li>
+	  <li data-date="date-<?php echo $year.'-'.$month.'-'.$day;?>"><a data-date-type="day" href="<?php echo $this->Link->removeNumParam($this->Html->url(null,false));?>/<?php echo $year.'-'.$month.'-'.$day;?>" data-date="<?php echo $year.'-'.$month.'-'.$day;?>" class="btn <?php if($max==1){echo 'first last';}elseif($count++ == 0){echo 'first';}elseif($count == $max){echo 'last';}else{ echo 'mid';}?>" data-complete-text="<?php echo $day;?>"><?php echo $day;?></a></li>
 	  <?php endforeach;?>
 	</ul>
 	<?php endforeach;?>
