@@ -71,6 +71,7 @@ class UsersController extends AppController{
          * redirect user to api.twitter.com to make Twitter OAuth process.
          * Aquire request token and redirect user to authentication screen on twitter
          */
+        $this->autoRender = false;
 
         // get request token 
         $client = $this->Twitter->createClient();
@@ -80,6 +81,7 @@ class UsersController extends AppController{
              'https://api.twitter.com/oauth/request_token',
              'http://' . env('HTTP_HOST') . '/twitter/callback'
              );
+
 
         // check if request token was successfully acquired
         if($requestToken){
@@ -94,9 +96,9 @@ class UsersController extends AppController{
             $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
             
         }else{
-            
+
             // if failed in acquiring request token
-            $this->Session->setFlash('failed in connecting to twitter. Please try again later.');
+            die('failed in acquiring request token');
         }
     }
 
@@ -111,12 +113,12 @@ class UsersController extends AppController{
         
         // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
-        
+     
         $client = $this->createClient();
         
         // fetch access token for this user
         $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
-        
+     
         // check if access token was successfully acquired
         if(!$accessToken){
 
@@ -173,18 +175,18 @@ class UsersController extends AppController{
         $registoredUserData = $this->User->findById($userId);
         
         $userDataForLogin = array(
-                                     'id'=>$userId,
-                                     'Twitter'=>array('id'=>$registoredUserData['User']['twitter_id'])
-                                     );
+                                  'id'=>$userId,
+                                  'Twitter'=>array('id'=>$registoredUserData['User']['twitter_id'])
+                                  );
 
         $loginValueList = array(
-                                  'name',
-                                  'screen_name',
-                                  'profile_image_url_https',
-                                  'time_zone',
-                                  'utc_offset',
-                                  'lang'
-                                  );
+                                'name',
+                                'screen_name',
+                                'profile_image_url_https',
+                                'time_zone',
+                                'utc_offset',
+                                'lang'
+                                );
         
         foreach($loginValueList as $val){
             $userDataForLogin['Twitter'][$val] = $registoredUserData['User'][$val];

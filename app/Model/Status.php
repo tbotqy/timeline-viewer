@@ -32,7 +32,7 @@ class Status extends AppModel{
          * returns false if there is nothing to return
          */
         
-        $this->unbindEntity();
+        
 
         $statuses = $this->find(
                                 'all',
@@ -64,7 +64,7 @@ class Status extends AppModel{
         // find user_ids IN $twitter_ids
         $user_ids = $this->User->getIdByTwitterId($twitter_ids);
 
-        $this->unbindEntity();
+        
 
         $ret = $this->find(
                            'all',
@@ -92,7 +92,7 @@ class Status extends AppModel{
         
         $ids = $this->User->getIds();
 
-        $this->unbindEntity();
+        
 
         $ret = $this->find(
                            'all',
@@ -122,7 +122,7 @@ class Status extends AppModel{
          * @return array if there is any,false if there is no status in specified term
          */
 
-        $this->unbindEntity();
+        
 
         $statuses = $this->find(
                                 'all',
@@ -155,7 +155,7 @@ class Status extends AppModel{
         // find user_ids IN $twitter_ids
         $user_ids = $this->User->getIdByTwitterId($twitter_ids);
 
-        $this->unbindEntity();
+        
 
         $statuses = $this->find(
                                 'all',
@@ -187,7 +187,7 @@ class Status extends AppModel{
         // get user's friend ids
         $ids = $this->User->getIds();
 
-        $this->unbindEntity();
+        
 
         $statuses = $this->find(
                                 'all',
@@ -340,7 +340,7 @@ class Status extends AppModel{
          * @return array if retrieved any status, otherwise false
          */
          
-        $this->unbindEntity();
+        
        
         $statuses = $this->find(
                                 'all',
@@ -373,7 +373,7 @@ class Status extends AppModel{
                             'Status.pre_saved' => false,
                             );
 
-        $this->unbindEntity();
+        
         
         $statuses = $this->find(
                                 'all',
@@ -398,7 +398,7 @@ class Status extends AppModel{
                             'Status.pre_saved' => false
                             );
 
-        $this->unbindEntity();
+        
         
         $statuses = $this->find(
                                 'all',
@@ -446,10 +446,6 @@ class Status extends AppModel{
         
         // save the status
         $this->save($status_to_save);
-        
-        // save entities belonging to this status
-        $this->Entity->saveEntities($this->id,$status);
-        
     }
 
     public function savePreSavedStatus($user_id){
@@ -682,15 +678,4 @@ class Status extends AppModel{
                                   );
 
     }
-
-    public function unbindEntity(){
-        
-        return $this->unbindModel(
-                                  array(
-                                        'hasMany'=>array('Entity')
-                                        )
-                                  );
-        
-    }
-
 }
