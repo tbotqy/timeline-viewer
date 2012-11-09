@@ -78,7 +78,7 @@ $(function(){
   });          
   
   // click action for read more button
-  $("#wrap-timeline").on("click","#read-more",function(e){
+  $("#wrap-timeline-lower").on("click","#read-more",function(e){
     
     var self = $(this);
 
