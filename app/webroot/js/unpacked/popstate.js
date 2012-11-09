@@ -24,10 +24,21 @@ $(function(){
           }
           
         }
-        
+
         if( actionTypeOk ){
           var date;
-          if(countStr(path,"/") < 3){
+          var isPublicTimeline = path.indexOf("public_timeline") != -1;
+          
+          // count the / in path
+          // change its threshold value if view is public timeline
+          var threshold;
+          if(isPublicTimeline){
+            threshold = 2;
+          }else{
+            threshold = 3;
+          }
+
+          if(countStr(path,"/") < threshold){
             date = "notSpecified";
           }else{
             date = detectDate(path);
