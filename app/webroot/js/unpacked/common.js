@@ -19,7 +19,7 @@ $(function(){
   
   // click action to hide and show the bottom line in each status
   
-  $("#wrap-timeline").on("click",".status-content",function(e){
+  $("#wrap-timeline-lower").on("click",".status-content",function(e){
     
     // do process only if clicked element is not <a>
     var clicked = $(e.target);
@@ -32,7 +32,7 @@ $(function(){
   });
 
   // click action to fire a delete ajax action
-  $("#wrap-timeline").on("click",".status-content .link-delete a",function(e){
+  $("#wrap-timeline-lower").on("click",".status-content .link-delete a",function(e){
     
     e.preventDefault();
     
