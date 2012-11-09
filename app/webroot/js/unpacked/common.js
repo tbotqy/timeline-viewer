@@ -18,8 +18,9 @@ $(function(){
   //////////////////////////
   
   // click action to hide and show the bottom line in each status
-  $(".status-content").live("click",function(e){
- 
+  
+  $("#wrap-timeline").on("click",".status-content",function(e){
+    
     // do process only if clicked element is not <a>
     var clicked = $(e.target);
     if(!clicked.is('a') && !clicked.is('i')){
@@ -31,7 +32,7 @@ $(function(){
   });
 
   // click action to fire a delete ajax action
-  $(".status-content").find(".link-delete a").live("click",function(e){
+  $("#wrap-timeline").on("click",".status-content .link-delete a",function(e){
     
     e.preventDefault();
     
@@ -77,27 +78,29 @@ $(function(){
   });          
   
   // click action for read more button
-  $("#read-more").live("click",function(e){
+  $("#wrap-timeline").on("click","#read-more",function(e){
     
+    var self = $(this);
+
     e.preventDefault();
-    var distance = $(this).offset().top;
+    var distance = self.offset().top;
 
     // let button say 'loading'
-    $(this).button('loading');
-    
+    self.button('loading');
+    var elmOldestTimestamp = $("#oldest-timestamp");
     // fetch more statuses to show
     $.ajax({
 
       type:"POST",
       dataType:"html",
       data:{
-	"oldest_timestamp":$("#oldest-timestamp").attr("value"),
+	"oldest_timestamp":elmOldestTimestamp.attr("value"),
 	"destination_action_type":detectActionType(location.pathname)
       },
       url: '/ajax/read_more',
       success: function(responce){
 	// remove the element representing last status's timestamp
-	$("#oldest-timestamp").remove();
+	elmOldestTimestamp.remove();
 	
 	$("#wrap-read-more").remove();
 
@@ -146,15 +149,15 @@ $(function(){
   ////////////////////////////////////
   // code for /users/home_timeline  //
   ////////////////////////////////////
-  
-  $(".error-inner").find(".description").click(function(e){
+  var elmErrorInner = $(".error-inner");
+  elmErrorInner.find(".description").click(function(e){
     e.preventDefault();
-    $(".error-inner").find(".invite-friends").fadeIn();
+    elmErrorInner.find(".invite-friends").fadeIn();
   });
 
-  $(".error-inner").find(".invite-friends .close").click(function(e){
+  elmErrorInner.find(".invite-friends .close").click(function(e){
     e.preventDefault();
-    $(".error-inner").find(".invite-friends").fadeOut();
+    elmErrorInner.find(".invite-friends").fadeOut();
   });
 
   ////////////////////////////////////
@@ -166,12 +169,12 @@ $(function(){
    */
 
   $("#update-profile").click(function(){
-
+    var self = $(this);
     // change the button's statement
-    $(this).button('loading');
+    self.button('loading');
 
     // show the loading icon 
-    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    self.after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
     $(".wrap-profile").find(".loader").fadeIn();
 
     checkProfileUpdate();
@@ -183,12 +186,12 @@ $(function(){
    */
 
   $("#update-statuses").click(function(){
-
+    var self = $(this);
     // change the button's statement
-    $(this).button('loading');
+    self.button('loading');
 
     // show the loading icon 
-    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    self.after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
     $(".tweets").find(".loader").fadeIn();
 
     checkStatusUpdate();
@@ -200,12 +203,13 @@ $(function(){
    */
 
   $("#update-friends").click(function(){
-    
+    var self = $(this);
+
     // change the button's statement
-    $(this).button('loading');
+    self.button('loading');
 
     // show the loading icon
-    $(this).after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
+    self.after("<img class=\"loader\" src=\"/img/ajax-loader.gif\" />");
     $(".friends").find(".loader").fadeIn();
 
     checkFriendUpdate();
@@ -220,13 +224,14 @@ $(function(){
  
   // click event to delete account
   $("#delete-account").click(function(){
-
+    var elmModalDeleteAccount = $("#modal-delete-account");
     // disable cancel button
-    $("#modal-delete-account").find(".modal-header .close").fadeOut();
-    $("#modal-delete-account").find(".modal-footer .cancel-delete").addClass("disabled");
+    elmModalDeleteAccount.find(".modal-header .close").fadeOut();
+    elmModalDeleteAccount.find(".modal-footer .cancel-delete").addClass("disabled");
 
     $(this).button('loading');
-    $("#modal-delete-account")
+    
+    elmModalDeleteAccount
       .find(".status")
       .fadeOut(function(){
 	$(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />"); 
@@ -272,10 +277,11 @@ $(function(){
 
   $(window).scroll(function() {
     var topy = $(document).scrollTop();
+    var elmToPageTop = $(".to-page-top");
     if (topy >= 200) {
-      $(".to-page-top").fadeIn();
+      elmToPageTop.fadeIn();
     }else{
-      $(".to-page-top").fadeOut();
+      elmToPageTop.fadeOut();
     }
   });
   
@@ -289,19 +295,20 @@ $(function(){
 
   // mouseover action for year list in dashbord
   $(".list-years").find("li").mouseover(function(){
-    
+    var self = $(this);
+
     // normalize all the buttons for years
     $(".list-years").find("a").removeClass("btn-primary selected");
  
     // apply unique css feature only to focused button 
-    $(this).find('a').addClass("btn-primary selected");
+    self.find('a').addClass("btn-primary selected");
     
     // hide all the lists for months and days
     $("#wrap-list-months").find("ul").css('display','none');
     $("#wrap-list-days").find("ul").css('display','none');
     
     // get the data-date value in hovered button
-    var year = $(this).attr('data-date');
+    var year = self.attr('data-date');
 
     // show the months list whose class is equal to var year
     $("#wrap-list-months").find("."+year).css('display','block');
@@ -310,19 +317,20 @@ $(function(){
 
   // mouseover action for months list in dashbord
   $(".list-months").find("li").mouseover(function(){
-    
+    var self = $(this);
+
     // normalize all the buttons for months
     $(".list-months").find("li").find("a").removeClass("btn-primary selected");
   
     // apply unique css feature only to focused button 
-    $(this).find('a').addClass("btn-primary selected");
+    self.find('a').addClass("btn-primary selected");
 
     // hide all the days lists
     $("#wrap-list-days").find("ul").css('display','none');
 
     // get the data-date value in hovered button 
-    var month = $(this).attr('data-date');
-   
+    var month = self.attr('data-date');
+    
     // show the days list whose class is equal to var month
     $("#wrap-list-days").find("."+month).css('display','block');
  
@@ -332,16 +340,17 @@ $(function(){
 
   // click action to change the term of statuses to show
   $("#wrap-term-selectors").find("a").click(function(e){
-    
+    var self = $(this);
+
     // prevent the page from reloading
     e.preventDefault();
 
     // get href attr in clicked button
-    var href =$(this).attr('href');
+    var href = self.attr('href');
     
     // acquire the date to fetch from clicked button
-    var date = $(this).attr('data-date');
-    var date_type = $(this).attr('data-date-type');
+    var date = self.attr('data-date');
+    var date_type = self.attr('data-date-type');
 
     // show the loading icon over the statuses area
     var wrap_timeline = $("#wrap-timeline");
@@ -397,8 +406,6 @@ $(function(){
   });
       
   }
-
-
 
   // click event for year selector
   $("#wrap-list-years").find("a").click(function(){

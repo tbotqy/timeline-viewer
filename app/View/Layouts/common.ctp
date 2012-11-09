@@ -35,7 +35,7 @@
        );
       echo $this->Html->script
       (array(
-             'libs/jquery-1.7.2.min',
+             'libs/jquery-1.8.2.min',
              'libs/bootstrap.min',
              'functions',
              'common',

@@ -7,14 +7,14 @@ $(function(){
 
   // click event handler for the button to delete each single account
   admin.find(".delete-each").click(function(){
-
-    var parent = $(this).parent();
+    var self = $(this);
+    var parent = self.parent();
 
     // show the loader
     showLoader(parent);
 
     // check which user id does clicked button point
-    var dest_id = $(this).data('dest-id');
+    var dest_id = self.data('dest-id');
     deleteHim(dest_id);
     
     
@@ -22,8 +22,8 @@ $(function(){
                                   
   // click event handler for the button to delete selected accounts 
   admin.find("#delete-selected").click(function(){
-
-    var parent = $(this).parent();
+    var self = $(this);
+    var parent = self.parent();
 
     // show the loader
     showLoader(parent);

@@ -7,7 +7,7 @@ $(function(){
   if('pushState' in history){
 
     window.setTimeout(function(){
-      $(window).bind("popstate",function(e){
+      $(this).on("popstate",function(e){
         
         var white_list = ['tweets','home_timeline','public_timeline'];
         var path = location.pathname;
@@ -24,16 +24,6 @@ $(function(){
           }
           
         }
-        
-        // check if displaying screen is showing error
-        // [ToDo]
-        
-        // check if requested path contians 3 slashes
-        /*
-          if(countStr(path,"/") == 3){
-          slashCountOk = true;
-          }
-        */    
         
         if( actionTypeOk ){
           var date;
