@@ -222,10 +222,15 @@ class Status extends AppModel{
         if(!$status_date_list){
             return false;
         }
+
         // get utc_offset for user
         $user_data = $this->User->findById($user_id);
-        $utc_offset = $user_data['User']['utc_offset'];
-
+        if($user_data){
+            $utc_offset = $user_data['User']['utc_offset'];
+        }else{
+            $utc_offset = 32400;
+        }
+        
         // classify them by date       
         foreach($status_date_list as $key=>$created_at){
             $created_at += $utc_offset;
@@ -295,24 +300,55 @@ class Status extends AppModel{
 
             break;
         case 'public_timeline':
-            $ids = $this->User->getIds();
             
-            $ret = $this->find
-                (
-                 'list',
-                 array
-                 (
-                  'conditions'=>array(
-                                      'Status.user_id'=>$ids,
-                                      'Status.pre_saved' => false
-                                      ),
-                  'fields'=>array(
-                                  'Status.created_at'
-                                  ),
-                  'order'=>'Status.created_at '.$order
-                  )
-                 );
-                       
+            $cachedData = Cache::read("created_at_list_public");
+            
+            $fetchNewData = false;
+
+            // check if cached data exists
+            if($cachedData){
+                
+                // check if model data is updated by checking its largest created value
+                $lastCreated = $this->getLastCreated();
+                $lastCreatedInCache = Cache::read('Status.created_largest');
+                
+                // compare cached data with model
+                if($lastCreated != $lastCreatedInCache){
+                    $fetchNewData = true;
+                }
+                
+            }else{
+                // if cache is expired
+                $fetchNewData = true;
+            }
+
+            if($fetchNewData){
+                
+                // fetch flesh data
+                $ids = $this->User->getIds();
+                $ret = $this->find(
+                                   'list',
+                                   array(
+                                         'conditions'=>array(
+                                                             'Status.user_id'=>$ids,
+                                                             'Status.pre_saved' => false
+                                                             ),
+                                         'fields'=>array(
+                                                         'Status.created_at'
+                                                         ),
+                                         'order'=>'Status.created_at '.$order
+                                         )
+                                   );
+
+                $lastCreated = $this->getLastCreated();
+
+                // update cache
+                Cache::write("created_at_list_public",$ret);
+                Cache::write("Status.created_largest",$lastCreated);
+            }else{
+                $ret = $cachedData;
+            }
+            
             return $ret;
 
             break;
@@ -321,7 +357,13 @@ class Status extends AppModel{
         }
 
         return $this->checkNum($ret);
+        
+    }
 
+    public function getLastCreated(){
+        $result = $this->query('SELECT created from statuses where pre_saved = 0 ORDER BY created DESC limit 1');
+        $ret = isset($result[0]['statuses']['created']) ? $result[0]['statuses']['created'] : false;
+        return $ret;
     }
 
     //////////////////////////////////////////
