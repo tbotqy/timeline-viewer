@@ -457,7 +457,7 @@ class UsersController extends AppController{
             
             // fetch statuses in specified term
             $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
-
+            
         }else{
 
             // fetch tweets
