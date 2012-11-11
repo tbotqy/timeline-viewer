@@ -37,9 +37,7 @@ class User extends AppModel{
 
         $cachedData = Cache::read('User.getIds');
         $lastCreatedTime = $this->getLastCreatedTime();
-        if($cachedData){
-            
-        }
+
         $fetchFleshData = true;
 
         if($cachedData){
@@ -60,17 +58,17 @@ class User extends AppModel{
 
             // fetch flesh data
             $ret = $this->find(
-                           'list',
-                           array(
-                                 'conditions'=>array(
-                                                     'User.deleted_flag'=>false
+                               'list',
+                               array(
+                                     'conditions'=>array(
+                                                         'User.deleted_flag'=>false
+                                                         ),
+                                     'fields'=>array(
+                                                     'User.id'
                                                      ),
-                                 'fields'=>array(
-                                                 'User.id'
-                                                 ),
-                                 'order'=>'User.id ASC',
-                                 'recursive'=>-1
-                                 )
+                                     'order'=>'User.id ASC',
+                                     'recursive'=>-1
+                                     )
                                );
         }else{
             $ret = $cachedData;
