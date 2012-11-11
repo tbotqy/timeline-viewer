@@ -7,13 +7,7 @@
 class Status extends AppModel{
     
     public $name = 'Status';
-        
-    public $hasMany = array(
-                            'Entity' => array(
-                                              'dependent'=>true
-                                              )
-                            );
-    
+ 
     public $belongsTo = array(
                               'User'=>array(
                                             'dependent'=>false
@@ -631,9 +625,7 @@ class Status extends AppModel{
          * count the number of total statuses active
          * @return int
          */
-
-        // get the active user list
-
+            
         $activeUser = $this->User->getIds();
 
         return $this->find(
@@ -642,7 +634,8 @@ class Status extends AppModel{
                                  'conditions'=>array(
                                                      'Status.user_id'=>$activeUser,
                                                      'Status.pre_saved'=>false
-                                                     )
+                                                     ),
+                                 'recursive'=>-1
                                  )
                            );
 
@@ -662,7 +655,8 @@ class Status extends AppModel{
                                  'conditions'=>array(
                                                      'Status.user_id'=>$user_id,
                                                      'Status.pre_saved'=>false
-                                                     )
+                                                     ),
+                                 'recursive'=>-1
                                  )
                            );
 

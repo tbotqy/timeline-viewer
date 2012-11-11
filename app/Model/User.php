@@ -35,7 +35,31 @@ class User extends AppModel{
 
         $this->unbindAllModels();
 
-        $ret = $this->find(
+        $cachedData = Cache::read('User.getIds');
+        $lastCreatedTime = $this->getLastCreatedTime();
+        if($cachedData){
+            
+        }
+        $fetchFleshData = true;
+
+        if($cachedData){
+
+            // compare the total number of ids
+            if( count($cachedData) == $this->getTotalUserNum() ){
+
+                // compare the 'created' value
+                if( Cache::read('User.created_largest') == $lastCreatedTime ){
+                    $fetchFleshData = false;
+                }
+            }
+        }else{
+            $fetchFleshData = true;
+        }
+
+        if($fetchFleshData){
+
+            // fetch flesh data
+            $ret = $this->find(
                            'list',
                            array(
                                  'conditions'=>array(
@@ -44,10 +68,18 @@ class User extends AppModel{
                                  'fields'=>array(
                                                  'User.id'
                                                  ),
-                                 'order'=>'User.id ASC'
+                                 'order'=>'User.id ASC',
+                                 'recursive'=>-1
                                  )
-                           );
-
+                               );
+        }else{
+            $ret = $cachedData;
+        }
+        
+        // update cache 
+        Cache::write('User.getIds',$ret);
+        Cache::write('User.created_largest',$lastCreatedTime);
+        
         return $ret;
 
     }
@@ -150,6 +182,23 @@ class User extends AppModel{
         }
     }
 
+    public function getLastCreatedTime(){
+
+        $result = $this->find('first',
+                              array(
+                                    'conditions'=>array(
+                                                        'User.deleted_flag'=>false
+                                                        ),
+                                    'fields'=>array('User.created'),
+                                    'order'=>'User.created DESC',
+                                    'recursive'=>-1
+                                    )
+                              );
+        
+        return $result ? $result['User']['created'] : false;
+
+    }
+
     public function getLastUpdatedTime($user_id){
 
         /**
@@ -164,6 +213,22 @@ class User extends AppModel{
         
         return $user['User']['updated'];
     }
+    
+    public function getTotalUserNum(){
+
+        $ret = $this->find('count',
+                           array(
+                                 'conditions'=>array(
+                                                     'User.deleted_flag'=>false
+                                                     ),
+                                 'recursive'=>-1
+                                 )
+                           );
+        
+        return $ret;
+    }
+
+
 
     public function getGoneUsers(){
 
