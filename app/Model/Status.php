@@ -186,9 +186,7 @@ class Status extends AppModel{
         
         // get user's friend ids
         $ids = $this->User->getIds();
-
         
-
         $statuses = $this->find(
                                 'all',
                                 array(

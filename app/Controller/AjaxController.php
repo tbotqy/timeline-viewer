@@ -391,10 +391,14 @@ class AjaxController extends AppController{
          * renders html
          */
         
-        $user = $this->Auth->user();
-        $userId = $user['id'];
-        $utcOffset = $user['Twitter']['utc_offset'];
-        
+        if($this->Auth->loggedIn()){
+            $user = $this->Auth->user();
+            $userId = $user['id'];
+            $utcOffset = $user['Twitter']['utc_offset'];
+        }else{
+            $utcOffset = 32400;
+        }
+
         $fetchLatest = false;
 
         // fetch query string
