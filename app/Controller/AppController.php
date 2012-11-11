@@ -48,8 +48,7 @@ class AppController extends Controller {
         $this->set('title_for_layout','Timedline');
 
         $actionType = $this->request->params['action'];
-        
-
+    
         // check if user agent is compatible
         if($this->isCompatibleUA()){
 
@@ -101,16 +100,15 @@ class AppController extends Controller {
                 $this->redirect('/');
                 return ;
             }
+
+
+            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));        
             
             $this->set('loggingUser',$loggingUser);
-            
+
         }
-            
-        $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
-        
-        $this->set('userIsInitialized',$userIsInitialized);
-        $this->set('loggedIn',$loggedIn);
-        $this->set('actionType',$actionType);
+
+        $this->set(compact('userIsInitialized','loggedIn','actionType'));
         $this->set('isAjax',$this->request->isAjax());
         $this->set('showFooter',false);
     

@@ -14,7 +14,7 @@ class UsersController extends AppController{
 
         parent::beforeFilter();
         
-        $this->Auth->allow('index','login','authorize','callback','logout','public_timeline','we_are_sorry_but','under_construction','browser','test');
+        $this->Auth->allow('index','login','authorize','callback','logout','public_timeline','we_are_sorry_but','under_construction','browser');
         
     }
 
