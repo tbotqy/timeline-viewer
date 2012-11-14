@@ -89,7 +89,7 @@ $(function(){
     self.button('loading');
     var elmOldestTimestamp = $(".oldest-timestamp");
     var oldestTimestamp = elmOldestTimestamp.val();
-    console.log(oldestTimestamp);
+   
     // fetch more statuses to show
     $.ajax({
 
@@ -107,7 +107,7 @@ $(function(){
       $("#wrap-read-more").remove();
 
       // insert loaded html code 
-      $(".wrap-each-status:last").after(responce);
+      $(".wrap-one-result:last").after(responce);
       },
       error: function(responce){
       alert("読み込みに失敗しました。");
