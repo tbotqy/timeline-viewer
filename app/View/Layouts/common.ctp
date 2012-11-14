@@ -38,7 +38,7 @@
              'libs/jquery-1.8.2.min',
              'libs/bootstrap.min',
              'functions',
-             'common',
+             '/js/unpacked/common',
              'twitter_tweet_button',
              'twitter_follow_button'
              )
@@ -53,7 +53,7 @@
     <?php
       if(stripos(env('HTTP_HOST'),'dev') === false):
     ?>
-
+   
     <script type="text/javascript">
 
       var _gaq = _gaq || [];
