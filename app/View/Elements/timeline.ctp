@@ -4,7 +4,6 @@
      <?php 
      if($statuses){
          echo $this->element('each-status');
-        
          if($hasNext){
              echo $this->element('read-more');
          }else{

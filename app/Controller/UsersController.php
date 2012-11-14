@@ -322,6 +322,7 @@ class UsersController extends AppController{
         $this->set('oldest_timestamp',$oldestTimestamp);      
         $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
+        $this->set('isInitialRequest',true);
     }
     
     public function home_timeline(){
@@ -410,6 +411,7 @@ class UsersController extends AppController{
         $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldestTimestamp);
+        $this->set('isInitialRequest',true);
         
     }
 
@@ -487,7 +489,7 @@ class UsersController extends AppController{
         $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldestTimestamp);
-        
+        $this->set('isInitialRequest',true); 
     }
 
     public function configurations(){
