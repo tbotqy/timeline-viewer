@@ -1,7 +1,3 @@
-<?php
-echo $this->Html->script('popstate.js',array('inline'=>false));
-?>
-
 <?php 
   if($date_list){
       echo $this->element('dashbord');
@@ -21,5 +17,9 @@ echo $this->Html->script('popstate.js',array('inline'=>false));
   </div>
   <!-- /#wrap-main -->
   
+  <?php
+    echo $this->element('ads-timeline');
+  ?>
+
 </div>
 <!-- /#wrap-timeline-lower -->

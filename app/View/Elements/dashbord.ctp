@@ -4,7 +4,13 @@
    * contains navigation to switch timeline type, list of date with all the statuses user has.
    */
 ?>
-
+<?php
+  if($isDebug){
+      echo $this->Html->script('/js/unpacked/popstate.js',array('inline'=>false));
+  }else{
+      echo $this->Html->script('popstate.js',array('inline'=>false));
+  }
+?>
 <!-- #wrap-dashbord -->
 <div id="wrap-dashbord" data-type="<?php echo $actionType;?>">
   <!-- .inner -->

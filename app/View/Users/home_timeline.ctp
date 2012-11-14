@@ -1,8 +1,4 @@
 <?php
-  echo $this->Html->script('popstate.js',array('inline'=>false));
-?>
-
-<?php
   // check error type
   if($error_type == 'noFriendList'){
 

@@ -1,5 +1,5 @@
 <?php
-
+//die("howdy!");
 /**
  * Index
  *
