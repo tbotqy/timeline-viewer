@@ -8,7 +8,8 @@
    */
  
 ?>
-
+<div class="wrap-one-result">
+<?php $cnt = 0;?>
 <?php foreach($statuses as $status):?>
 <!-- .wrap-each-status -->
 <div class="wrap-each-status" 
@@ -80,8 +81,16 @@
     <!-- /.bottom -->
   </div>
   <!-- /.status-content -->
-</div><!-- /.wrap-each-status -->
+ 
+  </div><!-- /.wrap-each-status -->
+<?php
+    if( !isset($statuses[$cnt+1]) ){
+        echo $this->element('adsense468-link-unit');
+    }
+  $cnt++;
+?>
 <?php endforeach;?>
 <?php if(isset($oldest_timestamp)):?>
-<input type="hidden" id="oldest-timestamp" value="<?php echo $oldest_timestamp;?>"/>
+<input type="hidden" class="oldest-timestamp" value="<?php echo $oldest_timestamp;?>"/>
 <?php endif;?>
+</div>

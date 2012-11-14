@@ -10,7 +10,7 @@
   </div>
   <div>
     <?php
-      //echo $this->element('adsense160-2');
+      echo $this->element('adsense160-2');
     ?>
   </div>
   
