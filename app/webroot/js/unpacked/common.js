@@ -13,6 +13,16 @@ $(function(){
     facebook(document, 'script', 'facebook-jssdk');
   },3000);
 
+  setTimeout(function(){
+    console.log("KL");
+    //$.getScript("/js/show_ads.js");
+    //$.getScript("//pagead2.googlesyndication.com/pagead/show_ads.js");
+    //var starter = $(document.createElement("script"));
+    //starter.attr("src","//pagead2.googlesyndication.com/pagead/show_ads.js");
+    //$(".adsense").find("script").after(starter);
+  },1000);
+
+  
   //////////////////////////
   // code for each status //
   //////////////////////////
