@@ -33,12 +33,16 @@
              'style',
              )
        );
+
+      // switch the js file
+      $jsLoadPath = $isDebug ? "/js/unpacked/" : "";
+
       echo $this->Html->script
       (array(
              'libs/jquery-1.8.2.min',
              'libs/bootstrap.min',
-             'functions',
-             '/js/unpacked/common',
+             $jsLoadPath.'functions',
+             $jsLoadPath.'common',
              'twitter_tweet_button',
              'twitter_follow_button'
              )

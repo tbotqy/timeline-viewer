@@ -610,7 +610,7 @@ function ajaxSwitchTerm(date,action_type,mode){
   $.ajax({
     type: 'GET',
     dataType: 'html',
-    url:'/ajax/switch_term',
+    url:'/ajax/switch_term?ajax=true',
     data:{
       "date":date,
       "date_type": detectDateType(date),

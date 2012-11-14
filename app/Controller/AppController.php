@@ -40,12 +40,19 @@ class AppController extends Controller {
     
     public $userIsInitialized = false;
     public $browserOk = false;
+    public $isDebug = false;
+    public $underConstruction = false;
 
     public function beforeFilter(){
         
         parent::beforeFilter();
-     
+
+        $this->isDebug = Configure::read('debug') > 0;
+        $this->underConstruction = Configure::read('underConstruction');
         $this->set('title_for_layout','Timedline');
+        $this->set('isDebug',$this->isDebug);
+        $this->set('isInitialRequest',false);
+        $this->set('underConstruction',$this->underConstruction);
 
         $actionType = $this->request->params['action'];
     
@@ -53,8 +60,8 @@ class AppController extends Controller {
         if($this->isCompatibleUA()){
 
             // check if the site is under construction
-            if(Configure::read('underConstruction')){
-
+            if($this->underConstruction){
+                
                 if($this->isRequestedByFacebookPlugin()){
                     // do nothing
                 }else{
@@ -111,7 +118,7 @@ class AppController extends Controller {
         $this->set(compact('userIsInitialized','loggedIn','actionType'));
         $this->set('isAjax',$this->request->isAjax());
         $this->set('showFooter',false);
-    
+        
     }
 
     public function beforeRender(){

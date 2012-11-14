@@ -9,7 +9,13 @@
  
 ?>
 <div class="wrap-one-result">
-<?php $cnt = 0;?>
+<?php
+     if($isInitialRequest){
+         echo $this->element('adsense468-link-unit');
+     }
+     $loopCnt = 0;
+
+?>
 <?php foreach($statuses as $status):?>
 <!-- .wrap-each-status -->
 <div class="wrap-each-status" 
@@ -84,10 +90,10 @@
  
   </div><!-- /.wrap-each-status -->
 <?php
-    if( !isset($statuses[$cnt+1]) ){
+    if( $isInitialRequest && !isset($statuses[$loopCnt+1]) ){
         echo $this->element('adsense468-link-unit');
     }
-  $cnt++;
+  $loopCnt++;
 ?>
 <?php endforeach;?>
 <?php if(isset($oldest_timestamp)):?>

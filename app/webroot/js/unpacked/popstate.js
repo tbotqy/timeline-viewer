@@ -3,10 +3,11 @@ $(function(){
   /////////////////////////////
   // code for popstate event //
   /////////////////////////////
-
+  
   if('pushState' in history){
-
+    
     window.setTimeout(function(){
+      
       $(this).on("popstate",function(e){
         
         var white_list = ['tweets','home_timeline','public_timeline'];
@@ -53,7 +54,7 @@ $(function(){
         }
         
       });
-    },1000);
+    },2000);
     
   }
   

@@ -13,16 +13,6 @@ $(function(){
     facebook(document, 'script', 'facebook-jssdk');
   },3000);
 
-  setTimeout(function(){
-    console.log("KL");
-    //$.getScript("/js/show_ads.js");
-    //$.getScript("//pagead2.googlesyndication.com/pagead/show_ads.js");
-    //var starter = $(document.createElement("script"));
-    //starter.attr("src","//pagead2.googlesyndication.com/pagead/show_ads.js");
-    //$(".adsense").find("script").after(starter);
-  },1000);
-
-  
   //////////////////////////
   // code for each status //
   //////////////////////////
@@ -97,32 +87,34 @@ $(function(){
 
     // let button say 'loading'
     self.button('loading');
-    var elmOldestTimestamp = $(".wrap-one-result:last").find(".oldest-timestamp");
+    var elmOldestTimestamp = $(".oldest-timestamp");
+    var oldestTimestamp = elmOldestTimestamp.val();
+    console.log(oldestTimestamp);
     // fetch more statuses to show
     $.ajax({
 
       type:"POST",
       dataType:"html",
       data:{
-	"oldest_timestamp":elmOldestTimestamp.attr("value"),
-	"destination_action_type":detectActionType(location.pathname)
+      "oldest_timestamp":oldestTimestamp,
+      "destination_action_type":detectActionType(location.pathname)
       },
       url: '/ajax/read_more',
       success: function(responce){
-	// remove the element representing last status's timestamp
-	elmOldestTimestamp.remove();
-	
-	$("#wrap-read-more").remove();
-        
-	// insert loaded html code 
-        $(".wrap-one-result:last").after(responce);
+      // remove the element representing last status's timestamp
+      elmOldestTimestamp.remove();
+      
+      $("#wrap-read-more").remove();
+
+      // insert loaded html code 
+      $(".wrap-each-status:last").after(responce);
       },
       error: function(responce){
-	alert("読み込みに失敗しました。");
+      alert("読み込みに失敗しました。");
       },
       complete: function(){
-	
-	scrollDownToDestination(e,distance);
+      
+      scrollDownToDestination(e,distance);
 
       }
     });
@@ -175,8 +167,8 @@ $(function(){
   ////////////////////////////////////
 
   /**
-   * the process to update profile
-   */
+   *    * the process to update profile
+   *    */
 
   $("#update-profile").click(function(){
     var self = $(this);
@@ -192,8 +184,8 @@ $(function(){
   });
 
   /**
-   * the process to update tweets
-   */
+   *    * the process to update tweets
+   *    */
 
   $("#update-statuses").click(function(){
     var self = $(this);
@@ -209,8 +201,8 @@ $(function(){
   });
 
   /**
-   * the process to update friend list
-   */
+   *    * the process to update friend list
+   *    */
 
   $("#update-friends").click(function(){
     var self = $(this);
@@ -227,8 +219,8 @@ $(function(){
   });
   
   /**
-   * the process for account deletion
-   */
+   *    * the process for account deletion
+   *    */
 
   var deleted = "";
  
@@ -244,7 +236,7 @@ $(function(){
     elmModalDeleteAccount
       .find(".status")
       .fadeOut(function(){
-	$(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />"); 
+      $(this).html("処理中...<img src=\"/img/ajax-loader.gif\" class=\"loader\" />"); 
       })
       .fadeIn();
     
@@ -255,24 +247,24 @@ $(function(){
       dataType: 'json',
       
       success: function(res){
-	deleted = res.deleted;
-	showDeleteCompleteMessage(res.deleted);
+      deleted = res.deleted;
+      showDeleteCompleteMessage(res.deleted);
       },
 
       error: function(){
-	showDeleteErrorMessage();
+      showDeleteErrorMessage();
       },
       
       complete: function(){
-	if(deleted){
+      if(deleted){
 
-	  setTimeout(
-	    function(){
-	      redirect();
-	    }, 3000
-	  );
-	  
-	}else{
+        setTimeout(
+            function(){
+                  redirect();
+                }, 3000
+          );
+        
+      }else{
           alert("処理がうまくいきませんでした。");
         }
       }
@@ -391,26 +383,27 @@ $(function(){
       },
       success: function(responce){
 
-	// insert recieved html
-	$("#wrap-main").html(responce);
+      // insert recieved html
+      $("#wrap-main").html(responce);
       },
       error: function(responce){
-	alert("読み込みに失敗しました。画面をリロードしてください");	
+        alert("読み込みに失敗しました。画面をリロードしてください");
       },
       complete: function(){
+          
 
-	// scroll to top
-	scrollToPageTop(e);
+        // scroll to top
+        scrollToPageTop(e);
 
-	// show the loaded html
-	$("#wrap-main").fadeIn('fast');
+        // show the loaded html
+        $("#wrap-main").fadeIn('fast');
 
-	// let the button say that process has been done
-	$("#wrap-term-selectors").find("a").button('complete');
-	
-	// record requested url in the histry
-	window.history.pushState(null,null,href);
-	
+        // let the button say that process has been done
+        $("#wrap-term-selectors").find("a").button('complete');
+        
+        // record requested url in the histry
+        window.history.pushState(null,null,href);
+        
       }
     });
   });

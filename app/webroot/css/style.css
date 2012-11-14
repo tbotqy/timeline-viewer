@@ -1,11 +1,5 @@
 @charset "utf-8";
 
-.adtest{ 
-  width: 100%;
-  float: left;
-}
-
-
 /* --------------------------------------------------
    body
 -------------------------------------------------- */
@@ -60,6 +54,14 @@ footer .copyright{
 .adsense.footer{ 
   width: 728px;
   margin: 0 auto;
+}
+
+.adsense.in-timeline{ 
+  float: left;
+  width: 100%;
+  text-align: center;
+  padding: 5px 0;
+  
 }
 
 .adsense.timeline{ 
