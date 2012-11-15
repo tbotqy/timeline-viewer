@@ -154,6 +154,7 @@ footer .copyright{
 
 #container-footer{
   position: absolute;
+  float: left;
   width: 100%;
   bottom: 0px;
   color: #7a6e7e;

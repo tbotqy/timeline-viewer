@@ -4,7 +4,22 @@ $(function(){
   var admin = $("#wrap-admin");
   
   // ----
+  var footer = $("#container-footer");
+  footer.css("position","relative");
+ 
+  // show and hide the tables
+  admin.on("click",".toggler",function(e){
+    
+    var self = $(this);
+    e.preventDefault();
 
+    var destContentType = self.data("dest-content-type");
+    if(!destContentType) return;
+    
+    admin.find(".area-"+destContentType).find(".content").toggle();
+
+  });
+  
   // click event handler for the button to delete each single account
   admin.find(".delete-each").click(function(){
     var self = $(this);
