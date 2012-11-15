@@ -248,6 +248,24 @@ class User extends AppModel{
 
     }
 
+    public function getActiveUsers(){
+
+        $this->unbindAllModels();
+
+        $ret = $this->find(
+                           'all',
+                           array(
+                                 'conditions'=>array(
+                                                     'User.deleted_flag'=>false
+                                                     ),
+                                 'order'=>'User.created DESC'
+                                 )
+                           );
+
+        return $ret;
+
+    }
+
     ///////////////////////////////////////////////
     // functions to save/update/delete something //
     ///////////////////////////////////////////////
