@@ -9,13 +9,11 @@
  
 ?>
 <div class="wrap-one-result">
-<?php
-     if($isInitialRequest){
-         echo $this->element('adsense468-link-unit');
-     }
-     $loopCnt = 0;
 
+<?php
+     $loopCnt = 0;
 ?>
+
 <?php foreach($statuses as $status):?>
 <!-- .wrap-each-status -->
 <div class="wrap-each-status" 
