@@ -54,7 +54,7 @@
 	</div>
 	
 	<div class="readme">
-	  <a  href="#modal-how-data-are-treated" data-toggle="modal">※利用に際して</a>
+	  <a  href="#modal-how-data-are-treated" data-toggle="modal">※ご利用に際して</a>
 	</div>
 	
       </div>

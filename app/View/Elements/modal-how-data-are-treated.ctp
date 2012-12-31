@@ -3,7 +3,7 @@
   <!-- .modal-header -->
   <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal">×</button>
-    <h4><i class="icon-pushpin"></i>利用に際して</h4>
+    <h4><i class="icon-pushpin"></i>ご利用に際して</h4>
   </div>
   <!-- /.modal-header -->
   
