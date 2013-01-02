@@ -39,7 +39,7 @@
       <div class="container">
 
 	<span class="copyright">
-	  <a href="http://<?php echo env('HTTP_HOST');?>">Timedline</a> © 2012
+	  <a href="http://<?php echo env('HTTP_HOST');?>">Timedline</a> © 2013
 	</span>
 	
 	<!-- .wrap-social-plugins -->
