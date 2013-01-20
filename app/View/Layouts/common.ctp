@@ -39,7 +39,8 @@
 
       echo $this->Html->script
       (array(
-             'libs/jquery-1.8.2.min',
+             //'libs/jquery-1.8.2.min',
+             'libs/jquery-1.9.0.min',
              'libs/bootstrap.min',
              $jsLoadPath.'functions',
              $jsLoadPath.'common',
