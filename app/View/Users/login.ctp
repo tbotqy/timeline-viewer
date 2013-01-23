@@ -33,8 +33,15 @@
 	</div>
 	
 	<div class="wrap-btn-public">
-	  <a href="/public_timeline" class="link btn btn-primary">パブリックタイムラインを見てみる</a>
+	  <a href="/public_timeline" class="link btn btn-primary" data-loading-text="パブリックタイムラインを見てみる">パブリックタイムラインを見てみる</a>
 	</div>
+	<script>
+	  (function(){
+	    $(".link.btn").click(function(){
+	      $(this).button("loading");
+	    });
+	  })();
+	</script>
 	
       </div>
       <!-- /.lower .left -->
