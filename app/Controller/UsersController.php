@@ -106,26 +106,22 @@ class UsersController extends AppController{
         // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
      
-        $client = $this->createClient();
-        
         // fetch access token for this user
-        $accessToken = $client->getAccessToken('https://api.twitter.com/oauth/access_token', $requestToken);
-     
+        $accessToken = $this->Twitter->getAccessToken($requestToken);     
+        
         // check if access token was successfully acquired
         if(!$accessToken){
 
             // if failed in fetching access token,show the error message
-            $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
-            return ;
+            die('Failed in connecting to api.twitter.com. Please try again later.');
         }
 
         // fetch user's twitter account information
         $tokens['token'] = $accessToken->key;
         $tokens['token_secret'] = $accessToken->secret;
 
-        $verifyCredentials = $this->Twitter->get('account/1.1/verify_credentials',array(),$tokens);
-        pr($verifyCredentials);exit;
-        $verifyCredentials = json_decode($verifyCredentials,true);
+        $verifyCredentials = $this->Twitter->setAccessToken((array)$accessToken);
+        $verifyCredentials = json_decode($this->Twitter->getVerifyCredentials(),true);
         
         /////////////////////////////////////////////////////////////////
         // check if user with authorized twitter id exists in database //
