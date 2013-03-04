@@ -74,26 +74,18 @@ class UsersController extends AppController{
         $this->autoRender = false;
 
         // get request token 
-        $client = $this->Twitter->createClient();
+        $requestToken = $this->Twitter->getRequestToken();
         
-        $requestToken = $client->getRequestToken
-            (
-             'https://api.twitter.com/oauth/request_token',
-             'http://' . env('HTTP_HOST') . '/twitter/callback'
-             );
-
-
         // check if request token was successfully acquired
         if($requestToken){
             
             // redirect to api.twitter.com
-            $this->Session->write
-                (
-                 'twitter_request_token',
-                 $requestToken
-                 );
+            $this->Session->write(
+                                  'twitter_request_token',
+                                  $requestToken
+                                  );
             
-            $this->redirect('https://api.twitter.com/oauth/authorize?oauth_token=' . $requestToken->key);
+            $this->redirect( $this->Twitter->getAuthorizeUrl($requestToken) );
             
         }else{
 
@@ -126,12 +118,13 @@ class UsersController extends AppController{
             $this->Session->setFlash('Failed in connecting to api.twitter.com. Please try again later.');
             return ;
         }
-        
+
         // fetch user's twitter account information
         $tokens['token'] = $accessToken->key;
         $tokens['token_secret'] = $accessToken->secret;
 
-        $verifyCredentials = $this->Twitter->get('account/verify_credentials',array(),$tokens);
+        $verifyCredentials = $this->Twitter->get('account/1.1/verify_credentials',array(),$tokens);
+        pr($verifyCredentials);exit;
         $verifyCredentials = json_decode($verifyCredentials,true);
         
         /////////////////////////////////////////////////////////////////

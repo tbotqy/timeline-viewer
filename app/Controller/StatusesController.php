@@ -37,6 +37,7 @@ class StatusesController extends AppController{
                        );
 
         $twitterUserInfo = json_decode($this->Twitter->get('users/show',$param),true);
+        
         $statusesCount = $twitterUserInfo['statuses_count'];
         
         $this->set('statuses_count',$statusesCount);
