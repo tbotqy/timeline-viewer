@@ -83,10 +83,9 @@ class AjaxController extends AppController{
             
             // acquire latest 100 statuses
             $statuses = $this->Twitter->get('statuses/user_timeline',$apiParams);
-            $statuses = json_decode($statuses['body'],true);
-
+            
             // retrieve following list
-            $followingList = json_decode($this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true)),true);
+            $followingList = $this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true));
             $this->Friend->saveFriends($user['id'],$followingList['ids']);
             
             if(count($statuses) == 0){
@@ -102,8 +101,7 @@ class AjaxController extends AppController{
             
             // acquire 101 statuses older than max_id
             $statuses = $this->Twitter->get('statuses/user_timeline',$apiParams);
-            $statuses = json_decode($statuses['body'],true);
-         
+            
             // remove the newest status from result because it has been already saved in previous loop
             if(count($statuses)>0){
                 

@@ -107,10 +107,11 @@ class AppController extends Controller {
                 $this->redirect('/');
                 return ;
             }
-
-
-            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));        
             
+            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));        
+
+            $tokens = $this->User->getTokens($id);
+            $this->Twitter->setAccessToken( $tokens['User'] );
             $this->set('loggingUser',$loggingUser);
 
         }
