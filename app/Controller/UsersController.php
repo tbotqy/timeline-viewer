@@ -21,7 +21,7 @@ class UsersController extends AppController{
     }
 
     public function collectDestIds(){
-        
+    
         return;
 
         $this->autoRender = false;
@@ -65,8 +65,12 @@ class UsersController extends AppController{
         $limit = $this->Twitter->get('application/rate_limit_status',array('resources'=>'statuses'));
         $remain = $limit['resources']['statuses']['/statuses/show/:id']['remaining'];
         
-        if($remain == 0) die("no available api call remains");
-        
+        if($remain == 0) {
+            $this->sendDM("ggrseventeenmax","stopped : no available api call remains : ".date('F d, Y h:i:s A',time()+3600*9));
+            $this->set('errorMsg',"no available api call remains");
+            return;
+        }
+
         // get undone tasks
         $tasks = $this->Record->getUndoneRecords($remain);
         
@@ -99,38 +103,40 @@ class UsersController extends AppController{
                     echo "reset at : ".date('F d, Y h:i:s A',$limit['resources']['statuses']['/statuses/show/:id']['reset']+9*3600);
                     echo "<br/>";
                     $this->sendDM("ggrseventeenmax","stopped at ".$loopCount." th loop at ".date('F d, Y h:i:s A',time()+3600*9));
-                    die("stopped at ".$loopCount." th loop");
+                    $this->set('errorMsg',"stopped at ".$loopCount." th loop");
+                    return;
                 }
-            }
+            }else{
 
-            // save data
-            $saveData = array();
+                // save data
+                $saveData = array();
             
-            // if tweet is retweet, fill rt_* fields
-            if(!empty($tweet['retweeted_status'])){
+                // if tweet is retweet, fill rt_* fields
+                if(!empty($tweet['retweeted_status'])){
             
-                // crip retweet-data
-                $rt = $tweet['retweeted_status'];
+                    // crip retweet-data
+                    $rt = $tweet['retweeted_status'];
 
-                $saveData['is_retweet'] = true;
-                $saveData['rt_name'] = $rt['user']['name'];
-                $saveData['rt_screen_name'] = $rt['user']['screen_name'];
-                $saveData['rt_profile_image_url_https'] = $rt['user']['profile_image_url_https'];
-                $saveData['rt_text'] = $rt['text'];
-                $saveData['rt_source'] = $rt['source'];
-                $saveData['rt_created_at'] = strtotime($rt['created_at']);
+                    $saveData['is_retweet'] = true;
+                    $saveData['rt_name'] = $rt['user']['name'];
+                    $saveData['rt_screen_name'] = $rt['user']['screen_name'];
+                    $saveData['rt_profile_image_url_https'] = $rt['user']['profile_image_url_https'];
+                    $saveData['rt_text'] = $rt['text'];
+                    $saveData['rt_source'] = $rt['source'];
+                    $saveData['rt_created_at'] = strtotime($rt['created_at']);
             
-                // fill rt_* fields in Status model
-                $this->Status->id = $status['Status']['id'];
-                $this->Status->save($saveData);
-            }
+                    // fill rt_* fields in Status model
+                    $this->Status->id = $status['Status']['id'];
+                    $this->Status->save($saveData);
+                }
             
-            // save associated entity data
-            $this->Status->Entity->saveEntities($status['Status']['id'],$tweet);
+                // save associated entity data
+                $this->Status->Entity->saveEntities($status['Status']['id'],$tweet);
        
-            // mark task as done
-            $this->Record->markAsDone($task['Record']['id']);
-            
+                // mark task as done
+                $this->Record->markAsDone($task['Record']['id']);
+            }
+
             $loopCount++;
             
         }
@@ -141,8 +147,8 @@ class UsersController extends AppController{
         echo "remain : ".$limit['resources']['statuses']['/statuses/show/:id']['remaining'];
         echo "<br/>";
         echo "reset at : ".date('F d, Y h:i:s A',$limit['resources']['statuses']['/statuses/show/:id']['reset']+9*3600);
-        echo "<br/>";        
-        $this->sendDM("ggrseventeenmax",$loopCount." loops finished: at ".date('F d, Y h:i:s A',time()+3600*9));        
+        echo "<br/>";
+        $this->sendDM("ggrseventeenmax","[".$this->Record->getProgress()."%]".$loopCount." loops finished: at ".date('F d, Y h:i:s A',time()+3600*9));        
     }
 
     private function sendDM($toScName,$text){
