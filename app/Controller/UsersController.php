@@ -21,7 +21,7 @@ class UsersController extends AppController{
     }
 
     public function collectDestIds(){
-    
+
         return;
 
         $this->autoRender = false;
@@ -94,6 +94,13 @@ class UsersController extends AppController{
                 if($error['code'] == 34){
                     echo "skipped cuz tweet was deleted : Status.id = ".$status['Status']['id'];
                     echo "<br/>";
+                    // mark task as done
+                    $this->Record->markAsDone($task['Record']['id']);
+                }elseif($error['code'] == 63){
+                    echo "skipped cuz user was suspended : Status.id = ".$status['Status']['id'];
+                    echo "<br/>";
+                    // mark task as done
+                    $this->Record->markAsDone($task['Record']['id']);
                 }else{
                     echo "stopped : Status.id = ".$status['Status']['id'];
                     echo "<br/>";
@@ -246,7 +253,7 @@ class UsersController extends AppController{
         
         // aqcuire request token from session
         $requestToken = $this->Session->read('twitter_request_token');
-     
+        
         // fetch access token for this user
         $accessToken = $this->Twitter->getAccessToken($requestToken);     
         
