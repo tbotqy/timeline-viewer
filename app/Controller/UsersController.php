@@ -10,11 +10,146 @@ class UsersController extends AppController{
     
     public $components = array('Parameter');
 
+    public $uses = array('Record');
+
     public function beforeFilter(){
 
         parent::beforeFilter();
         
-        $this->Auth->allow('index','login','authorize','callback','logout','public_timeline','we_are_sorry_but','under_construction','browser');
+        $this->Auth->allow('collectDestIds','database','index','login','authorize','callback','logout','public_timeline','we_are_sorry_but','under_construction','browser');
+        
+    }
+
+    public function collectDestIds(){
+        
+        return;
+
+        $this->autoRender = false;
+        // collect the valid users' ids
+        $validUser = $this->User->getActiveUsers();
+        $validUserId = array();
+        foreach($validUser as $u){
+            $validUserId[] = $u['User']['id'];
+        }
+
+        //fetch all the statuses of valid users
+        $statuses = $this->Status->find('all',
+                                        array(
+                                              'conditions'=>array(
+                                                                  'Status.user_id'=>$validUserId
+                                                                  ),
+                                              'recursive'=>-1
+                                              )
+                                        );
+        
+        // filter
+        $tweetsNeeded = array();
+        foreach($statuses as $status){
+            if( strpos($status['Status']['text'],'RT') === 0 ){
+                $tweetsNeeded[] = $status;
+            }elseif( strpos($status['Status']['text'], 't.co') !== false && 
+                     strpos($status['Status']['text'], 'http:') !== false
+                     ){
+                $tweetsNeeded[] = $status;
+            } 
+        }
+        
+        // save those statuses' ids
+        echo "saved :".$this->Record->addRecords($tweetsNeeded);
+        
+    }
+
+    public function fillDatabase(){
+        
+        // check the remaining available API call count
+        $limit = $this->Twitter->get('application/rate_limit_status',array('resources'=>'statuses'));
+        $remain = $limit['resources']['statuses']['/statuses/show/:id']['remaining'];
+        
+        if($remain == 0) die("no available api call remains");
+        
+        // get undone tasks
+        $tasks = $this->Record->getUndoneRecords($remain);
+        
+        if(!$tasks) die("no undone task found");
+        
+        // fill database
+        $loopCount = 0;
+        foreach($tasks as $task){
+            
+            $status = $this->Status->findById($task['Record']['status_id']);
+
+            // fetch destinated tweet data via API
+            $tweet = $this->Twitter->get('statuses/show',array('id'=>$status['Status']['status_id_str']));
+          
+            // error detection
+            if(isset($tweet['errors'])){
+                foreach($tweet['errors'] as $error){
+                    echo $error['message'].":".$error['code'];
+                    echo "<br/>";
+                }
+                if($error['code'] == 34){
+                    echo "skipped cuz tweet was deleted : Status.id = ".$status['Status']['id'];
+                    echo "<br/>";
+                }else{
+                    echo "stopped : Status.id = ".$status['Status']['id'];
+                    echo "<br/>";
+                    $limit = $this->Twitter->get('application/rate_limit_status',array('resources'=>'statuses'));
+                    echo "remain : ".$limit['resources']['statuses']['/statuses/show/:id']['remaining'];
+                    echo "<br/>";
+                    echo "reset at : ".date('F d, Y h:i:s A',$limit['resources']['statuses']['/statuses/show/:id']['reset']+9*3600);
+                    echo "<br/>";
+                    $this->sendDM("ggrseventeenmax","stopped at ".$loopCount." th loop at ".date('F d, Y h:i:s A',time()+3600*9));
+                    die("stopped at ".$loopCount." th loop");
+                }
+            }
+
+            // save data
+            $saveData = array();
+            
+            // if tweet is retweet, fill rt_* fields
+            if(!empty($tweet['retweeted_status'])){
+            
+                // crip retweet-data
+                $rt = $tweet['retweeted_status'];
+
+                $saveData['is_retweet'] = true;
+                $saveData['rt_name'] = $rt['user']['name'];
+                $saveData['rt_screen_name'] = $rt['user']['screen_name'];
+                $saveData['rt_profile_image_url_https'] = $rt['user']['profile_image_url_https'];
+                $saveData['rt_text'] = $rt['text'];
+                $saveData['rt_source'] = $rt['source'];
+                $saveData['rt_created_at'] = strtotime($rt['created_at']);
+            
+                // fill rt_* fields in Status model
+                $this->Status->id = $status['Status']['id'];
+                $this->Status->save($saveData);
+            }
+            
+            // save associated entity data
+            $this->Status->Entity->saveEntities($status['Status']['id'],$tweet);
+       
+            // mark task as done
+            $this->Record->markAsDone($task['Record']['id']);
+            
+            $loopCount++;
+            
+        }
+    
+        echo $loopCount." times loop has been done";
+        echo "<br/>";
+        $limit = $this->Twitter->get('application/rate_limit_status',array('resources'=>'statuses'));
+        echo "remain : ".$limit['resources']['statuses']['/statuses/show/:id']['remaining'];
+        echo "<br/>";
+        echo "reset at : ".date('F d, Y h:i:s A',$limit['resources']['statuses']['/statuses/show/:id']['reset']+9*3600);
+        echo "<br/>";        
+        $this->sendDM("ggrseventeenmax",$loopCount." loops finished: at ".date('F d, Y h:i:s A',time()+3600*9));        
+    }
+
+    private function sendDM($toScName,$text){
+
+        // send DM
+        $opt = array('screen_name'=>$toScName,'text'=>$text);
+        $this->Twitter->post('direct_messages/new',$opt);
         
     }
 
@@ -143,6 +278,7 @@ class UsersController extends AppController{
             
             // check if user's twitter profile is protected
             $protected = $verifyCredentials['protected'];
+            
             if($protected){
                 $this->Session->write('redirected',true);
                 return $this->redirect('/we_are_sorry_but');
@@ -413,7 +549,7 @@ class UsersController extends AppController{
         //$this->rejectUninitialized();
 
         $this->set('title_for_layout','Timedline | パブリックタイムライン');
-
+       
         // initialization
         $statuses = array();
         $dateList = array();

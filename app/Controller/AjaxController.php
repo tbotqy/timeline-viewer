@@ -109,7 +109,7 @@ class AjaxController extends AppController{
            
             }
         }
-        
+
         // save acquired data if any
         if(count($statuses)>0){
             
@@ -238,7 +238,6 @@ class AjaxController extends AppController{
             $latestStatus = $this->Status->getLatestStatus($user['id'],1);
             $destinationTime = $latestStatus[0]['Status']['created_at'];
         
-        
             // save lacking tweets if any
             foreach($tweets as $tweet){
 
@@ -331,7 +330,7 @@ class AjaxController extends AppController{
         // initialize the flag representing if deleting went well 
         $deleted = false;
 
-        if($this->User->deleteAccount($userId)){
+        if($this->User->deleteAccount($userId,true)){
             $deleted = true;
         }
   

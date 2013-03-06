@@ -14,6 +14,11 @@ class Status extends AppModel{
                                             )
                               );
 
+    public $hasMany = array('Entity'=>array(
+                                            'dependent'=>true
+                                            )
+                            );
+
     ///////////////////////////////////////////
     // functions to retrieve latest statuses //
     ///////////////////////////////////////////
@@ -475,11 +480,23 @@ class Status extends AppModel{
                                 'created'=>time()
                                 );
 
-        // primary key ++
+        if(!empty($status['retweeted_status'])){
+            $rt = $status['retweeted_status'];
+
+            $status_to_save['is_retweet'] = true;
+            $status_to_save['rt_name'] = $rt['user']['name'];
+            $status_to_save['rt_screen_name'] = $rt['user']['screen_name'];
+            $status_to_save['rt_profile_image_url_https'] = $rt['user']['profile_image_url_https'];
+            $status_to_save['rt_text'] = $rt['text'];
+            $status_to_save['rt_source'] = $rt['source'];
+            $status_to_save['rt_created_at'] = strtotime($rt['created_at']);
+        }
+            
+        // save  status and its associated entities
         $this->create();
-        
-        // save the status
         $this->save($status_to_save);
+        
+        $this->Entity->saveEntities($this->id,$status);
     }
 
     public function savePreSavedStatus($user_id){
