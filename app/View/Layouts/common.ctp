@@ -53,7 +53,7 @@
       echo $this->fetch('css');
       echo $this->fetch('script');
     ?>
-    
+    <script type="text/javascript" src="//platform.twitter.com/widgets.js"></script>    
     <title><?php echo $title_for_layout; ?></title>
     <?php
       if(stripos(env('HTTP_HOST'),'dev') === false):
@@ -80,7 +80,7 @@
   <body>
     <div id="fb-root"></div>
     
-    <?php echo $this->element('global-header');?>
+    <?php //echo $this->element('global-header');?>
 
     <!-- #container-main -->
     <div id="container-main" class="<?php echo $actionType;?>">

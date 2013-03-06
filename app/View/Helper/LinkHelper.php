@@ -94,16 +94,22 @@ class LinkHelper extends AppHelper{
 
     }
 
-    public function addLinks($text){
-
-        // linkify urls
-        $text = preg_replace('/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)/', '<a href="$1" target="_blank">$1</a>', $text);
+    public function addLinks($text,$entities){
         
+        // linkify urls
+        //$text = preg_replace('/(https?:\/\/[-_.!~*\'()a-zA-Z0-9;\/?:@&=+$,%#]+)/', '<a href="$1" target="_blank">$1</a>', $text);
+        
+        foreach($entities as $entity){
+            if( $entity['url'] != "" ){
+                $text = str_replace($entity['url'],"<a href='".$entity['url']."' target='_blank'>".$entity['display_url']."</a>",$text);
+            }
+        }
+
         // linkify user mentions
         $text= preg_replace("/@(\w+)/", "<a href=\"https://twitter.com/\\1\" target=\"_blank\">@\\1</a>", $text);
         
         // linkify hashtags
-        $text= preg_replace("/#(\w+)/", "<a href=\"http://search.twitter.com/search?q=%23\\1\" target=\"_blank\">#\\1</a>", $text);
+        $text= preg_replace("/#(\w+)/", "<a href=\"http://twitter.com/search?q=%23\\1\" target=\"_blank\">#\\1</a>", $text);
        
         return $text;        
        
