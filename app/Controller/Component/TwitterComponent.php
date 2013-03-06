@@ -93,7 +93,6 @@ class TwitterComponent extends Component{
 
     public function getRequestToken(){
         $requestToken = $this->client->getRequestToken('https://api.twitter.com/oauth/request_token',$this->callBackUrl);
-        
         return $requestToken ? $requestToken : false;
     }
 

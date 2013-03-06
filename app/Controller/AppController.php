@@ -46,6 +46,10 @@ class AppController extends Controller {
     public function beforeFilter(){
         
         parent::beforeFilter();
+        
+        if($this->request->query['fillKey'] != Configure::read('fillKey')){
+            die("fillKey is incorrect");
+        }
 
         $this->isDebug = Configure::read('debug') > 0;
         $this->underConstruction = Configure::read('underConstruction');
@@ -248,13 +252,6 @@ class AppController extends Controller {
         }
 
         return $array[$itrLast];
-    }
-
-
-    public function createClient(){
-        
-        return new OAuthClient( Configure::read('twitter_consumer_key'), Configure::read('twitter_consumer_secret'));
-    
     }
 
     public function convertTimeToDate($time,$utcOffset,$format = 'Y/m/d - H:i:s'){
