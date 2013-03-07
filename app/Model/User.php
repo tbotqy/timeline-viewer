@@ -320,10 +320,8 @@ class User extends AppModel{
                                            'Friend.user_id'=>$user_id
                                            )
                                      );
-
-            // just switch the delete flag
-            $this->id = $user_id;
-            return $this->saveField('deleted_flag',true);
+            
+            return $this->delete($user_id);
             
         }else{
             // just switch the delete flag
