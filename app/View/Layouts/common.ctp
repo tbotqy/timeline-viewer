@@ -80,7 +80,7 @@
   <body>
     <div id="fb-root"></div>
     
-    <?php //echo $this->element('global-header');?>
+    <?php echo $this->element('global-header');?>
 
     <!-- #container-main -->
     <div id="container-main" class="<?php echo $actionType;?>">

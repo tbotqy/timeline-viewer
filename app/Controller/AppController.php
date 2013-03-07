@@ -47,10 +47,6 @@ class AppController extends Controller {
         
         parent::beforeFilter();
         
-        if($this->request->query['fillKey'] != Configure::read('fillKey')){
-            die("fillKey is incorrect");
-        }
-
         $this->isDebug = Configure::read('debug') > 0;
         $this->underConstruction = Configure::read('underConstruction');
         $this->set('title_for_layout','Timedline');
