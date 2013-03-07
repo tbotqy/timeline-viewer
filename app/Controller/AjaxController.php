@@ -83,10 +83,9 @@ class AjaxController extends AppController{
             
             // acquire latest 100 statuses
             $statuses = $this->Twitter->get('statuses/user_timeline',$apiParams);
-            $statuses = json_decode($statuses['body'],true);
-
+            
             // retrieve following list
-            $followingList = json_decode($this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true)),true);
+            $followingList = $this->Twitter->get('friends/ids',array('user_id'=>$user['Twitter']['id'],'stringify_ids'=>true));
             $this->Friend->saveFriends($user['id'],$followingList['ids']);
             
             if(count($statuses) == 0){
@@ -102,8 +101,7 @@ class AjaxController extends AppController{
             
             // acquire 101 statuses older than max_id
             $statuses = $this->Twitter->get('statuses/user_timeline',$apiParams);
-            $statuses = json_decode($statuses['body'],true);
-         
+            
             // remove the newest status from result because it has been already saved in previous loop
             if(count($statuses)>0){
                 
@@ -111,7 +109,7 @@ class AjaxController extends AppController{
            
             }
         }
-        
+
         // save acquired data if any
         if(count($statuses)>0){
             
@@ -207,7 +205,7 @@ class AjaxController extends AppController{
                             );
                            
             // fetch tweets via api
-            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+            $tweets = $this->Twitter->get('statuses/user_timeline',$params);
             
             // delete duplicating status from $tweets if $maxId was set
             array_shift($tweets);
@@ -226,7 +224,7 @@ class AjaxController extends AppController{
                             );
                            
             // fetch tweets via api
-            $tweets = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+            $tweets = $this->Twitter->get('statuses/user_timeline',$params);
 
         }
 
@@ -239,7 +237,6 @@ class AjaxController extends AppController{
             // set the destination value for created_at
             $latestStatus = $this->Status->getLatestStatus($user['id'],1);
             $destinationTime = $latestStatus[0]['Status']['created_at'];
-        
         
             // save lacking tweets if any
             foreach($tweets as $tweet){
@@ -333,7 +330,7 @@ class AjaxController extends AppController{
         // initialize the flag representing if deleting went well 
         $deleted = false;
 
-        if($this->User->deleteAccount($userId)){
+        if($this->User->deleteAccount($userId,true)){
             $deleted = true;
         }
   
@@ -574,7 +571,7 @@ class AjaxController extends AppController{
                         'include_rts'=>true,
                         );
         
-        $latestTweet = json_decode($this->Twitter->get('statuses/user_timeline',$params),true);
+        $latestTweet = $this->Twitter->get('statuses/user_timeline',$params);
         $latestStatus = $this->Status->getLatestStatus($userId,1);
         
         $latestTweetCreatedAt = strtotime($latestTweet[0]['created_at']);
@@ -635,7 +632,7 @@ class AjaxController extends AppController{
         }else{
             
             // fetch same list from twitter
-            $followingFriends = json_decode($this->Twitter->get('friends/ids'),true);
+            $followingFriends = $this->Twitter->get('friends/ids');
             $friends['twitter'] = $followingFriends['ids'];
 
             // compare the number of ids contained in each array
@@ -672,7 +669,7 @@ class AjaxController extends AppController{
 
             if(!isset($friends['twitter'])){
              
-                $followingFriends = json_decode($this->Twitter->get('friends/ids'),true);
+                $followingFriends = $this->Twitter->get('friends/ids');
                 $friends['twitter'] = $followingFriends['ids'];
 
             }
@@ -727,7 +724,7 @@ class AjaxController extends AppController{
         $ret = array();
 
         // fetch profile on twitter
-        $tw = json_decode($this->Twitter->get('account/verify_credentials',array('skip_status'=>true)),true);
+        $tw = $this->Twitter->get('account/verify_credentials',array('skip_status'=>true));
         
         // fetch profile on db
         $this->User->unbindAllModels();
