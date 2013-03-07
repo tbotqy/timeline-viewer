@@ -348,7 +348,7 @@ class AjaxController extends AppController{
         }
 
         $destinationUserId = $this->request->data('dest_id');
-
+        
         if($this->User->deleteAccount($destinationUserId,true)){
             echo "OK";
         }else{
