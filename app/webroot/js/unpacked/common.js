@@ -242,7 +242,7 @@ $(function(){
     
     $.ajax({
       
-      url: '/ajax/delete_account',
+      url: '/ajax/deactivate_account',
       type: 'post',
       dataType: 'json',
       

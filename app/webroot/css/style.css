@@ -614,6 +614,15 @@ footer .copyright{
   cursor: pointer;
 }
 
+.wrap-each-status .status-content .top .logo{ 
+  float: left;
+  margin: 0 3px 0 0;
+}
+
+.wrap-each-status .status-content .top .logo img{ 
+  width: 18px;
+}
+
 .wrap-each-status .status-content .top .date{ 
   float: right;
 }
@@ -623,6 +632,30 @@ footer .copyright{
   width: 100%;
   padding: 10px 10px 10px 0;
   line-height: 20px;
+  word-wrap: break-word;
+}
+
+.wrap-each-status .status-content .retweet-info{
+  float: left;
+  width: 100%;
+  color: gray;
+  line-height: 10px;
+  font-size: 90%;
+  margin:0;
+}
+
+.wrap-each-status .status-content .retweet-info p{ 
+  margin: 0;
+}
+
+.wrap-each-status .status-content .retweet-info .icon{
+  float: left;
+  width: 16px !important;
+  height: 16px !important;
+  background:url('../img/everything-spritev2.png') no-repeat;
+  background-position: -96px 0;
+  overflow:hidden;
+  margin: -5px 5px 0 0;
 }
 
 .wrap-each-status .status-content .top{ 
@@ -634,8 +667,55 @@ footer .copyright{
   float: left;
   width: 100%;
   color: gray;
+  margin: 7px 0 0 0;
   display: none;
 }
+
+.wrap-each-status .status-content .bottom span{ 
+  float: left;
+}
+
+.wrap-each-status .status-content .bottom .source{ 
+  margin: 0 0 0 5px;
+}
+.wrap-each-status .status-content .bottom .link-official{ 
+  margin: 0 0 0 10px;
+}
+
+.wrap-each-status .status-content .bottom .area-intents{
+  float: left;
+  margin: 0 0 0 5px;
+}
+
+.wrap-each-status .status-content .bottom .area-intents .intent{ 
+  width: 16px !important;
+  height: 16px;
+  float: left;
+  text-decoration: none;
+  background:url('../img/everything-spritev2.png') no-repeat;
+  overflow:hidden;
+  margin-right: 3px;
+}
+
+.wrap-each-status .status-content .bottom .area-intents .intent-reply{
+  background-position: 0 0;
+}
+.wrap-each-status .status-content .bottom .area-intents .intent-reply:hover{ 
+  background-position: -16px 0;
+}
+.wrap-each-status .status-content .bottom .area-intents .intent-retweet{ 
+  background-position: -80px 0;
+}
+.wrap-each-status .status-content .bottom .area-intents .intent-retweet:hover{ 
+  background-position: -96px 0;
+}
+.wrap-each-status .status-content .bottom .area-intents .intent-favorite{ 
+  background-position: -32px 0;
+}
+.wrap-each-status .status-content .bottom .area-intents .intent-favorite:hover{ 
+  background-position: -48px 0;
+}
+
 .wrap-each-status .status-content .bottom .link-delete{
   float: right;
 }
