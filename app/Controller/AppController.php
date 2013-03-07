@@ -46,7 +46,7 @@ class AppController extends Controller {
     public function beforeFilter(){
         
         parent::beforeFilter();
-
+        
         $this->isDebug = Configure::read('debug') > 0;
         $this->underConstruction = Configure::read('underConstruction');
         $this->set('title_for_layout','Timedline');
@@ -107,10 +107,11 @@ class AppController extends Controller {
                 $this->redirect('/');
                 return ;
             }
-
-
-            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));        
             
+            $userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));        
+
+            $tokens = $this->User->getTokens($id);
+            $this->Twitter->setAccessToken( $tokens['User'] );
             $this->set('loggingUser',$loggingUser);
 
         }
@@ -247,13 +248,6 @@ class AppController extends Controller {
         }
 
         return $array[$itrLast];
-    }
-
-
-    public function createClient(){
-        
-        return new OAuthClient( Configure::read('twitter_consumer_key'), Configure::read('twitter_consumer_secret'));
-    
     }
 
     public function convertTimeToDate($time,$utcOffset,$format = 'Y/m/d - H:i:s'){

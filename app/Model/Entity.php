@@ -12,8 +12,7 @@ class Entity extends AppModel{
       
         /**
          * save given enitities with its status_id linked
-         * returns true if success
-         * returns false if fail
+         * @return bool : succeed or failed
          */
 
         $entities = $status['entities'];
@@ -58,9 +57,11 @@ class Entity extends AppModel{
             break;
         case 'urls':
             $ret['url'] = $entity['url'];
+            $ret['display_url'] = $entity['display_url'];
             break;
         case 'media':
             $ret['url'] = $entity['url'];
+            $ret['display_url'] = $entity['display_url'];
             break;
         case 'user_mentions':
             $ret['mention_to_screen_name'] = $entity['screen_name'];
