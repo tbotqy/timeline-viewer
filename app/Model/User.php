@@ -310,7 +310,21 @@ class User extends AppModel{
         if($physically_delete){
 
             // delete all related data
-            return $this->delete($user_id,true);
+            $this->Status->deleteAll(
+                                     array(
+                                           'Status.user_id'=>$user_id
+                                           )
+                                     );
+            $this->Friend->deleteAll(
+                                     array(
+                                           'Friend.user_id'=>$user_id
+                                           )
+                                     );
+
+            // just switch the delete flag
+            $this->id = $user_id;
+            return $this->saveField('deleted_flag',true);
+            
         }else{
             // just switch the delete flag
             $this->id = $user_id;
