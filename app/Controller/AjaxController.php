@@ -316,7 +316,7 @@ class AjaxController extends AppController{
         
     }
 
-    public function delete_account(){
+    public function deactivate_account(){
        
         if(!$this->request->isPost()){
 
@@ -330,7 +330,7 @@ class AjaxController extends AppController{
         // initialize the flag representing if deleting went well 
         $deleted = false;
 
-        if($this->User->deleteAccount($userId,true)){
+        if($this->User->deleteAccount($userId,false)){
             $deleted = true;
         }
   
