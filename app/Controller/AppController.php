@@ -34,7 +34,7 @@ App::uses('Controller', 'Controller');
 
 class AppController extends Controller {
 
-    public $uses = array('User','Status','Friend');
+    public $uses = array('User','Status','Friend','Entity');
     public $components = array('Auth','Session','Twitter');
     public $helpers = array('Html','Session','Text','Link');
     

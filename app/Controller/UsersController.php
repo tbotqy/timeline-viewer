@@ -406,7 +406,7 @@ class UsersController extends AppController{
     }
 
     public function public_timeline(){
-        
+       
         /**
          * shows the public timeline, the line of tweets presented by all the users registered 
          */
