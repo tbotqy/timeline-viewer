@@ -98,7 +98,8 @@ class Status extends AppModel{
                            array(
                                  'conditions'=>array(
                                                      'Status.user_id'=>$ids,
-                                                     'Status.pre_saved' => false
+                                                     'Status.pre_saved' => false,
+                                                     'User.closed_only'=>false,
                                                      ),
                                  'order'=>'Status.created_at DESC',
                                  'limit'=>$limit
@@ -193,7 +194,8 @@ class Status extends AppModel{
                                                           'Status.user_id'=>$ids,
                                                           'Status.created_at >=' => $begin,
                                                           'Status.created_at <=' => $end,
-                                                          'Status.pre_saved' => false
+                                                          'Status.pre_saved' => false,
+                                                          'User.closed_only'=>false,
                                                           ),
                                       'limit'=>$limit,
                                       'order'=>'Status.created_at '.$order
@@ -330,7 +332,8 @@ class Status extends AppModel{
                                    array(
                                          'conditions'=>array(
                                                              'Status.user_id'=>$ids,
-                                                             'Status.pre_saved' => false
+                                                             'Status.pre_saved' => false,
+                                                             'User.closed_only'=>false,
                                                              ),
                                          'fields'=>array(
                                                          'Status.created_at'
@@ -434,7 +437,8 @@ class Status extends AppModel{
         $conditions = array(
                             'Status.user_id' => $ids,
                             'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false
+                            'Status.pre_saved' => false,
+                            'User.closed_only'=>false,
                             );
 
         
@@ -620,7 +624,8 @@ class Status extends AppModel{
         $conditions = array(
                             'Status.user_id' => $ids,
                             'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false
+                            'Status.pre_saved' => false,
+                            'User.closed_only'=>false,
                             );
 
         $count = $this->find(

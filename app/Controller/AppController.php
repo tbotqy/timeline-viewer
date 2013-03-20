@@ -55,7 +55,7 @@ class AppController extends Controller {
         $this->set('underConstruction',$this->underConstruction);
 
         $actionType = $this->request->params['action'];
-    
+  
         // check if user agent is compatible
         if($this->isCompatibleUA()){
 
