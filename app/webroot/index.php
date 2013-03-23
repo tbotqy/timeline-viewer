@@ -1,4 +1,5 @@
 <?php
+
 //die("howdy!");
 /**
  * Index
@@ -57,7 +58,8 @@
  *
  * Leaving this constant undefined will result in it being defined in Cake/bootstrap.php
  */
-	//define('CAKE_CORE_INCLUDE_PATH', ROOT . DS . 'lib');
+
+//define('CAKE_CORE_INCLUDE_PATH', '/usr/share/php/');
 
 /**
  * Editing below this line should NOT be necessary.

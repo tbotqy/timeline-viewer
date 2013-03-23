@@ -16,4 +16,5 @@
  * @license       MIT License (http://www.opensource.org/licenses/mit-license.php)
  */
 ?>
+  <?php //header('Content-Type: text/html;charset=UTF-8');?>
 <?php echo $content_for_layout; ?>

@@ -327,13 +327,14 @@ class Status extends AppModel{
                 
                 // fetch flesh data
                 $ids = $this->User->getIds();
+
                 $ret = $this->find(
                                    'list',
                                    array(
                                          'conditions'=>array(
                                                              'Status.user_id'=>$ids,
-                                                             'Status.pre_saved' => false,
-                                                             'User.closed_only'=>false,
+                                                             'Status.pre_saved' => false
+                                                             //'User.closed_only'=>false,
                                                              ),
                                          'fields'=>array(
                                                          'Status.created_at'
@@ -341,7 +342,7 @@ class Status extends AppModel{
                                          'order'=>'Status.created_at '.$order
                                          )
                                    );
-
+                
                 $lastCreated = $this->getLastCreated();
 
                 // update cache
