@@ -28,7 +28,7 @@
 	</li>
 	<li>
 	  <a href="//windows.microsoft.com/ja-jp/internet-explorer/products/ie-9/features" target="_blank"><img width="64" src="/img/ie.png" alt="IE" /></a>
-	  <span class="link"><a href="//windows.microsoft.com/ja-jp/internet-explorer/products/ie-9/features" target="_blank">IE 9+</a></span>
+	  <span class="link"><a href="//windows.microsoft.com/ja-jp/internet-explorer/products/ie-9/features" target="_blank">IE 9</a></span>
 	</li>
       </ul>
     </div>

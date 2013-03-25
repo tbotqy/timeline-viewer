@@ -222,7 +222,28 @@ class AppController extends Controller {
         
         return $ver;
     }
-    
+
+    /*
+    public function getIEVersion(){
+    */
+        /**
+         * check if client browser type is IE and returns its version
+         * @return int : version of IE if browser is IE, else false
+         */
+    /*  
+        $httpUA = env('HTTP_USER_AGENT');
+        $pos = stripos($httpUA,'msie');
+
+        if($pos === FALSE) return false;
+
+        $ver = substr($httpUA, $pos+5, 2);
+        if(strpos($ver,'.')){
+            $ver = str_replace(".","",$ver);
+        }
+
+        return (int)$ver;
+    }
+    */
     public function checkInitialized(){
      
         $this->userIsInitialized = $this->User->isInitialized($this->Auth->user('id'));
