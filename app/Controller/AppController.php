@@ -49,7 +49,7 @@ class AppController extends Controller {
         
         $this->isDebug = Configure::read('debug') > 0;
         $this->underConstruction = Configure::read('underConstruction');
-        $this->set('title_for_layout','Timedline');
+        $this->set('title_for_layout','Timedline - あの日のタイムラインを眺められる、ちょっとしたアプリケーション');
         $this->set('isDebug',$this->isDebug);
         $this->set('isInitialRequest',false);
         $this->set('underConstruction',$this->underConstruction);

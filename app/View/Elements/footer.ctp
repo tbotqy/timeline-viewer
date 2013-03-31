@@ -60,7 +60,7 @@
 	  </div>
       
 	  <div class="wrap-hatena">
-	    <a href="http://b.hatena.ne.jp/entry/http://<?php echo env('HTTP_HOST');?>" class="hatena-bookmark-button" data-hatena-bookmark-title="Timedline" data-hatena-bookmark-layout="standard" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a>
+<a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a><script type="text/javascript" src="http://b.st-hatena.com/js/bookmark_button.js" charset="utf-8" async="async"></script>
 	  </div>      
 	  
 	</div>
