@@ -9,20 +9,20 @@ class Status extends AppModel{
     public $name = 'Status';
  
     public $belongsTo = array(
-                              'User'=>array(
-                                            'dependent'=>false
-                                            )
-                              );
+        'User'=>array(
+            'dependent'=>false
+        )
+    );
 
     public $hasMany = array('Entity'=>array(
-                                            'dependent'=>true
-                                            )
-                            );
+            'dependent'=>true
+        )
+    );
 
     ///////////////////////////////////////////
     // functions to retrieve latest statuses //
     ///////////////////////////////////////////
-    
+        
     public function getLatestStatus($user_id,$limit = 10){
 
         /**
@@ -34,16 +34,16 @@ class Status extends AppModel{
         
 
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.user_id'=>$user_id,
-                                                          'Status.pre_saved' => false
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at DESC'
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$user_id,
+                    'Status.pre_saved' => false
+                ),
+                'limit'=>$limit,
+                'order'=>'Status.created_at DESC'
+            )
+        );
         // return result
         return $this->checkNum($statuses);
         
@@ -66,16 +66,16 @@ class Status extends AppModel{
         
 
         $ret = $this->find(
-                           'all',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.user_id'=>$user_ids,
-                                                     'Status.pre_saved' => false,
-                                                     ),
-                                 'order'=>'Status.created_at DESC',
-                                 'limit'=>$limit
-                                 )
-                           );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$user_ids,
+                    'Status.pre_saved' => false,
+                ),
+                'order'=>'Status.created_at DESC',
+                'limit'=>$limit
+            )
+        );
 
         return $this->checkNum($ret);
 
@@ -91,20 +91,18 @@ class Status extends AppModel{
         
         $ids = $this->User->getIds();
 
-        
-
         $ret = $this->find(
-                           'all',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.user_id'=>$ids,
-                                                     'Status.pre_saved' => false,
-                                                     'User.closed_only'=>false,
-                                                     ),
-                                 'order'=>'Status.created_at DESC',
-                                 'limit'=>$limit
-                                 )
-                           );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$ids,
+                    'Status.pre_saved' => false,
+                    'User.closed_only'=>false,
+                ),
+                'order'=>'Status.created_at DESC',
+                'limit'=>$limit
+            )
+        );
 
         return $this->checkNum($ret);
 
@@ -125,18 +123,18 @@ class Status extends AppModel{
         
 
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.user_id'=>$user_id,
-                                                          'Status.created_at >=' => $begin,
-                                                          'Status.created_at <=' => $end,
-                                                          'Status.pre_saved' => false
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at '.$order
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$user_id,
+                    'Status.created_at >=' => $begin,
+                    'Status.created_at <=' => $end,
+                    'Status.pre_saved' => false
+                ),
+                'limit'=>$limit,
+                'order'=>'Status.created_at '.$order
+            )
+        );
      
         return $this->checkNum($statuses);
         
@@ -158,18 +156,18 @@ class Status extends AppModel{
         
 
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.user_id'=>$user_ids,
-                                                          'Status.created_at >=' => $begin,
-                                                          'Status.created_at <=' => $end,
-                                                          'Status.pre_saved' => false,
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at '.$order
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$user_ids,
+                    'Status.created_at >=' => $begin,
+                    'Status.created_at <=' => $end,
+                    'Status.pre_saved' => false,
+                ),
+                'limit'=>$limit,
+                'order'=>'Status.created_at '.$order
+            )
+        );
 
         // return result
         return $this->checkNum($statuses);
@@ -188,19 +186,19 @@ class Status extends AppModel{
         $ids = $this->User->getIds();
         
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.user_id'=>$ids,
-                                                          'Status.created_at >=' => $begin,
-                                                          'Status.created_at <=' => $end,
-                                                          'Status.pre_saved' => false,
-                                                          'User.closed_only'=>false,
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at '.$order
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$ids,
+                    'Status.created_at >=' => $begin,
+                    'Status.created_at <=' => $end,
+                    'Status.pre_saved' => false,
+                    'User.closed_only'=>false,
+                ),
+                'limit'=>$limit,
+                'order'=>'Status.created_at '.$order
+            )
+        );
 
         // return result
         return $this->checkNum($statuses);
@@ -259,104 +257,104 @@ class Status extends AppModel{
          */
        
         switch($mode){
-        case 'sent_tweets':
-            $ret = $this->find(
-                               'list',
-                               array(
-                                     'conditions'=>array(
-                                                         'Status.user_id'=>$user_id,
-                                                         'Status.pre_saved' => false
-                                                         ),
-                                     'fields'=>array(
-                                                     'Status.created_at'
-                                                     ),
-                                     'order'=>'Status.created_at '.$order
-                                     )
-                               );
-            break;
-        case 'home_timeline':
+            case 'sent_tweets':
+                $ret = $this->find(
+                    'list',
+                    array(
+                        'conditions'=>array(
+                            'Status.user_id'=>$user_id,
+                            'Status.pre_saved' => false
+                        ),
+                        'fields'=>array(
+                            'Status.created_at'
+                        ),
+                        'order'=>'Status.created_at '.$order
+                    )
+                );
+                break;
+            case 'home_timeline':
 
-            // get user's friend ids
-            $twitter_ids = $this->User->Friend->getFriendIds($user_id);
-            // find user_ids IN $twitter_ids
-            $user_ids = $this->User->getIdByTwitterId($twitter_ids);
+                // get user's friend ids
+                $twitter_ids = $this->User->Friend->getFriendIds($user_id);
+                // find user_ids IN $twitter_ids
+                $user_ids = $this->User->getIdByTwitterId($twitter_ids);
         
-            $ret = $this->find
-                (
-                 'list',
-                 array
-                 (
-                  'conditions'=>array(
-                                      'Status.user_id'=>$user_ids,
-                                      'Status.pre_saved'=>false
-                                      ),
-                  'fields'=>array(
-                                  'Status.created_at'
-                                  ),
-                  'order'=>'Status.created_at '.$order
-                  )
-                 );
+                $ret = $this->find
+                    (
+                        'list',
+                        array
+                        (
+                            'conditions'=>array(
+                                'Status.user_id'=>$user_ids,
+                                'Status.pre_saved'=>false
+                            ),
+                            'fields'=>array(
+                                'Status.created_at'
+                            ),
+                            'order'=>'Status.created_at '.$order
+                        )
+                    );
                        
-            return $ret;
+                return $ret;
 
-            break;
-        case 'public_timeline':
+                break;
+            case 'public_timeline':
             
-            $cachedData = Cache::read("created_at_list_public");
+                $cachedData = Cache::read("created_at_list_public");
             
-            $fetchNewData = false;
+                $fetchNewData = false;
 
-            // check if cached data exists
-            if($cachedData){
+                // check if cached data exists
+                if($cachedData){
                 
-                // check if model data is updated by checking its largest created value
-                $lastCreated = $this->getLastCreated();
-                $lastCreatedInCache = Cache::read('Status.created_largest');
+                    // check if model data is updated by checking its largest created value
+                    $lastCreated = $this->getLastCreated();
+                    $lastCreatedInCache = Cache::read('Status.created_largest');
                 
-                // compare cached data with model
-                if($lastCreated != $lastCreatedInCache){
+                    // compare cached data with model
+                    if($lastCreated != $lastCreatedInCache){
+                        $fetchNewData = true;
+                    }
+                
+                }else{
+                    // if cache is expired
                     $fetchNewData = true;
                 }
-                
-            }else{
-                // if cache is expired
-                $fetchNewData = true;
-            }
 
-            if($fetchNewData){
+                if($fetchNewData){
                 
-                // fetch flesh data
-                $ids = $this->User->getIds();
+                    // fetch flesh data
+                    $ids = $this->User->getIds();
 
-                $ret = $this->find(
-                                   'list',
-                                   array(
-                                         'conditions'=>array(
-                                                             'Status.user_id'=>$ids,
-                                                             'Status.pre_saved' => false
-                                                             //'User.closed_only'=>false,
-                                                             ),
-                                         'fields'=>array(
-                                                         'Status.created_at'
-                                                         ),
-                                         'order'=>'Status.created_at '.$order
-                                         )
-                                   );
+                    $ret = $this->find(
+                        'list',
+                        array(
+                            'conditions'=>array(
+                                'Status.user_id'=>$ids,
+                                'Status.pre_saved' => false
+                                //'User.closed_only'=>false,
+                            ),
+                            'fields'=>array(
+                                'Status.created_at'
+                            ),
+                            'order'=>'Status.created_at '.$order
+                        )
+                    );
                 
-                $lastCreated = $this->getLastCreated();
+                    $lastCreated = $this->getLastCreated();
 
-                // update cache
-                Cache::write("created_at_list_public",$ret);
-                Cache::write("Status.created_largest",$lastCreated);
-            }else{
-                $ret = $cachedData;
-            }
+                    // update cache
+                    Cache::write("created_at_list_public",$ret);
+                    Cache::write("Status.created_largest",$lastCreated);
+                }else{
+                    $ret = $cachedData;
+                }
             
-            return $ret;
+                return $ret;
 
-            break;
-        default:
-            return false;
+                break;
+            default:
+                return false;
         }
 
         return $this->checkNum($ret);
@@ -386,17 +384,17 @@ class Status extends AppModel{
         
        
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>array(
-                                                          'Status.user_id'=>$user_id,
-                                                          'Status.created_at <'=>$threshold_timestamp,
-                                                          'Status.pre_saved' => false
-                                                          ),
-                                      'limit'=>$limit,
-                                      'order'=>'Status.created_at DESC'
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$user_id,
+                    'Status.created_at <'=>$threshold_timestamp,
+                    'Status.pre_saved' => false
+                ),
+                'limit'=>$limit,
+                'order'=>'Status.created_at DESC'
+            )
+        );
         
         return $this->checkNum($statuses);
     }
@@ -411,21 +409,21 @@ class Status extends AppModel{
 
         // retrieve statuses
         $conditions = array(
-                            'Status.user_id' => $user_ids,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false,
-                            );
+            'Status.user_id' => $user_ids,
+            'Status.created_at <' => $timestamp,
+            'Status.pre_saved' => false,
+        );
 
         
         
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>$conditions,
-                                      'order'=>'Status.created_at DESC',
-                                      'limit'=>$limit
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>$conditions,
+                'order'=>'Status.created_at DESC',
+                'limit'=>$limit
+            )
+        );
 
         return $this->checkNum($statuses);
     }
@@ -436,22 +434,22 @@ class Status extends AppModel{
 
         // retrieve statuses
         $conditions = array(
-                            'Status.user_id' => $ids,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false,
-                            'User.closed_only'=>false,
-                            );
+            'Status.user_id' => $ids,
+            'Status.created_at <' => $timestamp,
+            'Status.pre_saved' => false,
+            'User.closed_only'=>false,
+        );
 
         
         
         $statuses = $this->find(
-                                'all',
-                                array(
-                                      'conditions'=>$conditions,
-                                      'order'=>'Status.created_at DESC',
-                                      'limit'=>$limit
-                                      )
-                                );
+            'all',
+            array(
+                'conditions'=>$conditions,
+                'order'=>'Status.created_at DESC',
+                'limit'=>$limit
+            )
+        );
         return $this->checkNum($statuses);
     }
 
@@ -469,21 +467,21 @@ class Status extends AppModel{
                 
         // create an array to pass to model
         $status_to_save = array(
-                                'user_id'=>$user['id'],
-                                'twitter_id'=>$user['Twitter']['id'],
-                                'status_id_str'=>$status['id_str'],
-                                'in_reply_to_status_id_str'=>$status['in_reply_to_status_id_str'],
-                                'in_reply_to_user_id_str'=>$status['in_reply_to_user_id_str'],
-                                'in_reply_to_screen_name'=>$status['in_reply_to_screen_name'],
-                                'place_full_name'=>$status['place']['full_name'],// optional value
-                                'retweet_count'=>$status['retweet_count'],// int
-                                'created_at'=>$created_at,
-                                'source'=>$status['source'],
-                                'text'=>$status['text'],
-                                'possibly_sensitive'=>$possibly_sensitive,// boolean
-                                'pre_saved'=>true,
-                                'created'=>time()
-                                );
+            'user_id'=>$user['id'],
+            'twitter_id'=>$user['Twitter']['id'],
+            'status_id_str'=>$status['id_str'],
+            'in_reply_to_status_id_str'=>$status['in_reply_to_status_id_str'],
+            'in_reply_to_user_id_str'=>$status['in_reply_to_user_id_str'],
+            'in_reply_to_screen_name'=>$status['in_reply_to_screen_name'],
+            'place_full_name'=>$status['place']['full_name'],// optional value
+            'retweet_count'=>$status['retweet_count'],// int
+            'created_at'=>$created_at,
+            'source'=>$status['source'],
+            'text'=>$status['text'],
+            'possibly_sensitive'=>$possibly_sensitive,// boolean
+            'pre_saved'=>true,
+            'created'=>time()
+        );
 
         if(!empty($status['retweeted_status'])){
             $rt = $status['retweeted_status'];
@@ -511,14 +509,14 @@ class Status extends AppModel{
          */
 
         $this->updateAll(
-                         array(
-                               'Status.pre_saved'=>false
-                               ),
-                         array(
-                               'Status.user_id'=>$user_id,
-                               'Status.pre_saved'=>true
-                               )
-                         );
+            array(
+                'Status.pre_saved'=>false
+            ),
+            array(
+                'Status.user_id'=>$user_id,
+                'Status.pre_saved'=>true
+            )
+        );
         
         $this->updateSavedTime($user_id);
         
@@ -530,20 +528,20 @@ class Status extends AppModel{
          */
         
         $count_pre_saved = $this->find(
-                                       'count',
-                                       array(
-                                             'Status.user_id'=>$user_id,
-                                             'Status.pre_saved'=>true
-                                             )
-                                       );
+            'count',
+            array(
+                'Status.user_id'=>$user_id,
+                'Status.pre_saved'=>true
+            )
+        );
         
         if($count_pre_saved > 0){
             return $this->deleteAll(
-                                    array(
-                                          'Status.user_id'=>$user_id,
-                                          'Status.pre_saved'=>true
-                                          )
-                                    );
+                array(
+                    'Status.user_id'=>$user_id,
+                    'Status.pre_saved'=>true
+                )
+            );
         }else{
             return false;
         }
@@ -565,17 +563,17 @@ class Status extends AppModel{
          */
 
         $conditions = array(
-                            'Status.user_id'=>$user_id,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false
-                            );
+            'Status.user_id'=>$user_id,
+            'Status.created_at <' => $timestamp,
+            'Status.pre_saved' => false
+        );
 
         $count_older_status = $this->find(
-                                          'count',
-                                          array(
-                                                'conditions'=>$conditions
-                                                )
-                                          );
+            'count',
+            array(
+                'conditions'=>$conditions
+            )
+        );
         
         return ($count_older_status > 0) ? true : false;
             
@@ -596,17 +594,17 @@ class Status extends AppModel{
         $user_ids = $this->User->getIdByTwitterId($twitter_ids);
 
         $conditions = array(
-                            'Status.user_id' => $user_ids,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false,
-                            );
+            'Status.user_id' => $user_ids,
+            'Status.created_at <' => $timestamp,
+            'Status.pre_saved' => false,
+        );
 
         $count = $this->find(
-                             'count',
-                             array(
-                                   'conditions'=>$conditions
-                                   )
-                             );
+            'count',
+            array(
+                'conditions'=>$conditions
+            )
+        );
         
         return $count > 0 ? true : false;
     }
@@ -623,18 +621,18 @@ class Status extends AppModel{
         $ids = $this->User->getIds();
 
         $conditions = array(
-                            'Status.user_id' => $ids,
-                            'Status.created_at <' => $timestamp,
-                            'Status.pre_saved' => false,
-                            'User.closed_only'=>false,
-                            );
+            'Status.user_id' => $ids,
+            'Status.created_at <' => $timestamp,
+            'Status.pre_saved' => false,
+            'User.closed_only'=>false,
+        );
 
         $count = $this->find(
-                             'count',
-                             array(
-                                   'conditions'=>$conditions
-                                   )
-                             );
+            'count',
+            array(
+                'conditions'=>$conditions
+            )
+        );
         return $count > 0 ? true : false;
     }
 
@@ -642,26 +640,35 @@ class Status extends AppModel{
     // utils //
     ///////////
 
+    public function sumStatusesUntilTime($maxUnixtime){
+        
+        $ret = $this->find('count',array(
+                'conditions'=>array(
+                    'Status.pre_saved'=>false,
+                    'Status.created <='=>$maxUnixtime
+                ),
+                'recursive'=>-1
+            )
+        );
+
+        return $ret;
+
+    }
+
     public function getTotalStatusNum(){
         
         /**
          * count the number of total statuses active
          * @return int
          */
-            
-        $activeUser = $this->User->getIds();
 
-        return $this->find(
-                           'count',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.user_id'=>$activeUser,
-                                                     'Status.pre_saved'=>false
-                                                     ),
-                                 'recursive'=>-1
-                                 )
-                           );
-
+        return $this->find('count',array(
+                'conditions'=>array(
+                    'Status.pre_saved'=>false
+                ),
+                'recursive'=>-1
+            )
+        );
     }
 
     public function getStatusNum($user_id){
@@ -673,15 +680,15 @@ class Status extends AppModel{
          */
 
         return $this->find(
-                           'count',
-                           array(
-                                 'conditions'=>array(
-                                                     'Status.user_id'=>$user_id,
-                                                     'Status.pre_saved'=>false
-                                                     ),
-                                 'recursive'=>-1
-                                 )
-                           );
+            'count',
+            array(
+                'conditions'=>array(
+                    'Status.user_id'=>$user_id,
+                    'Status.pre_saved'=>false
+                ),
+                'recursive'=>-1
+            )
+        );
 
     }
 
@@ -707,13 +714,13 @@ class Status extends AppModel{
          */
         
         return $this->User->updateAll(
-                                      array(
-                                            'User.statuses_updated'=>time()
-                                            ),
-                                      array(
-                                            'User.id'=>$user_id
-                                            )
-                                      );
+            array(
+                'User.statuses_updated'=>time()
+            ),
+            array(
+                'User.id'=>$user_id
+            )
+        );
 
     }
 
@@ -728,11 +735,11 @@ class Status extends AppModel{
         }
 
         return $this->unbindModel(
-                                  array(
-                                        'hasMany'=>$hasMany,
-                                        'belongsTo'=>$belongsTo
-                                        )
-                                  );
+            array(
+                'hasMany'=>$hasMany,
+                'belongsTo'=>$belongsTo
+            )
+        );
 
     }
 }

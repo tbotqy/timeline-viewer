@@ -18,7 +18,7 @@ class AjaxController extends AppController{
         // make all the actions need authentication
         $this->Auth->deny();
         // only allow some methods,which are accessed from /public_timedline
-        $this->Auth->allow('read_more','switch_term');
+        $this->Auth->allow('read_more','switch_term','get_graph_data');
 
         // reject non-ajax requests
         if(!$this->request->isAjax()){
@@ -60,10 +60,10 @@ class AjaxController extends AppController{
         
         // set params for api call
         $apiParams = array(
-                            'include_rts'=>true,
-                            'include_entities'=>true,
-                            'screen_name'=>$user['Twitter']['screen_name']
-                            );
+            'include_rts'=>true,
+            'include_entities'=>true,
+            'screen_name'=>$user['Twitter']['screen_name']
+        );
         
         // this is the oldest tweet's id of the statuses which have imported so far
         $maxId = $this->request->data('id_str_oldest');
@@ -148,9 +148,9 @@ class AjaxController extends AppController{
             
             $ret['id_str_oldest'] = $idStrOldest;
             $ret['status'] = array(
-                                   'date'=>$createdAt,
-                                   'text'=>$text
-                                   );
+                'date'=>$createdAt,
+                'text'=>$text
+            );
         
         }else{
             
@@ -197,12 +197,12 @@ class AjaxController extends AppController{
             
             // set params for api request            
             $params = array(
-                            'include_rts'=>true,
-                            'include_entities'=>true,
-                            'count'=>101,
-                            'user_id'=>$user['Twitter']['id'],
-                            'max_id'=>$maxId
-                            );
+                'include_rts'=>true,
+                'include_entities'=>true,
+                'count'=>101,
+                'user_id'=>$user['Twitter']['id'],
+                'max_id'=>$maxId
+            );
                            
             // fetch tweets via api
             $tweets = $this->Twitter->get('statuses/user_timeline',$params);
@@ -217,11 +217,11 @@ class AjaxController extends AppController{
 
             // set params for api request            
             $params = array(
-                            'include_rts'=>true,
-                            'include_entities'=>true,
-                            'count'=>100,
-                            'user_id'=>$user['Twitter']['id'],
-                            );
+                'include_rts'=>true,
+                'include_entities'=>true,
+                'count'=>100,
+                'user_id'=>$user['Twitter']['id'],
+            );
                            
             // fetch tweets via api
             $tweets = $this->Twitter->get('statuses/user_timeline',$params);
@@ -273,11 +273,11 @@ class AjaxController extends AppController{
         $updatedDate = $this->convertTimeToDate($updatedTime,$user['Twitter']['utc_offset']);
 
         $ret = array(
-                     'count_saved'=>$countSaved,
-                     'continue'=>$continue,
-                     'oldest_id_str'=>$oldestIdStr,
-                     'updated_date'=>$updatedDate
-                     );
+            'count_saved'=>$countSaved,
+            'continue'=>$continue,
+            'oldest_id_str'=>$oldestIdStr,
+            'updated_date'=>$updatedDate
+        );
         
         echo json_encode($ret);
 
@@ -308,9 +308,9 @@ class AjaxController extends AppController{
         }
         
         $ret = array(
-                     'deleted'=>$deleted,
-                     'owns'=>$owns
-                     );
+            'deleted'=>$deleted,
+            'owns'=>$owns
+        );
         
         echo json_encode($ret);
         
@@ -415,72 +415,72 @@ class AjaxController extends AppController{
         
         switch($actionType){
 
-        case 'tweets':
+            case 'tweets':
             
-            if($fetchLatest){
+                if($fetchLatest){
                 
-                $statuses = $this->Status->getLatestStatus($userId);
+                    $statuses = $this->Status->getLatestStatus($userId);
             
-            }else{
+                }else{
 
-                // fetch 10 statsues in specified term
-                $statuses = $this->Status->getStatusInTerm($userId,$term['begin'],$term['end']);
+                    // fetch 10 statsues in specified term
+                    $statuses = $this->Status->getStatusInTerm($userId,$term['begin'],$term['end']);
             
-            }
+                }
 
-            $lastStatus = $this->getLastLine($statuses);
-            $oldestTimestamp = $lastStatus['Status']['created_at'];
+                $lastStatus = $this->getLastLine($statuses);
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
         
-            // check if any older status exists in user's timeline  
-            $hasNext = $this->Status->hasOlderStatus($userId,$oldestTimestamp);                    
+                // check if any older status exists in user's timeline  
+                $hasNext = $this->Status->hasOlderStatus($userId,$oldestTimestamp);                    
            
-            break;
+                break;
 
-        case 'home_timeline':
+            case 'home_timeline':
 
-            if($fetchLatest){
+                if($fetchLatest){
 
-                $statuses = $this->Status->getLatestTimeline($userId);
+                    $statuses = $this->Status->getLatestTimeline($userId);
 
-            }else{
+                }else{
 
-                // fetch 10 timeline in specified term
-                $statuses = $this->Status->getTimelineInTerm($userId,$term['begin'],$term['end']);
+                    // fetch 10 timeline in specified term
+                    $statuses = $this->Status->getTimelineInTerm($userId,$term['begin'],$term['end']);
 
-            }
+                }
 
-            $lastStatus = $this->getLastLine($statuses);
-            $oldestTimestamp = $lastStatus['Status']['created_at'];
+                $lastStatus = $this->getLastLine($statuses);
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
             
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($userId,$oldestTimestamp);
+                // check if any older status exists in user's timeline
+                $hasNext = $this->Status->hasOlderTimeline($userId,$oldestTimestamp);
 
-            break;
+                break;
 
-        case 'public_timeline':
+            case 'public_timeline':
 
-            if($fetchLatest){
+                if($fetchLatest){
                 
-                $statuses = $this->Status->getLatestPublicTimeline();
+                    $statuses = $this->Status->getLatestPublicTimeline();
 
-            }else{
+                }else{
 
-                // fetch 10 timeline in specified term
-                $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
+                    // fetch 10 timeline in specified term
+                    $statuses = $this->Status->getPublicTimelineInTerm($term['begin'],$term['end']);
             
-            }
+                }
 
-            $lastStatus = $this->getLastLine($statuses);
-            $oldestTimestamp = $lastStatus['Status']['created_at'];
+                $lastStatus = $this->getLastLine($statuses);
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
             
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
+                // check if any older status exists in user's timeline
+                $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
 
-            break;
+                break;
 
-        default:
+            default:
 
-            break;
+                break;
             
         }
         
@@ -505,48 +505,48 @@ class AjaxController extends AppController{
  
         switch($destinationActionType){
 
-        case 'tweets':
-            // fetch older statuses
-            $statuses = $this->Status->getOlderStatus($user['id'],$oldestTimestamp);
+            case 'tweets':
+                // fetch older statuses
+                $statuses = $this->Status->getOlderStatus($user['id'],$oldestTimestamp);
 
-            // set created_at of last status 
-            $lastStatus = $this->getLastLine($statuses);
-            $oldestTimestamp = $lastStatus['Status']['created_at'];
+                // set created_at of last status 
+                $lastStatus = $this->getLastLine($statuses);
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
 
-            // check if any older status exists
-            $hasNext = $this->Status->hasOlderStatus($user['id'],$oldestTimestamp);
+                // check if any older status exists
+                $hasNext = $this->Status->hasOlderStatus($user['id'],$oldestTimestamp);
            
-            break;
+                break;
 
-        case 'home_timeline':
+            case 'home_timeline':
            
-            // fetch older timeline
-            $statuses = $this->Status->getOlderTimeline($user['id'],$oldestTimestamp);
+                // fetch older timeline
+                $statuses = $this->Status->getOlderTimeline($user['id'],$oldestTimestamp);
             
-            // set created_at of last status 
-            $lastStatus = $this->getLastLine($statuses);
+                // set created_at of last status 
+                $lastStatus = $this->getLastLine($statuses);
             
-            $oldestTimestamp = $lastStatus['Status']['created_at'];
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
             
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldestTimestamp);
+                // check if any older status exists in user's timeline
+                $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldestTimestamp);
             
-            break;
+                break;
 
-        case 'public_timeline':
+            case 'public_timeline':
            
-            // fetch older timeline
-            $statuses = $this->Status->getOlderPublicTimeline($oldestTimestamp);
+                // fetch older timeline
+                $statuses = $this->Status->getOlderPublicTimeline($oldestTimestamp);
             
-            // set created_at of last status 
-            $lastStatus = $this->getLastLine($statuses);
+                // set created_at of last status 
+                $lastStatus = $this->getLastLine($statuses);
             
-            $oldestTimestamp = $lastStatus['Status']['created_at'];
+                $oldestTimestamp = $lastStatus['Status']['created_at'];
             
-            // check if any older status exists in user's timeline
-            $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
+                // check if any older status exists in user's timeline
+                $hasNext = $this->Status->hasOlderPublicTimeline($oldestTimestamp);
             
-            break;
+                break;
         }
         
         $this->autoRender = true;
@@ -566,10 +566,10 @@ class AjaxController extends AppController{
         $userId = $user['id'];
                 
         $params = array(
-                        'user_id'=>$user['Twitter']['id'],
-                        'count'=>1,
-                        'include_rts'=>true,
-                        );
+            'user_id'=>$user['Twitter']['id'],
+            'count'=>1,
+            'include_rts'=>true,
+        );
         
         $latestTweet = $this->Twitter->get('statuses/user_timeline',$params);
         $latestStatus = $this->Status->getLatestStatus($userId,1);
@@ -693,10 +693,10 @@ class AjaxController extends AppController{
 
         // prepare the array to return
         $ret = array(
-                     'updated'=>$doUpdate,
-                     'count_friends'=>$countFriends,
-                     'updated_date'=>$updatedDate
-                     );
+            'updated'=>$doUpdate,
+            'count_friends'=>$countFriends,
+            'updated_date'=>$updatedDate
+        );
         
         echo json_encode($ret);
 
@@ -754,9 +754,9 @@ class AjaxController extends AppController{
         $this->User->updateTime($userId);
         
         $ret = array(
-                     'updated'=>$updated,
-                     'updated_date'=>$this->convertTimeToDate($this->User->getLastUpdatedTime($userId),$utcOffset)
-                     );
+            'updated'=>$updated,
+            'updated_date'=>$this->convertTimeToDate($this->User->getLastUpdatedTime($userId),$utcOffset)
+        );
         
         if($updated){
 
@@ -776,6 +776,122 @@ class AjaxController extends AppController{
         }
 
         echo json_encode($ret);
+    }
+
+    public function get_graph_data(){
+
+        $type = $this->request->query['type'];
+        $ret = array();
+        $utcOffset = 32400;
+
+        $listTimes = $this->Status->find('list',array(
+                'conditions'=>array('Status.pre_saved'=>false),
+                'order'=>'Status.created ASC',
+                'fields'=>'Status.created',
+                'group'=>'Status.created',
+                'recursive'=>-1
+            )
+        );
+         
+        $dataX = array();
+        $dataY = array();
+        
+        switch($type){
+            case 'months':
+               
+                $listFullDate = array();// used for create dataY
+
+                $prevYear = "";
+                foreach($listTimes as $time){
+                    $time += $utcOffset;
+                    
+                    $year = date('Y',$time);
+                    $month = date('m',$time);
+                    $day = date('d',$time);
+         
+                    if($year == $prevYear){
+                        $str = $month;
+                        if( !in_array($str,$dataX) && !in_array($year."/".$str,$dataX) ){
+                            $dataX[] = $str;
+                        }
+                    }else{
+                        $dataX[] = $year."/".$month;
+                    }
+         
+                    // create list of full date for month
+                    $fullDate = $year."/".$month."/".$day;
+                    $dateMonth = $year."/".$month;
+                    if(!array_key_exists($fullDate,$listFullDate)){
+                        $listFullDate[$dateMonth]['monthStart'] = strtotime($dateMonth."/01 00:00:00");
+                        $listFullDate[$dateMonth]['monthEnd'] = strtotime(date("Y/m/t 23:59:59",strtotime($fullDate)));
+                    }
+
+                    $prevYear = $year;
+                }
+
+                // sum statuses until each month
+                foreach($listFullDate as $key=>$line){
+                    $count = $this->Status->sumStatusesUntilTime($line['monthEnd']-$utcOffset);
+                    $dataY[] = $count;
+                }
+
+                break;
+
+            case 'days':
+
+                $listFullDate = array();// used for create dataY etc
+
+                $prevYear = "";
+                foreach($listTimes as $time){
+                    $time += $utcOffset;
+
+                    $year = date('Y',$time);
+                    $month = date('m',$time);
+                    $day = date('d',$time);
+         
+                    /*
+                      // prints same year once
+                      if($year == $prevYear){
+                      $str = $month."/".$day;
+                      if( !in_array($str,$dataX) && !in_array($year."/".$str,$dataX) ){
+                      $dataX[] = $str;
+                      }
+                      }else{
+                      $dataX[] = $year."/".$month;
+                      }
+
+                    */
+
+                    $str = $year."/".$month."/".$day;
+                    if( !in_array($str,$dataX) ){
+                        $dataX[] = $str;
+                    }
+                    // create list of full date for day 
+                    
+                    $fullDate = $year."/".$month."/".$day;
+                    if(!array_key_exists($fullDate,$listFullDate)){
+                        $listFullDate[$fullDate]['fullDate'] = $fullDate;
+                        $listFullDate[$fullDate]['dayStart'] = strtotime($fullDate." 00:00:00");
+                        $listFullDate[$fullDate]['dayEnd'] = strtotime(date($fullDate." 23:59:59",strtotime($fullDate)));
+                    }
+                    
+                    $prevYear = $year;
+                }
+
+                // count statuses in each day
+                foreach($listFullDate as $key=>$line){
+                    $count = $this->Status->sumStatusesUntilTime($line['dayEnd']-$utcOffset);
+                    $dataY[] = $count;
+                }
+
+                break;
+                
+            default:break;
+        }
+
+        $ret = compact('dataX','dataY');
+        return json_encode($ret);
+
     }
 
 }

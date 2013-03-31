@@ -11,6 +11,7 @@ class StatusesController extends AppController{
     public function beforeFilter(){
 
         parent::beforeFilter();
+        $this->Auth->allow('sum');
         $this->Auth->deny('import');
     
     }
@@ -47,4 +48,9 @@ class StatusesController extends AppController{
         
     }
     
+    public function sum(){
+        $this->set('title_for_layout','共有ツイート数の推移 - Timedline');
+        $this->set('showFooter',true);
+    }
+
 }
