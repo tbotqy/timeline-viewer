@@ -14,7 +14,7 @@
 </header>
 <hr/>
 <div class="pull-right">
-  <a href="https://twitter.com/share" class="twitter-share-button" data-text="Timedline | あの日のタイムラインを眺められる、ちょっとしたアプリケーション" data-url="http://<?php echo env('HTTP_HOST');?>" data-via="timedline_tw" data-lang="ja" data-hashtags="timedline">ツイート</a>
+  <a href="https://twitter.com/share" class="twitter-share-button" data-via="timedline_tw" data-lang="ja" data-hashtags="timedline">ツイート</a>
   <a href="http://b.hatena.ne.jp/entry/" class="hatena-bookmark-button" data-hatena-bookmark-layout="simple-balloon" title="このエントリーをはてなブックマークに追加"><img src="http://b.st-hatena.com/images/entry-button/button-only.gif" alt="このエントリーをはてなブックマークに追加" width="20" height="20" style="border: none;" /></a>
 </div>
 
