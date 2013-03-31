@@ -13,21 +13,16 @@ class AdminController extends AppController{
     public function beforeFilter(){
 
         parent::beforeFilter();
+
+        $this->set('title_for_layout','Timedline | Admin');
         
         $this->Auth->allow('deny');
-        
-        if(Configure::read('underConstruction')){
-            return $this->render('under-construction');
-        }
-        
-    }
-
-    public function index(){
 
         $isAdmin = false;
              
         $user = $this->Auth->user();
-       
+
+
         // load the list of admin user names
         $adminList = Configure::read('adminList');
         
@@ -43,9 +38,19 @@ class AdminController extends AppController{
         if(!$isAdmin){
             return $this->redirect('/users/logout');
         }
+        
+        if(Configure::read('underConstruction')){
+            return $this->render('under-construction');
+        }
+        
+    }
 
-        $this->set('title_for_layout','Timedline | Admin');
-
+    public function index(){}
+    
+    public function statuses(){}
+    
+    public function accounts(){
+        
         $activeUsers = $this->User->getActiveUsers();
 
         $goneUsers = $this->User->getGoneUsers();
@@ -53,7 +58,7 @@ class AdminController extends AppController{
         $this->set('gone_users',$goneUsers);
         $this->set('active_users',$activeUsers);
         $this->set('showFooter',true);
-      
+
     }
 
 
