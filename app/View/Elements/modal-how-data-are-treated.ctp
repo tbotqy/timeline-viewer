@@ -9,7 +9,7 @@
   
   <!-- .modal-body -->
   <div class="modal-body">
-    <p><i class="icon-info-sign"></i>このアプリケーションは、Twitter社が提供するAPIを用いてあなたのツイートを読み込み・保存します。</p>
+    <p><i class="icon-info-sign"></i>このアプリケーションは、Twitter社が提供するAPIを用いてあなたのツイートを読み込み・保存します。( 最新のツイートから最大3,200件)</p>
     <p><i class="icon-info-sign"></i>保存されたあなたのツイートは、アプリ内の<a href="/public_timeline" target="_blank">共有タイムライン</a>に表示され、誰でも見ることが可能となります。</p>
     <p><i class="icon-info-sign"></i>アプリの性質上、Twitterアカウントに鍵をかけている方は登録ができないつくりになっています。</p>
     <p><i class="icon-info-sign"></i>一度取り込んだデータは、あなたの好きな時に削除する事ができます。</p>
