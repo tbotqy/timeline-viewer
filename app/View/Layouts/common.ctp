@@ -30,7 +30,7 @@
              'bootstrap.min',
              'bootstrap.2.1.nav.min',
              'font-awesome',
-             'style',
+             'style.css?1',
              )
        );
 
@@ -39,7 +39,6 @@
 
       echo $this->Html->script
       (array(
-             //'libs/jquery-1.8.2.min',
              'libs/jquery-1.9.0.min',
              'libs/bootstrap.min',
              $jsLoadPath.'functions',
