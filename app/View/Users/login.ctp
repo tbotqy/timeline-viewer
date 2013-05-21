@@ -27,7 +27,8 @@
 	
 	  <div class="description">
 	    <p>人々がつぶやいた事を日付を指定して振り返る事ができます</p>
-	    <span class="info alert alert-info"><a href="/statuses/sum">現在の共有ツイート数 : <?php echo $totalStatusNum;?>&nbsp;&nbsp;<i class="icon-share"></i></a></span>
+	    <!--<span class="info alert alert-info"><a href="/statuses/sum">現在の共有ツイート数 : <?php echo $totalStatusNum;?>&nbsp;&nbsp;<i class="icon-share"></i></a></span>-->
+<span class="info alert alert-info">現在の共有ツイート数 : <?php echo $totalStatusNum;?>&nbsp;&nbsp;<i class="icon-share"></i></span>
 	    
 	  </div>
 	
