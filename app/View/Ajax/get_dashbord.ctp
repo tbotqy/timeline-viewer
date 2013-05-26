@@ -3,7 +3,7 @@
       $now = time();
       echo $this->Html->script('/js/unpacked/dashbord.js?t='.$now);
   }else{
-      echo $this->Html->script('dashbord.jsv=1369568580');
+      echo $this->Html->script('dashbord.js?v=1369568580');
   }
 
   $baseUrl = "";
