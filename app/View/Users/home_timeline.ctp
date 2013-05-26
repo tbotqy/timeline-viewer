@@ -17,11 +17,8 @@
       echo "<!-- /#wrap-main.home_timeline.error -->";
 
   }else{
-
-      if($date_list){
-          echo $this->element('dashbord');
-      }
-    
+      echo $this->element('dashbord');
+              
       if($statuses){
           echo "<!-- #wrap-timeline-lower -->";
           echo "<div id=\"wrap-timeline-lower\">";

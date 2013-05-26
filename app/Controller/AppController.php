@@ -55,7 +55,7 @@ class AppController extends Controller {
         $this->set('underConstruction',$this->underConstruction);
 
         $actionType = $this->request->params['action'];
-  
+       
         // check if user agent is compatible
         if($this->isCompatibleUA()){
 
@@ -139,9 +139,9 @@ class AppController extends Controller {
         
         // the list of user agents not to be accepted
         $uaBlackList = array(
-                             'opera',
-                             'msie'
-                             );  
+            'opera',
+            'msie'
+        );  
         
         foreach($uaBlackList as $uaName){
 
@@ -191,12 +191,12 @@ class AppController extends Controller {
         if($plane) return $httpUA;
 
         $uaStrList = array(
-                           'msie',
-                           'chrome',
-                           'safari',
-                           'firefox',
-                           'opera'
-                           );
+            'msie',
+            'chrome',
+            'safari',
+            'firefox',
+            'opera'
+        );
 
         foreach($uaStrList as $uaName){
         
@@ -224,12 +224,12 @@ class AppController extends Controller {
     }
 
     /*
-    public function getIEVersion(){
+      public function getIEVersion(){
     */
-        /**
-         * check if client browser type is IE and returns its version
-         * @return int : version of IE if browser is IE, else false
-         */
+    /**
+     * check if client browser type is IE and returns its version
+     * @return int : version of IE if browser is IE, else false
+     */
     /*  
         $httpUA = env('HTTP_USER_AGENT');
         $pos = stripos($httpUA,'msie');
@@ -238,11 +238,11 @@ class AppController extends Controller {
 
         $ver = substr($httpUA, $pos+5, 2);
         if(strpos($ver,'.')){
-            $ver = str_replace(".","",$ver);
+        $ver = str_replace(".","",$ver);
         }
 
         return (int)$ver;
-    }
+        }
     */
     public function checkInitialized(){
      

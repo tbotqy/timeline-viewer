@@ -262,7 +262,6 @@ class UsersController extends AppController{
         $userData = array(); 
         $statuses = array();
         $oldestTimestamp = "";      
-        $dateList = array();
         $hasNext = false;
         
         // load user info 
@@ -299,9 +298,6 @@ class UsersController extends AppController{
         $num = count($statuses)-1;
         $oldestTimestamp = $statuses[$num]['Status']['created_at'];
         $hasNext = $this->Status->hasOlderStatus($user['id'],$oldestTimestamp);
-
-        // create the list of all the statuses user has.           
-        $dateList = $this->Status->getDateList($user['id']);
         
         if(!$statuses){
             $this->set('showFooter',true);
@@ -310,7 +306,6 @@ class UsersController extends AppController{
         $this->set('user_data',$userData); 
         $this->set('statuses',$statuses);
         $this->set('oldest_timestamp',$oldestTimestamp);      
-        $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
         $this->set('isInitialRequest',true);
     }
@@ -328,7 +323,6 @@ class UsersController extends AppController{
 
         // initialization
         $statuses = array();
-        $dateList = array();
         $hasNext = false;
         $oldestTimestamp = "";
         $errorType = "";
@@ -375,8 +369,6 @@ class UsersController extends AppController{
                 $oldestTimestamp = $lastStatus['Status']['created_at'];
    
                 $hasNext = $this->Status->hasOlderTimeline($user['id'],$oldestTimestamp);
-          
-                $dateList = $this->Status->getDateList($user['id'],'home_timeline');
                 
             }
 
@@ -398,7 +390,6 @@ class UsersController extends AppController{
 
         $this->set('error_type',$errorType);
         $this->set('statuses',$statuses);
-        $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldestTimestamp);
         $this->set('isInitialRequest',true);
@@ -417,7 +408,6 @@ class UsersController extends AppController{
        
         // initialization
         $statuses = array();
-        $dateList = array();
         $oldestTimestamp = "";
         $hasNext = false;
         $noStatusAtAll = false;
@@ -471,12 +461,8 @@ class UsersController extends AppController{
             $noStatusAtAll = true;
        
         }
-
-        // get date list
-        $dateList = $this->Status->getDateList($userId,'public_timeline');
         
         $this->set('statuses',$statuses);
-        $this->set('date_list',$dateList);
         $this->set('hasNext',$hasNext);
         $this->set('oldest_timestamp',$oldestTimestamp);
         $this->set('isInitialRequest',true); 

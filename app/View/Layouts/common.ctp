@@ -41,8 +41,8 @@
       (array(
              'libs/jquery-1.9.0.min',
              'libs/bootstrap.min',
-             $jsLoadPath.'functions',
-             $jsLoadPath.'common',
+             $jsLoadPath.'functions.js?v=1369568580',
+             $jsLoadPath.'common?v=1369568580',
              'twitter_tweet_button',
              'twitter_follow_button'
              )
@@ -106,3 +106,10 @@
 
   </body>
 </html>
+
+
+
+
+
+
+

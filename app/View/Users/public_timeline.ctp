@@ -1,7 +1,5 @@
 <?php 
-  if($date_list){
-      echo $this->element('dashbord');
-  }
+  echo $this->element('dashbord');
 ?>
 
 <!-- #wrap-timeline-lower -->

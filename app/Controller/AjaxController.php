@@ -18,7 +18,7 @@ class AjaxController extends AppController{
         // make all the actions need authentication
         $this->Auth->deny();
         // only allow some methods,which are accessed from /public_timedline
-        $this->Auth->allow('read_more','switch_term','get_graph_data');
+        $this->Auth->allow('read_more','switch_term','get_graph_data','get_dashbord');
 
         // reject non-ajax requests
         if(!$this->request->isAjax()){
@@ -356,16 +356,16 @@ class AjaxController extends AppController{
         }
         
     }
-
-    public function switch_dashbord(){
+    
+    public function get_dashbord(){
         
         /**
          * creates a dashbord html code for requested action type
          * returns html
          */
         
-        $actionType = $this->request->data('action_type');
-       
+        $actionType = $this->request->query['actionType'];
+
         if(!$actionType){
             echo "action type is not specified";
             exit;
@@ -850,15 +850,15 @@ class AjaxController extends AppController{
                     $day = date('d',$time);
          
                     /*
-                      // prints same year once
-                      if($year == $prevYear){
-                      $str = $month."/".$day;
-                      if( !in_array($str,$dataX) && !in_array($year."/".$str,$dataX) ){
-                      $dataX[] = $str;
-                      }
-                      }else{
-                      $dataX[] = $year."/".$month;
-                      }
+                    // prints same year once
+                    if($year == $prevYear){
+                    $str = $month."/".$day;
+                    if( !in_array($str,$dataX) && !in_array($year."/".$str,$dataX) ){
+                    $dataX[] = $str;
+                    }
+                    }else{
+                    $dataX[] = $year."/".$month;
+                    }
 
                     */
 

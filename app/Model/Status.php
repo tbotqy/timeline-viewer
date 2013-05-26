@@ -218,6 +218,7 @@ class Status extends AppModel{
         
         // fetch created_at value of the statuses
         $status_date_list = $this->getCreatedAtList($user_id,$mode);
+      
         if(!$status_date_list){
             return false;
         }
@@ -238,8 +239,6 @@ class Status extends AppModel{
             $month = date('n',$created_at);
             $day = date('j',$created_at);
 
-            //$sum_by_year[$year] = isset($sum_by_year[$year]) ? $sum_by_year[$year]+1 : 1;
-            //$sum_by_month[$year][$month] = isset($sum_by_month[$year][$month]) ? $sum_by_month[$year][$month]+1 : 1;
             $sum_by_day[$year][$month][$day] = isset($sum_by_day[$year][$month][$day]) ? $sum_by_day[$year][$month][$day]+1 : 1;
             
         }
@@ -322,7 +321,7 @@ class Status extends AppModel{
                 }
 
                 if($fetchNewData){
-                
+              
                     // fetch flesh data
                     $ids = $this->User->getIds();
 
@@ -337,6 +336,7 @@ class Status extends AppModel{
                             'fields'=>array(
                                 'Status.created_at'
                             ),
+                            'group'=>'Status.created_at',
                             'order'=>'Status.created_at '.$order
                         )
                     );
