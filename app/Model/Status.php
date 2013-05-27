@@ -325,22 +325,28 @@ class Status extends AppModel{
                     // fetch flesh data
                     $ids = $this->User->getIds();
 
-                    $ret = $this->find(
-                        'list',
-                        array(
-                            'conditions'=>array(
-                                'Status.user_id'=>$ids,
-                                'Status.pre_saved' => false
-                                //'User.closed_only'=>false,
-                            ),
-                            'fields'=>array(
-                                'Status.created_at'
-                            ),
-                            'group'=>'Status.created_at',
-                            'order'=>'Status.created_at '.$order
-                        )
-                    );
-                
+                    /*
+                      $ret = $this->find(
+                      'list',
+                      array(
+                      'conditions'=>array(
+                      'Status.user_id'=>$ids,
+                      'Status.pre_saved' => false
+                      //'User.closed_only'=>false,
+                      ),
+                      'fields'=>array(
+                      'Status.created_at'
+                      ),
+                      'group'=>'Status.created_at',
+                      'order'=>'Status.created_at '.$order
+                      )
+                      );
+                    */
+
+                    App::import('Model','PublicDate');
+                    $this->PublicDate = new PublicDate();
+                    $ret = $this->PublicDate->getList();
+                    
                     $lastCreated = $this->getLastCreated();
 
                     // update cache
@@ -500,6 +506,14 @@ class Status extends AppModel{
         $this->save($status_to_save);
         
         $this->Entity->saveEntities($this->id,$status);
+
+        /*
+         * save status's created_at value to the table of its list
+         */
+        
+        App::import('Model','PublicDate');
+        $this->PublicDate = new PublicDate();
+        $this->PublicDate->addRecord($created_at);
     }
 
     public function savePreSavedStatus($user_id){
