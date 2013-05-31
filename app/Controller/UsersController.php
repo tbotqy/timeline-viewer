@@ -253,7 +253,7 @@ class UsersController extends AppController{
         /**
          * shows the teewts sent by logged-in user
          */
-
+        
         $this->rejectUnInitialized();
 
         $this->set('title_for_layout','Timedline | あなたのツイート');

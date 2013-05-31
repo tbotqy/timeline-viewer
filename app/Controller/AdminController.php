@@ -51,6 +51,30 @@ class AdminController extends AppController{
     
     public function accounts(){
         
+        if(false){
+        
+            /**
+             * code for maintenance
+             * create the list data of tweets' posted time with public timeline
+             */
+    
+            $all = $this->Status->find('list',array(
+                    'conditions'=>array('pre_saved'=>false),
+                    'fields'=>array('created_at'),
+                    'order'=>array('created_at ASC'),
+                    'group'=>array('created_at'),
+                    'recursive'=>-1
+                )
+            );
+            
+            App::import('Model','PublicDate');
+            $this->PublicDate = new PublicDate();
+            foreach($all as $k=>$v){
+                $this->PublicDate->addRecord($v);
+            }
+            echo "done";exit;
+        }
+        
         $activeUsers = $this->User->getActiveUsers();
 
         $goneUsers = $this->User->getGoneUsers();

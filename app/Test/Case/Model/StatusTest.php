@@ -11,3 +11,4 @@ class StatusTest extends CakeTestCase{
         $this->Status = ClassRegistry::init('Status');
     }
 
+}
