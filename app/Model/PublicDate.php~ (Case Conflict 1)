@@ -1,0 +1,44 @@
+<?php
+
+/**
+ * Model/PublicDate
+ * deal with 'created_at' value in tweet data
+ */
+
+class PublicDate extends AppModel{
+
+    public $name ='PublicDate';
+    
+    public function convertTimeToDate($created_at){
+
+        /** 
+         * convert given $unixtime to YYYY/M/D 
+         * @param int $unixtime
+         * @return string converted unixtime in YYYY/M/D
+         */
+        
+        return date('Y/n/j',$created_at);
+    }
+    
+    public function dateExists($created_at){
+
+        $date = $this->convertTimeToDate($created_at);
+
+        $result = $this->find('first',array(
+                'conditions'=>array(
+                    'posted_date'=>$date
+                )
+            )
+        );
+
+        return count($result) > 0;
+    }
+    
+    public function addRecord($created_at){
+        
+        $this->set(array('posted_date'=>$this->convertTimeToDate($created_at)));
+        $this->create();
+        $this->save();
+    }
+    
+}
