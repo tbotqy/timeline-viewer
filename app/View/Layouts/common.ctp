@@ -1,5 +1,9 @@
 <!DOCTYPE html>
+  <?php if($showScrollBar):?>
+<html class="show-scroll" lang="ja">
+  <?php else: ?>
 <html lang="ja">
+  <?php endif;?>
   <head>
     <meta charset="UTF-8"/>
     <?php if(Configure::read('underConstruction') || Configure::read('useDbConfig') == "dev"):
@@ -30,7 +34,7 @@
              'bootstrap.min',
              'bootstrap.2.1.nav.min',
              'font-awesome',
-             'style.css?1',
+             'style.css?2',
              )
        );
 
@@ -42,7 +46,7 @@
              'libs/jquery-1.9.0.min',
              'libs/bootstrap.min',
              $jsLoadPath.'functions.js?v=1369568580',
-             $jsLoadPath.'common.js?v=1369568580',
+             $jsLoadPath.'common.js?v=1371425827',
              'twitter_tweet_button',
              'twitter_follow_button'
              )

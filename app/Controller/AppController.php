@@ -119,6 +119,7 @@ class AppController extends Controller {
         $this->set(compact('userIsInitialized','loggedIn','actionType'));
         $this->set('isAjax',$this->request->isAjax());
         $this->set('showFooter',false);
+        $this->set('showScrollBar',false);
         
     }
 

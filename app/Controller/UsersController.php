@@ -30,6 +30,7 @@ class UsersController extends AppController{
         
         }else{
             $this->set('showFooter',true);
+            $this->set('showScrollBar',true);
             $this->set('totalStatusNum',$this->Status->getTotalStatusNum());
             $this->render('login');
         }
